@@ -1,0 +1,103 @@
+$max: 1400px;
+$medium-max: 1400px;
+$medium: 1200px;
+$tablet: 900px;
+$min-mobile-mini: 320px;
+$mobile: 530px;
+$wrap: 960px;
+$mini-wrap: 768px;
+
+$primary-color: #3131cf;
+$secondary-color: #31ffcf;
+$bg-color: #ededff;
+
+@mixin media($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}
+
+.All-gallery {
+  .container {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+
+    .wrapper {
+      text-align: center;
+
+      .check-img {
+        margin-top: 10px;
+        width: 20px;
+        height: 20px;
+        background-color: #3131cf;
+      }
+    }
+
+    .tablet {
+      @include media($tablet) {
+        display: none;
+      }
+    }
+
+    .mobile {
+      @include media($mobile) {
+        display: none;
+      }
+    }
+
+    .wrapper {
+      padding: 10px;
+      //width: 20%;
+      @include media($tablet) {
+        width: 50%;
+      }
+
+      img {
+        width: 400px;
+        height: 400px;
+        object-fit: cover;
+
+        @include media($medium-max) {
+          width: 330px;
+          height: 330px;
+        }
+        @include media($medium) {
+          width: 280px;
+          height: 280px;
+        }
+        @include media($mini-wrap) {
+          width: 240px;
+          height: 240px;
+        }
+        @include media($mobile) {
+          width: 180px;
+          height: 180px;
+        }
+        @include media(424px) {
+          width: 140px;
+          height: 140px;
+        }
+        @include media($min-mobile-mini) {
+          width: 120px;
+          height: 120px;
+        }
+      }
+    }
+  }
+
+  .rodaldiv {
+    height: 100%;
+    width: 100%;
+    display: flex;
+
+    .my-label {
+      display: flex;
+
+      .imgrodal {
+        max-width: 100%;
+        height: auto;
+        margin: auto;
+      }
+    }
+  }
+}

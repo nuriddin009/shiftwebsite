@@ -1,0 +1,275 @@
+$tablet: 995px;
+
+$mobile: 500px;
+$wrap: 990px;
+
+$primary-color: #023247;
+
+@mixin media($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+  text-decoration: none;
+}
+
+body {
+  font-family: "montserratlight", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1b1b1b;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "montserratbold", sans-serif;
+}
+
+.container {
+  max-width: 1210px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  padding: 0 20px;
+}
+
+.header {
+  .btnT {
+    position: fixed;
+    left: 110%;
+    top: 90%;
+    border: none;
+    transition: all 0.8s;
+  }
+
+  .scroll {
+    left: 94%;
+
+  }
+
+  .top-bar {
+    height: 80px;
+    background-color: $primary-color;
+
+    color: white;
+    //max-width: 1210px;
+
+    .container {
+      display: flex;
+
+      .logo {
+        width: 120px;
+        @include media($mobile) {
+          width: 113.79px;
+          height: 22px;
+        }
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .userImageNavbar {
+          width: 50px;
+          height: 50px;
+
+          .userimage {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+          }
+        }
+
+        @include media($wrap) {
+          gap: 10px;
+        }
+
+        ul {
+
+        }
+
+        @include media($tablet) {
+          gap: 40px;
+        }
+        @include media($mobile) {
+          gap: 30px;
+        }
+
+        .menus {
+          display: flex;
+          gap: 47px;
+          transition: 1s;
+          margin-bottom: 0;
+          z-index: 2;
+
+          li {
+            transition: all 0.5s;
+
+            &:hover {
+              transform: scale(1.1);
+              border-bottom: 1px solid;
+              @include media($tablet) {
+                border: none;
+              }
+            }
+
+            margin-bottom: 2px;
+
+            a {
+              text-decoration: none;
+              color: white;
+
+              @include media($tablet) {
+                color: black;
+              }
+
+              p {
+                margin-bottom: 0;
+              }
+
+            }
+          }
+
+          .first-item {
+            display: none;
+          }
+
+          @include media($tablet) {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            background-color: white;
+            display: block;
+            width: 250px;
+            height: 100%;
+            color: black;
+            padding: 26px 15px;
+            font-size: 14px;
+            line-height: 17px;
+            li {
+              margin-top: 20px;
+            }
+            .first-item {
+              display: block;
+              font-family: "montserratbold", sans-serif;
+              font-size: 16px;
+              line-height: 20px;
+              margin-bottom: 30px;
+            }
+          }
+        }
+
+        .lang-userbtn {
+          .sign-in {
+            @include media(769px) {
+              font-size: 0.8rem;
+            }
+          }
+        }
+
+        .lang-btn {
+          width: 55px;
+          height: 30px;
+          border: 1px solid #ffffff;
+          border-radius: 3px;
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          font-size: 0.8rem;
+          background-color: $primary-color;
+          @include media($wrap) {
+            margin-left: 10px;
+            width: 60px;
+            height: 25px;
+            font-size: 0.8rem;
+          }
+
+          img {
+            @include media($mobile) {
+              width: 9px;
+              height: 5px;
+            }
+          }
+
+          @include media($mobile) {
+            width: 47.67px;
+            height: 22px;
+            font-size: 0.6rem;
+          }
+
+          span {
+            display: inline-block;
+            width: 5px;
+            transform: rotate(90deg) scale(1, 2);
+            margin-bottom: 2px;
+            margin-left: 3px;
+          }
+
+          .lang-btn-wrapper {
+            position: absolute;
+            top: 50px;
+            background-image: url("../../file/image/imageShift/iconLAng/Union.svg");
+            background-size: cover;
+            width: 150px;
+            height: 140px;
+
+            .triangle {
+              margin-top: 17px;
+              color: black;
+              font-size: 0.9rem;
+              text-align: center;
+              padding: 9px;
+
+              h6 {
+                margin: 10px;
+                height: 25px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.5s;
+
+                &:hover {
+                  background-color: #E7F3FF;
+                  border-radius: 4px;
+                }
+              }
+            }
+
+          }
+        }
+
+        .menus-icon {
+          display: none;
+          @include media($tablet) {
+            display: block;
+          }
+          @include media($mobile) {
+            width: 20.29px;
+            height: 15px;
+          }
+        }
+      }
+    }
+  }
+
+  #toggle {
+    display: none;
+
+    &:checked + ul {
+      left: 0;
+    }
+  }
+}

@@ -1,0 +1,191 @@
+$primary-color: #023247;
+$color: #00C3FF;
+$bg-color: #ffffff;
+.studyCenter {
+
+  overflow-x: scroll;
+  height: 100vh;
+
+
+
+  .register-card {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: bolder;
+  }
+
+  .all-time {
+
+    position: sticky;
+    left: 0;
+    width: 100%;
+
+    .group-btn {
+      overflow-x: auto;
+      //padding: 2rem;
+
+      .group-btn-child {
+        flex-wrap: nowrap !important;
+        display: flex;
+        gap: 15px;
+        padding: 1rem;
+        box-sizing: border-box;
+
+        .btnjon-father {
+          display: flex;
+          position: relative;
+
+          div {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 30px;
+            height: 30px;
+            background: red;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bolder;
+            border-radius: 50%;
+          }
+        }
+
+
+        .btnjon {
+          min-width: 100px;
+          color: white;
+          background-color: $primary-color;
+          position: relative;
+        }
+      }
+    }
+
+    .time-table {
+      .time-table-child {
+        display: flex;
+        align-items: center;
+        min-height: 50px;
+
+        margin-top: 10px;
+      }
+
+      .btnjon {
+        background-color: $primary-color;
+        color: white;
+        height: 90px;
+      }
+    }
+  }
+
+
+  .lesson-wrapper {
+    .user_data {
+      margin-top: 30px;
+
+      .table {
+
+
+        thead {
+          position: sticky;
+          top: 0;
+          z-index: 2;
+          background-color: gainsboro;
+
+
+          .user-colom {
+            position: sticky;
+            top: 0;
+            left: 0;
+
+            z-index: 2;
+            background-color: gainsboro;
+
+          }
+
+          .headcol {
+
+            h5 {
+              min-width: 150px;
+            }
+          }
+        }
+
+        tbody {
+          //font-size: 1.4rem;
+          font-weight: bolder;
+
+          .user-data-coloum {
+            .user-colom {
+
+              border: none;
+              border-bottom: 1px solid;
+              background-color: white;
+              position: sticky;
+              left: 0;
+
+              .btnjon {
+                //font-size: 1.7rem;
+              }
+            }
+
+            button {
+
+              margin-top: 20px;
+              position: relative;
+
+              .spanDeleteUser {
+                position: absolute;
+                top: -20px;
+                right: 0;
+                width: 30px;
+                background-color: $primary-color;
+                border-radius: 30%;
+              }
+
+              p {
+                margin-bottom: 0;
+              }
+            }
+          }
+        }
+
+        .user-data-coloum {
+          .row-user {
+            border: black solid 1px;
+
+            .lesson-input {
+              width: 35px;
+              margin-bottom: 10px;
+              border: none;
+            }
+
+            span {
+              display: inline-block;
+            }
+
+            .lesson-check {
+              display: inline-block;
+              width: 30px;
+              height: 15px;
+            }
+          }
+        }
+      }
+
+    }
+
+  }
+
+  .bgCollor {
+    background-color: $primary-color;
+  }
+}

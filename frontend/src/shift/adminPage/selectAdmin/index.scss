@@ -1,0 +1,22 @@
+$primary-color: #023247;
+
+.selectadmin_{
+  display: flex;
+  .navbarAdmin{
+z-index: 99999;
+    background-color: $primary-color;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 300px;
+    padding: 30px;
+    height: 100vh;
+    .nav{
+      .nav-item{
+        a{
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}

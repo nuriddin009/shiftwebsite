@@ -1,0 +1,128 @@
+$tablet: 900px;
+$mobile: 500px;
+$wrap: 960px;
+
+$primary-color: #3131cf;
+$secondary-color: #31ffcf;
+$bg-color: #ededff;
+
+@mixin media($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}
+
+.courses_ {
+  .section-4 {
+    margin: 100px 0;
+
+    .carousel-WhyUs {
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 35px;
+      line-height: 43px;
+      margin-bottom: 70px;
+    }
+
+    .container {
+      gap: 20px;
+      @include media(700px) {
+        flex-direction: column;
+        gap: 70px;
+      }
+
+      .article {
+        position: relative;
+
+        padding: 40px 22px;
+        margin: 20px;
+        width: 370px;
+        height: 400px;
+        background: #ffffff;
+        box-shadow: 0 0 28px rgba(27, 27, 27, 0.15);
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        align-items: center;
+        @include media($tablet) {
+          width: 226px;
+          height: 244px;
+          padding: 19px 10px 15px;
+        }
+
+        .img {
+          width: 115px;
+          height: 115px;
+          border-radius: 50%;
+          background-color: $bg-color;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          @include media($tablet) {
+            width: 72.54px;
+            height: 72.54px;
+          }
+
+          img {
+            width: 70px;
+            height: 62px;
+            @include media($tablet) {
+              width: 51.09px;
+              height: 39.11px;
+            }
+          }
+        }
+
+        .content {
+          text-align: center;
+
+          h4 {
+            font-size: 18px;
+            line-height: 22px;
+            @include media($tablet) {
+              font-size: 16px;
+              line-height: 20px;
+            }
+          }
+
+          .h1-title {
+            width: 300px;
+            border: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-align: center;
+            font-family: "neue_machinaregular", sans-serif;
+
+          }
+
+          p {
+            margin-top: 20px;
+            @include media($tablet) {
+              font-size: 14px;
+              line-height: 17px;
+              margin-top: 6px;
+            }
+          }
+
+          .btn-save {
+            position: absolute;
+            top: 30px;
+            right: 23px;
+          }
+
+          .t1-desc {
+            border: none;
+            padding: 0;
+            text-align: center;
+            font-family: "neue_machinalight", sans-serif;
+
+          }
+
+        }
+      }
+    }
+  }
+}

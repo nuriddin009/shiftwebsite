@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/static/css/main.8ae28c0d.css",
+    "main.js": "/static/js/main.377e0bd1.js",
+    "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
+    "static/media/section2.webp": "/static/media/section2.0806c8daef64a64d1ffd.webp",
+    "static/media/section1.webp": "/static/media/section1.b37962d7ba882b4d38d4.webp",
+    "static/media/section2.jpg": "/static/media/section2.fb19ed092c3a46103f8b.jpg",
+    "static/media/neuemachina-regular-webfont.woff": "/static/media/neuemachina-regular-webfont.374a90646285ab5d0f44.woff",
+    "static/media/neuemachina-bold-webfont.woff": "/static/media/neuemachina-bold-webfont.322b0c6e13598ac22b18.woff",
+    "static/media/neuemachina-light-webfont.woff": "/static/media/neuemachina-light-webfont.58fd5a5dc6535c9170f9.woff",
+    "static/media/upload.png": "/static/media/upload.6782749a2e5fa5b302da.png",
+    "static/media/verified.png": "/static/media/verified.5031ac72de9b28f566f8.png",
+    "static/media/neuemachina-regular-webfont.woff2": "/static/media/neuemachina-regular-webfont.8bb0b78e352bf0ac753b.woff2",
+    "static/media/neuemachina-light-webfont.woff2": "/static/media/neuemachina-light-webfont.c9776d666201cdd39d25.woff2",
+    "static/media/neuemachina-bold-webfont.woff2": "/static/media/neuemachina-bold-webfont.98e790a5b973269515ba.woff2",
+    "static/media/upload.webp": "/static/media/upload.3e336ef1280abcb0f9e1.webp",
+    "static/media/logo2.svg": "/static/media/logo2.5b77d4ae9fc3c6c452bbcf127f7813fe.svg",
+    "index.html": "/index.html",
+    "static/media/Union.svg": "/static/media/Union.b8cb104420bede91a2a4.svg",
+    "main.8ae28c0d.css.map": "/static/css/main.8ae28c0d.css.map",
+    "main.377e0bd1.js.map": "/static/js/main.377e0bd1.js.map",
+    "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8ae28c0d.css",
+    "static/js/main.377e0bd1.js"
+  ]
+}

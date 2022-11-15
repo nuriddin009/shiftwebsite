@@ -1,0 +1,91 @@
+
+.certificate {
+  width: 100%;
+  padding: 1rem;
+
+  .container-top {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    transform: scale(0.85);
+  }
+
+
+  .filters {
+    display: flex;
+    flex-direction: column;
+    width: 600px;
+    gap: 10px;
+  }
+
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    width: 600px;
+    border: 4px solid;
+    padding: 1rem;
+  }
+
+
+  table {
+    margin-top: 20px;
+  }
+
+
+  .right {
+    background: black;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+  }
+
+  .crop-container {
+    position: fixed;
+    top: 0;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+  }
+
+  .controls {
+    position: fixed;
+    bottom: 20px;
+    right: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .control-upper-area {
+      width: 50%;
+      display: flex;
+      justify-content: center;
+
+      input[type="range"] {
+        width: 100%;
+      }
+    }
+
+    .buttons-area {
+      width: 50%;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+
+      button {
+        width: 50%;
+      }
+    }
+
+  }
+
+}

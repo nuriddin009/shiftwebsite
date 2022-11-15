@@ -1,0 +1,117 @@
+$tablet: 900px;
+$mobile: 500px;
+$wrap: 960px;
+
+$primary-color: #3131cf;
+$secondary-color: #31ffcf;
+$bg-color: #ededff;
+
+@mixin media($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}
+
+.whyUs_ {
+  .section-3 {
+    margin: 100px 0;
+
+    .section-title {
+      text-align: center;
+      font-size: 35px;
+      line-height: 43px;
+      margin-bottom: 70px;
+    }
+
+    .container {
+      margin-top: 70px;
+      gap: 20px;
+      padding: 0;
+
+      @include media($wrap) {
+        flex-direction: column;
+      }
+      @include media($mobile) {
+        gap: 50px;
+      }
+
+      .article {
+        position: relative;
+        text-align: center;
+        width: 258px;
+        height: 250px;
+        @include media($mobile) {
+          width: 229px;
+        }
+
+        img {
+          width: 95px;
+          height: 95px;
+          object-fit: cover;
+          border-radius: 50%;
+        }
+
+        .title {
+          font-size: 18px;
+          line-height: 22px;
+          margin-top: 10px;
+          @include media($mobile) {
+            font-size: 16px;
+            line-height: 20px;
+          }
+        }
+
+        .h1-title {
+          width: 300px;
+          text-align: center;
+          border: none;
+          font-weight: 700;
+          font-size: 1.2rem;
+          margin-bottom: 15px;
+          font-family: "neue_machinaregular", sans-serif;
+
+        }
+
+        .desc {
+          font-size: 16px;
+          line-height: 20px;
+          @include media($mobile) {
+            font-size: 14px;
+            line-height: 17px;
+          }
+        }
+
+        .btn-save {
+          position: absolute;
+          top: 0;
+          right: 1px;
+        }
+
+        .t1-desc {
+          border: none;
+          height: 50px;
+          padding: 0;
+          text-align: center;
+          font-family: "neue_machinalight", sans-serif;
+
+        }
+
+        .save-btn {
+          position: absolute;
+          width: 60px;
+          height: 50px;
+          background: $secondary-color;
+          box-shadow: 2px 2px 16px rgba(49, 49, 207, 0.4);
+          border-radius: 3px;
+          color: white;
+          font-size: 16px;
+          line-height: 20px;
+          font-weight: bold;
+          font-family: inherit;
+          border: none;
+        }
+      }
+    }
+  }
+
+}

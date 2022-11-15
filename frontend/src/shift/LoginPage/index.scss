@@ -1,0 +1,69 @@
+$tablet: 768px;
+$mobile: 360x;
+$wrap: 990px;
+$primary-color: #023247;
+$secondary-color: #00C3FF;
+$bg-color: #ffffff;
+@mixin media($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .card-father {
+    margin: 0 auto;
+    padding: 15px;
+    width: 35%;
+
+    .card {
+
+
+      @media (max-width: 500px) {
+        transform: scale(0.6);
+      }
+
+      .bgCollor {
+        background-color: $primary-color;
+
+        .btn-login {
+          width: 70px;
+          height: 40px;
+          background: $secondary-color;
+          box-shadow: 2px 2px 16px rgba(49, 49, 207, 0.4);
+          border-radius: 3px;
+          color: $primary-color;
+          font-size: 16px;
+          line-height: 20px;
+          font-weight: bold;
+          font-family: inherit;
+          border: none;
+        }
+
+      }
+    }
+
+    //@include media($mobile) {
+    //  width: 100%;
+    //  margin: 100px auto;
+    //  background-color:#1883ba ;
+    //}
+
+    @include media($tablet) {
+
+      width: 500px;
+      margin: 150px auto;
+    }
+
+  }
+
+
+}
+
+.react-tel-input .form-control{
+    width: 100% !important;
+}

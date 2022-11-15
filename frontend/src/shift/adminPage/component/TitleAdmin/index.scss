@@ -1,0 +1,17 @@
+$tablet: 900px;
+$mobile: 500px;
+$wrap: 960px;
+
+$primary-color: #3131cf;
+$secondary-color: #31ffcf;
+$bg-color: #ededff;
+
+@mixin media($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}
+
+.AdminTitle{
+
+}

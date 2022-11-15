@@ -1,0 +1,55 @@
+$tablet: 900px;
+$mobile: 500px;
+$wrap: 960px;
+
+$primary-color: #023247;
+$secondary-color: #31ffcf;
+$bg-color: #ededff;
+
+@mixin media($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}
+
+.AdminAbout {
+  background-color: $primary-color;
+  margin-top: 15px;
+
+  .address {
+    color: #ffffff;
+
+    .btn-save {
+      top: 0;
+      position: absolute;
+    }
+
+    .te-address {
+      font-weight: 700;
+      border: none;
+      background-color: $primary-color;
+      color: white;
+      width: 250px;
+      height: 100px;
+      font-family: "neue_machinaregular";
+    }
+
+    .i-number {
+      border: none;
+      background-color: $primary-color;
+      color: white;
+      font-family: "neue_machinalight";
+
+    }
+  }
+  .card{
+    width: 35%;
+    .input-url{
+      background-color: $primary-color;
+
+      color: white;
+    }
+  }
+
+
+}

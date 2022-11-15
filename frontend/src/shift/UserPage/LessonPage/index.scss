@@ -1,0 +1,80 @@
+$tablet: 900px;
+$mobile: 500px;
+$wrap: 960px;
+
+$primary-color: #023247;
+$secondary-color: #31ffcf;
+$bg-color: #ededff;
+
+@mixin media($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}
+
+
+._Lessonpage {
+  display: flex;
+  height: 100%;
+
+  .navbarAdmin {
+    min-width: 320px;
+    background-color: $primary-color;
+    position: relative;
+    left: 0;
+    width: 40%;
+    padding: 30px;
+    transition: 0.7s;
+
+
+    @include media(500px){
+      min-width: 180px;
+    }
+
+    .nav {
+      .nav-item {
+        a {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}
+
+.dis_bar {
+  margin-left: -330px;
+  position: relative;
+  @include media(500px) {
+    width: 200px;
+    margin-left: -180px;
+  }
+}
+
+.active_bar {
+  margin-left: 0;
+}
+
+.navbar_lesson {
+  position: relative;
+  overflow-y: auto;
+
+
+  .close_lesson {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 1rem;
+    color: white;
+    font-size: 2.5rem;
+    display: none;
+
+    @include media(992px) {
+      display: block;
+    }
+  }
+
+}
+
+.content_lesson {
+  width: 100%;
+}

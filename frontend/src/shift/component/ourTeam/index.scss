@@ -1,0 +1,112 @@
+$tablet: 900px;
+$mobile: 500px;
+$wrap: 960px;
+$min-mobile-mini: 320px;
+
+$primary-color: #00C3FF;
+$secondary-color: #31ffcf;
+$bg-color: #ededff;
+
+@mixin media($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}
+
+.ourTeam_ {
+  .section-6 {
+    margin: 100px 0;
+
+    .section-title {
+      text-align: center;
+      font-size: 35px;
+      line-height: 43px;
+      margin-bottom: 70px;
+    }
+
+    .container {
+
+      gap: 20px;
+      @include media(1000px) {
+        flex-direction: column;
+        gap: 50px;
+      }
+
+      .article {
+        text-align: center;
+        position: relative;
+        @include media(420px) {
+          transform: scale(0.8);
+        }
+        @include media($min-mobile-mini) {
+          transform: scale(0.64);
+        }
+
+        .btn-delete {
+          position: absolute;
+          z-index: 2;
+          right: 0;
+        }
+
+        .wrapper {
+          width: 306px;
+          height: 306px;
+          position: relative;
+          border-radius: 50%;
+
+          @include media($mobile) {
+            width: 228.29px;
+            height: 228.29px;
+          }
+
+          img {
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            object-fit: cover;
+          }
+
+          .bg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            border-radius: inherit;
+            top: -10px;
+            left: 10px;
+            border: 2px solid $primary-color;
+            z-index: -1;
+          }
+        }
+
+        .t1-name {
+          width: 300px;
+          border: none;
+          font-size: 1.2rem;
+          text-align: center;
+          margin-top: 5px;
+          font-weight: 800;
+          font-family: "neue_machinaregular", sans-serif;
+        }
+
+        h3 {
+          margin-top: 18px;
+          font-size: 18px;
+          line-height: 22px;
+        }
+
+        .t1-desc {
+          border: none;
+          padding: 0;
+          text-align: center;
+
+          font-family: "neue_machinalight", sans-serif;
+
+        }
+
+        p {
+          margin-top: 6px;
+        }
+      }
+    }
+  }
+}

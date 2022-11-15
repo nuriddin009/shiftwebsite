@@ -1,0 +1,60 @@
+$primary-color: #023247;
+$secondary-color: #00C3FF;
+$bg-color: #ffffff;
+
+@mixin media($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}
+.registerUser{
+
+  .text-danger{
+    font-size: 14px;
+  }
+
+  .registerCard{
+    width:500px ;
+    margin: auto;
+    @include media(1150px){
+      width: 450px;
+    }
+    @include media(500px){
+    width: 350px;
+  }
+  .bgCollor {
+    background-color: $primary-color;
+    .btn-login{
+      width: 70px;
+      height: 40px;
+      background:$secondary-color;
+      box-shadow: 2px 2px 16px rgba(49, 49, 207, 0.4);
+      border-radius: 3px;
+      color: white;
+      font-size: 16px;
+      line-height: 20px;
+      font-weight: bold;
+      font-family: inherit;
+      border: none;
+    }
+  }
+.card-header{
+  img{
+    @include media(1150px){
+      width: 150px;
+    }
+    @include media(500px){
+      width: 120px;
+    }
+  }
+}
+  .card-body{
+    .phoneAge{
+      @include media(500px) {
+      flex-direction: column;
+
+      }
+    }
+  }
+  }
+}

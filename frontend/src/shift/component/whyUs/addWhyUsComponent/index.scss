@@ -1,0 +1,39 @@
+$primary-color: #00C3FF;
+$secondary-color: #023247;
+$bg-color: #ffffff;
+
+.addWhyUs{
+  .btn-save{
+    width: 70px;
+    height: 40px;
+    background:$secondary-color;
+    box-shadow: 2px 2px 16px rgba(49, 49, 207, 0.4);
+    border-radius: 3px;
+    color: white;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: bold;
+    font-family: inherit;
+    border: none;
+  }
+  .card{
+    width: 100%;
+    height: 100%;
+  .c-h{
+    background-color: $secondary-color;
+  }
+    .card-body{
+
+      .my-label{
+        .imgIcon{
+          width: 95px;
+          height: 95px;
+          border-radius: 50px;
+        }
+      }
+    }
+  }
+  .logo{
+    width: 150px;
+  }
+}
