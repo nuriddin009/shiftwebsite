@@ -2,11 +2,7 @@ import axios from "axios";
 
 export default function request(url, method, data) {
     return axios({
-        //agar siz proyectni gitdan olgan bo'lsangiz img taglardan URl larni o'zgartiring 'localhost'ga
-
-        // /api
-
-        baseURL: "/api",
+        baseURL: "http://localhost:81/api",
         url,
         method,
         data,
@@ -15,5 +11,4 @@ export default function request(url, method, data) {
             'lang': localStorage.getItem("lang")
         }
     })
-
 }

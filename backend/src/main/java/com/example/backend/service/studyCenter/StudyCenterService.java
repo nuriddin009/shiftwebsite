@@ -87,13 +87,16 @@ public class StudyCenterService {
 
         if (!time_table.getIsFree()) {
             if (timeTableUsersByTimeTableId.isEmpty()) {
-                for (int i = 0; i < 12; i++) {
+                for (int i = 0; i < (time_table.getIsFree() ? 16 : 12); i++) {
                     Time_table_user_data time_table_user_data = new Time_table_user_data(save, i + 1, false, 0, 0, false, false, false);
                     timeTableUsersDataRepository.save(time_table_user_data);
                 }
             } else {
                 for (int i = 0; i < timeTableUsersByTimeTableId.get(0).getLessonData().size(); i++) {
-                    Time_table_user_data time_table_user_data = new Time_table_user_data(save, i + 1, false, 0, 0, timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getDone(), timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getExam(), false);
+                    Time_table_user_data time_table_user_data = new Time_table_user_data(
+                            save, i + 1, false, 0, 0,
+                            timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getDone(),
+                            timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getExam(), false);
                     timeTableUsersDataRepository.save(time_table_user_data);
                 }
             }
@@ -103,7 +106,9 @@ public class StudyCenterService {
         if (all.size() != 0) {
             if (timeTableUsersByTimeTableId.isEmpty()) {
                 for (Lesson lesson : all) {
-                    Time_table_user_data time_table_user_data = new Time_table_user_data(save, lesson.getLesson_order(), false, 0, 0, false, false, false);
+                    Time_table_user_data time_table_user_data = new Time_table_user_data(save,
+                            lesson.getLesson_order(), false, 0, 0,
+                            false, false, false);
                     timeTableUsersDataRepository.save(time_table_user_data);
                 }
             } else {
@@ -210,7 +215,8 @@ public class StudyCenterService {
                 return new ApiResponse(true, time_table_user_data.getIsvideoallowed() ? "Video activated" : "Video deactivated");
             }
 
-        } else {
+        }
+        else {
             for (Lesson_url lesson_url : ListLesson) {
                 HashModel hashModel = boomStreamService.addUserEmail(lesson_url.getUrl_video(), user.getPhoneNumber());
                 if (hashModel.getSuccess()) {

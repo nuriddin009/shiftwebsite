@@ -6,6 +6,7 @@ import com.example.backend.entity.telegramBot.Parent;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.repository.telegramBot.ParentRepo;
 import com.example.backend.telegramBot.QueryStep.BotSteps;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,18 +21,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
     private final UserRepository userRepository;
     private final BotUtils botUtils;
     private final ParentRepo parentRepo;
 
-    @Autowired
-    public TelegramBot(UserRepository userRepository, BotUtils botUtils, ParentRepo parentRepo) {
-    this.userRepository = userRepository;
-        this.botUtils = botUtils;
-        this.parentRepo = parentRepo;
-    }
+
 
     @SneakyThrows
     @Override
@@ -153,7 +150,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "5438088057:AAEtekplo9_9sR7AhG_0OfzvpHCjHchkr1U";
+        return "5053122492:AAGlm33_FkDAe2wJ2S-zg4Xf3VXms0pNqvE";
     }
 
 
@@ -164,7 +161,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "uzshiftacademy_bot";
+        return "test_qilish_uchun_robot";
     }
 
 

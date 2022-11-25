@@ -103,7 +103,7 @@ function Index(props) {
                         <label className={"my-label"}>
                             {
                                 fileId ? <img className={"imgIcon"} style={{width: "80px", height: "80px"}}
-                                              src={"/api/img/" + fileId} alt={"rasmni tanlang"}/>
+                                              src={"http://localhost:81/api/img/" + fileId} alt={"rasmni tanlang"}/>
                                     : <img
                                         width={100}
                                         height={100}

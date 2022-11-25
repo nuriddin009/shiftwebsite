@@ -152,7 +152,7 @@ public class UserController {
     @GetMapping("/avatar/{userId}")
     public void getAvatar(@PathVariable UUID userId, HttpServletResponse response) {
         FileCopyUtils.copy(
-                new FileInputStream("images/users/" + userId + ".png"),
+                new FileInputStream("backend/images/users/" + userId + ".png"),
                 response.getOutputStream()
         );
     }

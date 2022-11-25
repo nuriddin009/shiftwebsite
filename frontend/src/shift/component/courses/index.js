@@ -9,6 +9,7 @@ import AddWhyUsComponent from "../whyUs/addWhyUsComponent";
 import {selectLAngWhyUs} from "../../utils/selectLang";
 import load from "./load.png";
 import {LazyLoadImage} from "react-lazy-load-image-component";
+import Fade from 'react-reveal/Fade';
 
 function Index(props) {
     const [courses, setCourses] = useState([]);
@@ -31,7 +32,9 @@ function Index(props) {
         if (token !== null) {
 
             request("/user/me").then(res => {
-                setRole(res.data.roles[0].roleName)
+                setRole(res.data.roles
+                    .filter(item => item.roleName === "ROLE_ADMIN"
+                        || item.roleName === "ROLE_SUPERADMIN").length > 0 ? "ROLE_ADMIN" : "")
             })
         }
         setLang(localStorage.getItem("lang"))
@@ -136,7 +139,6 @@ function Index(props) {
                         enableAutoPlay={(!role)}
                         autoPlaySpeed={3000}
                         showArrows={courses.length > 3}
-
                     >
                         {
                             courses?.map((item, index) => <div key={item.id} className="article">
@@ -144,7 +146,7 @@ function Index(props) {
                                     pathname !== "/" ?
                                         <label className={"my-label"}>
                                             <img
-                                                src={"/api/img/" + item.attachment}
+                                                src={"http://localhost:81/api/img/" + item.attachment}
                                                 width={100}
                                                 alt="ua"
                                             />
@@ -158,7 +160,7 @@ function Index(props) {
                                                 <LazyLoadImage
                                                     alt={"section-1"}
                                                     effect="blur"
-                                                    src={"/api/img/" + item.attachment}
+                                                    src={"http://localhost:81/api/img/" + item.attachment}
                                                     placeholderSrc={load}
                                                     width={window.innerWidth > 900 ? "70px"
                                                         : "51.09px"}
@@ -177,11 +179,13 @@ function Index(props) {
                                                    autoFocus
                                                    value={courses[index]?.title} placeholder={"Title"}/>
                                             :
-                                            <pre>
-
+                                            <Fade bottom>
+                                                 <pre>
                                                 <h4 onDoubleClick={() => editTitle(index)}>{item.title ? item.title
                                                     : "Lorem ipsum dolor sit amet"}</h4>
                                             </pre>
+                                            </Fade>
+
                                     }
                                     {
                                         doubleDesc[index] ?
@@ -199,12 +203,13 @@ function Index(props) {
                                                           onKeyPress={(e) => enter(e, item, index, "description")}/>
                                             </div>
                                             :
-                                            <p onDoubleClick={() => editDescription(index)}>
-                                                {item.description ? item.description
-                                                    : "Lorem ipsum dolor sit amet, consectetur" +
-                                                    " adipisicing elit. Dolor, similique."}
-                                            </p>
-
+                                            <Fade bottom>
+                                                <p onDoubleClick={() => editDescription(index)}>
+                                                    {item.description ? item.description
+                                                        : "Lorem ipsum dolor sit amet, consectetur" +
+                                                        " adipisicing elit. Dolor, similique."}
+                                                </p>
+                                            </Fade>
                                     }
                                 </div>
                             </div>)

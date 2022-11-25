@@ -1,10 +1,19 @@
 $primary-color: #023247;
 $color: #00C3FF;
 $bg-color: #ffffff;
+
+
+.centerDiv {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
 .studyCenter {
 
   overflow-x: scroll;
   height: 100vh;
+
 
 
 

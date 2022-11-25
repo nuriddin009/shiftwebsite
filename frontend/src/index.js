@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import "./shift/font/stylesheet.css"
 import 'react-phone-input-2/lib/style.css'
 import 'react-lazy-load-image-component/src/effects/blur.css';
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

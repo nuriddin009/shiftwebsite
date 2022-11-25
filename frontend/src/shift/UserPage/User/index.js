@@ -87,7 +87,7 @@ function Index(props) {
                             </label>
                             :
                             <label className={"my-label"}>
-                                <img src={"/api/img/" + user?.attachment?.id} alt="ua"/>
+                                <img src={"http://localhost:81/api/img/" + user?.attachment?.id} alt="ua"/>
                                 <input accept={"image/*"} style={{display: "none"}}
                                        onChange={e => handleFile(e)}
                                        type="file"/>

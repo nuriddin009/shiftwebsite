@@ -13,6 +13,7 @@ import com.example.backend.repository.studyCenter.TimeTableUsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class LessonService {
         lesson.setIsactive(true);
         Lesson save = lessonRepository.save(lesson);
         save.setLesson_order(save.getId());
+        
 
         List<UserIdProjection> students = timeTableUsersDataRepository.getAllUserForAddTTUD();
 

@@ -8,6 +8,8 @@ import {toast} from "react-toastify";
 import AddWhyUsComponent from "./addWhyUsComponent";
 import {useLocation} from "react-router-dom";
 import {selectLAngWhyUs} from "../../utils/selectLang";
+import Fade from 'react-reveal/Fade';
+
 
 function Index({getShift, whyUses}) {
     const [whyUs, setWhyUs] = useState([]);
@@ -141,12 +143,12 @@ function Index({getShift, whyUses}) {
                                     {
                                         locationStateLocation.pathname === "/" ?
                                             <img
-                                                src={"/api/img/" + item.attachment}
+                                                src={"http://localhost:81/api/img/" + item.attachment}
                                                 alt="ua"
                                             />
                                             :
                                             <label className={"my-label"}>
-                                                <img src={"/api/img/" + item.attachment} alt="ua"/>
+                                                <img src={"http://localhost:81/api/img/" + item.attachment} alt="ua"/>
                                                 <input accept={"image/*"} style={{display: "none"}}
                                                        onChange={e => handleFile(e, item, index)}
                                                        type="file"/>
@@ -161,8 +163,10 @@ function Index({getShift, whyUses}) {
                                                    autoFocus
                                                    value={whyUs[index]?.title} placeholder={"Title"}/>
                                             :
-                                            <h3 onDoubleClick={() => editTitle(index)} className="title">
-                                                {item.title}</h3>
+                                            <Fade bottom>
+                                                <h3 onDoubleClick={() => editTitle(index)} className="title">
+                                                    {item.title}</h3>
+                                            </Fade>
 
                                     }
                                     {
@@ -182,9 +186,11 @@ function Index({getShift, whyUses}) {
                                             </div>
                                             :
 
-                                            <p onDoubleClick={() => editDescription(index)} className="desc">
-                                                {item.description}
-                                            </p>
+                                            <Fade bottom>
+                                                <p onDoubleClick={() => editDescription(index)} className="desc">
+                                                    {item.description}
+                                                </p>
+                                            </Fade>
 
                                     }
                                 </div>)

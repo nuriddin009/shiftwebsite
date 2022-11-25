@@ -160,7 +160,7 @@ function Index(props) {
                         <div className={"card-header"} style={{height: "100%"}}>
                             <label className={"my-label"} style={{cursor: "pointer"}}>
                                 <img style={{width: "50px", height: "50px"}}
-                                     src={"/api/img/" + item.attachment?.id} alt={"img"}/>
+                                     src={"http://localhost:81/api/img/" + item.attachment?.id} alt={"img"}/>
                                 <input accept={"image/*"} style={{display: "none"}}
                                        onChange={e => handleFile(e, index, item.id)}
                                        type="file"/>

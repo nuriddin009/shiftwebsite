@@ -91,7 +91,7 @@ function Index(props) {
                             <div className={"d-flex justify-content-center"}>
                                 <label>
                                     <img
-                                        src={"/api/img/" + currentImgId}
+                                        src={"http://localhost:81/api/img/" + currentImgId}
                                         alt={"rasmni tanlang"}
                                         width={(size[0] < 350 ? 250 : size[0] < 650 ? 350 : 450)}/>
                                     <input accept={"image/*"} style={{display: "none"}}
@@ -124,7 +124,7 @@ function Index(props) {
                             <div className={"d-flex flex-column align-items-end "}>
 
                                 <img onClick={() => clickImg(item)}
-                                     src={"/api/img/" + item.attachment?.id}
+                                     src={"http://localhost:81/api/img/" + item.attachment?.id}
                                      alt="gallery"/>
                                 {
                                     role === "ROLE_ADMIN" ?

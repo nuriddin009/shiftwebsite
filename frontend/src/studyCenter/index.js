@@ -76,6 +76,7 @@ function Index(props) {
         setRodal(p => !p)
     }
 
+
     const [add, setAddGroup] = useState(null)
 
     function addGroup() {
@@ -127,7 +128,6 @@ function Index(props) {
         localStorage.setItem("timeTableId", id);
         request("/studyCenter/timeTableUsers/" + id, "get").then(res => {
             setUsers(res.data)
-            setLessOrMore(res.data?.isMore)
         })
     }
 
@@ -194,10 +194,6 @@ function Index(props) {
 
     function handleInput(e, item1, index, index1, lesson) {
 
-        // if (lesson === "isFree") {
-        //     setIsFree(e.target.checked)
-        //     return;
-        // }
 
         if (lesson === "addGroup") {
             setInput(e.target.value)
@@ -433,11 +429,7 @@ function Index(props) {
     }
 
     function getLessOrMore(e) {
-        setLessOrMore(!e.target.checked)
-        let timeTableId = localStorage.getItem("timeTableId");
-        request(`/studyCenter/timeTable/${timeTableId}/${!e.target.checked}`, "patch").then(res => {
-            getTimeTab(timeTableId)
-        })
+
     }
 
     const [editTimeTableIndex, setEditTimeTableIndex] = useState(null);
@@ -670,12 +662,11 @@ function Index(props) {
                                         <div className="form-check form-switch">
                                             <input
                                                 style={{width: "80px", height: "40px"}}
-                                                onChange={getLessOrMore}
+                                                onChange={(e) => setLessOrMore(e.target.checked)}
                                                 value={lessOrMore}
                                                 className="form-check-input d-inline-block" type="checkbox"
                                                 id="flexSwitchCheckChecked"/>
                                         </div>
-                                        <h1>Less&nbsp;data</h1>
                                     </label>
 
                                     : ""
@@ -702,13 +693,18 @@ function Index(props) {
                                 >
                                     <div>
                                         <h5>Lesson-{index + 1}</h5>
-                                        <label>Imtixon <input disabled={item.done}
-                                                              defaultChecked={item.exam}
-                                                              onChange={(e) => exam(e, item)}
-                                                              type="checkbox" id="flexSwitchCheckChecked"
-                                                              className={"form-check-input"}
-                                        />
-                                        </label>
+                                        {
+                                            !lessOrMore ? <label>Imtixon <input disabled={item.done}
+                                                                                defaultChecked={item.exam}
+                                                                                onChange={(e) => exam(e, item)}
+                                                                                type="checkbox"
+                                                                                id="flexSwitchCheckChecked"
+                                                                                className={"form-check-input"}
+                                            />
+                                            </label> : ""
+                                        }
+
+
                                     </div>
                                 </th>)}
                                 </thead>
@@ -762,10 +758,11 @@ function Index(props) {
                                                         {/*        /> Tegma*/}
                                                         {/*</span>*/}
                                                         {
-                                                            item1.done && item1.exam ?
+                                                            item1.done && item1.exam && !lessOrMore ?
                                                                 <div className={"mt-4"}>
                                                                     Imtixon={item1.lessonmark}
-                                                                </div> : item1.exam ?
+                                                                </div> :
+                                                                item1.exam && !lessOrMore ?
                                                                     <div className={"mt-4"}>
                                                                         Imtihon=
                                                                         <select
@@ -785,11 +782,12 @@ function Index(props) {
                                                                     </div> :
 
                                                                     <div>
-                                                                        {item1.done || item.gotogroup !== 0 ?
+                                                                        {(item1.done || item.gotogroup !== 0) && !lessOrMore ?
                                                                             <div className={"d-flex"}>
                                                                                 Lesson&nbsp;grade={item1.lessonmark}
                                                                             </div>
                                                                             :
+                                                                            !lessOrMore &&
                                                                             <div className={"d-flex"}>
                                                                                 Lesson&nbsp;grade=
                                                                                 <select
@@ -809,9 +807,10 @@ function Index(props) {
                                                                         }
                                                                         <div>
                                                                             <p>
-                                                                                {item1.done || item.gotogroup !== 0 ?
+                                                                                {(item1.done || item.gotogroup !== 0) && !lessOrMore ?
                                                                                     <div
                                                                                         className={"mt-3"}>homework={item1.homeworkmark}</div> :
+                                                                                    !lessOrMore &&
                                                                                     <div>
                                                                                         homework=
                                                                                         <select
@@ -836,9 +835,9 @@ function Index(props) {
 
                                                     </p>
                                                 </div>
-                                                <label>
+                                                <label className={!lessOrMore ? "centerDiv" : ""}>
                                                                <span>
-                                                                Kelganmi &nbsp;
+                                                               {!lessOrMore && <span>Kelganmi &nbsp;</span>}
                                                                </span>
                                                     <input type="checkbox" id="flexSwitchCheckChecked"
                                                            disabled={item1.done || item.gotogroup !== 0}
@@ -847,7 +846,7 @@ function Index(props) {
                                                            defaultChecked={item1.hasinlesson}/>
                                                 </label>
                                                 {
-                                                    timeTab?.isFree ?
+                                                    timeTab?.isFree && !lessOrMore ?
 
                                                         <label className={"d-flex g-1"}>
                                                             Videoga ruxsat

@@ -7,6 +7,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {selectAboutTitle} from "../../utils/selectLang";
 import {LazyLoadImage} from 'react-lazy-load-image-component';
 import pSrc from "./section1.jpg";
+import Fade from 'react-reveal/Fade';
 
 
 function Index(props) {
@@ -87,11 +88,14 @@ function Index(props) {
                                     </div>
                                 </div>
                                 :
-                                <pre>
+                                <Fade left>
+                                     <pre>
                                 <h1 onDoubleClick={editTitle} className="title">
                                 {title?.title ? title?.title : "Ready to change\nyour life?"}
                                 </h1>
                                 </pre>
+                                </Fade>
+
                         }
                         {
                             doubleDesc ?
@@ -107,12 +111,13 @@ function Index(props) {
                                 </div>
                                 :
 
-
-                                <p onDoubleClick={editDescription} className="desc">
-                                    {title?.description ? title?.description : "Learn programming from international expert.\n" +
-                                        "Do not miss your chance, just click button and\n" +
-                                        "contact with us. "}
-                                </p>
+                                <Fade left>
+                                    <p onDoubleClick={editDescription} className="desc">
+                                        {title?.description ? title?.description : "Learn programming from international expert.\n" +
+                                            "Do not miss your chance, just click button and\n" +
+                                            "contact with us. "}
+                                    </p>
+                                </Fade>
 
                         }
                         <button onClick={() => navigate("/registerUser")} className="reg-btn">Register now</button>

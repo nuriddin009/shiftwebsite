@@ -89,7 +89,7 @@ public class FileController {
     @GetMapping("/users/{id}")
     public void getUsersImage(@PathVariable UUID id, HttpServletResponse response) {
         FileCopyUtils.copy(
-                new FileInputStream("images/users/" + id + ".png"),
+                new FileInputStream("backend/images/users/" + id + ".png"),
                 response.getOutputStream()
         );
     }
@@ -114,14 +114,14 @@ public class FileController {
 //        }
 //        return save.getId();
 
-        String fileName = "images/users/" + userId + ".png";
+        String fileName = "backend/images/users/" + userId + ".png";
         FileCopyUtils.copy(
                 file.getInputStream(),
                 new FileOutputStream(fileName)
         );
 
         User user = userRepository.findById(userId).get();
-        user.setFilePath("/images/users/" + userId);
+        user.setFilePath("/backend/images/users/" + userId);
         userRepository.save(user);
     }
 

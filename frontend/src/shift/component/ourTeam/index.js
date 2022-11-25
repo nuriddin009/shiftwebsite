@@ -142,14 +142,14 @@ function Index(props) {
                                         {
                                             pathname !== "/" ?
                                                 <label className={"wrapper"}>
-                                                    <img src={"/api/img/" + item.attachment}
+                                                    <img src={"http://localhost:81/api/img/" + item.attachment}
                                                          alt="mentor"/>
                                                     <input accept={"image/*"} style={{display: "none"}}
                                                            onChange={e => handleFile(e, item, index)}
                                                            type="file"/>
                                                 </label>
                                                 :
-                                                <img src={"/api/img/" + item.attachment}
+                                                <img src={"http://localhost:81/api/img/" + item.attachment}
                                                      alt="mentor"/>
                                         }
                                         <div className="bg"/>

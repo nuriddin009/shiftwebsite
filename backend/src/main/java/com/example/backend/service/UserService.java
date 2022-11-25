@@ -165,7 +165,7 @@ public class UserService {
 
         user.setFilePath("/users/" + userId);
         userRepository.save(user);
-        String fileName = "images/users/" + userId + ".png";
+        String fileName = "backend/images/users/" + userId + ".png";
         FileCopyUtils.copy(
                 file.getInputStream(),
                 new FileOutputStream(fileName)

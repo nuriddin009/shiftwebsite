@@ -7,6 +7,7 @@ import {useLocation} from "react-router-dom";
 import {selectAboutTitle} from "../../utils/selectLang";
 import {LazyLoadImage} from 'react-lazy-load-image-component';
 import sec2 from "./section2.jpg";
+import Fade from 'react-reveal/Fade';
 
 function Index(props) {
     const [about, setAbout] = useState(null);
@@ -93,12 +94,15 @@ function Index(props) {
                                               type="text" placeholder={"Title"} value={about?.title}/>
                                 </div>
                                 :
-                                <pre>
+                                <Fade right>
+                                     <pre>
                                 <h2 onDoubleClick={editTitle} className="title">
                                     {about?.title ? about?.title
                                         : "About"}
                                 </h2>
                                     </pre>
+                                </Fade>
+
                         }
                         {
                             doubleDesc ?
@@ -113,10 +117,12 @@ function Index(props) {
                                 </div>
                                 :
 
-                                <p onDoubleClick={editDescription} className="desc">
-                                    {about?.description ? about?.description : "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur " +
-                                        "cum delectus esse fugit illo in minus repudiandae suscipit tenetur totam.\n"}
-                                </p>
+                                <Fade bottom>
+                                    <p onDoubleClick={editDescription} className="desc">
+                                        {about?.description ? about?.description : "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur " +
+                                            "cum delectus esse fugit illo in minus repudiandae suscipit tenetur totam.\n"}
+                                    </p>
+                                </Fade>
 
                         }
                     </div>

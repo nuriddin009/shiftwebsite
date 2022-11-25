@@ -40,7 +40,7 @@ public class GenerateCertificate {
                                              String description
     ) {
 
-        Resource resource3 = new ClassPathResource("static/images/certificate.jpg");
+        Resource resource3 = new ClassPathResource("static/backend/images/certificate.jpg");
         InputStream inputStream3 = resource3.getInputStream();
 
 
