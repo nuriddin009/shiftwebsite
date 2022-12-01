@@ -11,12 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
     @Value("${app.jwtSecret}")
     private String jwtSecret;
+    @Value("${app.refreshJwtExpirationInMs}")
+    private String refreshJwtExpirationInMs;
 
     @Autowired
     UserRepository userRepository;
@@ -38,6 +42,17 @@ public class JwtTokenProvider {
         Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
         JWTVerifier verifier = JWT.require(algorithm).build();
         return verifier.verify(authToken);
+    }
+
+
+
+    public String generateRefreshToken(String username) {
+        Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
+        return JWT.create()
+                .withSubject(username)
+                .withExpiresAt(new Date(System.currentTimeMillis() + refreshJwtExpirationInMs))
+                .withIssuedAt(new Date(System.currentTimeMillis()))
+                .sign(algorithm);
     }
 
 //    public static DecodedJWT validateTokenHandle(String authToken) {

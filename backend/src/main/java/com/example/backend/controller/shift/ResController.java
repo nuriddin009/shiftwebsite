@@ -1,6 +1,7 @@
 package com.example.backend.controller.shift;
 
 import com.example.backend.config.SecurityConfig;
+import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.JwtAuthResponse;
 import com.example.backend.dto.ReqLogin;
 import com.example.backend.dto.ReqUser;
@@ -83,4 +84,9 @@ public class ResController {
         shiftService.deleteUser(userId);
     }
 
+
+    @PostMapping("token/refresh")
+    public HttpEntity<ApiResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(shiftService.refreshToken(request, response));
+    }
 }

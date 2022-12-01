@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.backend.config.SecurityConfig;
 import com.example.backend.dto.*;
 import com.example.backend.entity.Attachment;
@@ -20,6 +21,7 @@ import com.example.backend.repository.telegramBot.ParentRepo;
 import com.example.backend.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
@@ -341,5 +344,29 @@ public class ShiftService {
         parentRepo.deleteUserParent(userId);
         roleRepository.deleteUserRoles(userId);
         userRepository.deleteById(userId);
+    }
+
+    public ApiResponse refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            String authorizationHeader = request.getHeader("REFRESH_TOKEN");
+            String bearer = "Bearer ";
+            if (authorizationHeader != null && authorizationHeader.startsWith(bearer)) {
+                String token = authorizationHeader.substring(bearer.length());
+                DecodedJWT decodedJWT = jwtTokenProvider.validateToken(token);
+                String email = decodedJWT.getSubject();
+                Optional<User> userOptional = userRepository.findByUsername(email);
+                if (userOptional.isPresent()) {
+                    String accessToken = jwtTokenProvider.generateAccessToken(userOptional.get());
+                    String refreshToken = jwtTokenProvider.generateRefreshToken(userOptional.get().getUsername());
+                    return new ApiResponse(true, new JwtAuthResponse(accessToken, refreshToken), null);
+                } else {
+                    throw new RuntimeException("User not found");
+                }
+            } else {
+                throw new RuntimeException("Header not found");
+            }
+        } catch (Exception e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 }

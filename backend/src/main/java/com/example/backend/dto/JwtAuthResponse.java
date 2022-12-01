@@ -13,6 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class JwtAuthResponse {
     private String token;
+    private String refreshToken;
     private List<Role> roles;
     private String tokenType = "Bearer";
     private String username;
@@ -32,8 +33,13 @@ public class JwtAuthResponse {
         this.attachmentid=attachmentid;
     }
 
-    public JwtAuthResponse(Boolean success,String username) {
+    public  JwtAuthResponse(Boolean success,String username) {
         this.success = success;
         this.username = username;
+    }
+
+    public JwtAuthResponse(String accessToken, String refreshToken) {
+        this.token = accessToken;
+        this.refreshToken = refreshToken;
     }
 }
