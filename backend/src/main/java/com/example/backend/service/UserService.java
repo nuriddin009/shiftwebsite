@@ -9,9 +9,11 @@ import com.example.backend.projection.CustomUsers;
 import com.example.backend.projection.UserProjection;
 import com.example.backend.projection.UserSearchProjection;
 import com.example.backend.repository.AttachmentRepository;
+import com.example.backend.repository.IpAdressUserRepository;
 import com.example.backend.repository.RoleRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtTokenProvider;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +23,8 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
@@ -33,15 +37,17 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AttachmentRepository attachmentRepository;
-    @Autowired
-    private JwtTokenProvider tokenProvider;
+    private final IpAdressUserRepository ipAdressUserRepository;
+    private final JwtTokenProvider tokenProvider;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, AttachmentRepository attachmentRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, AttachmentRepository attachmentRepository, IpAdressUserRepository ipAdressUserRepository, JwtTokenProvider tokenProvider) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.attachmentRepository = attachmentRepository;
+        this.ipAdressUserRepository = ipAdressUserRepository;
+        this.tokenProvider = tokenProvider;
     }
 
     public Page<CustomUsers> getUser(Integer page, String input, Boolean active, String role) {
@@ -54,12 +60,12 @@ public class UserService {
 
     public Page<UserSearchProjection> getSearchUser(String input) {
         PageRequest pageRequest = PageRequest.of(0, 5);
-        return userRepository.findAllBySearch(input.toUpperCase(),  pageRequest);
+        return userRepository.findAllBySearch(input.toUpperCase(), pageRequest);
     }
 
 
     public ApiResponse saveUser(ReqUser reqUser) {
-        Role role = roleRepository.findById(1).get();
+        Role role = roleRepository.getReferenceById(1);
         List<Role> roles = Arrays.asList(role);
         User user = new User(
                 reqUser.getUsername(),
@@ -82,13 +88,13 @@ public class UserService {
 
 
     public void editActive(UUID id, Boolean active) {
-        User user = userRepository.findById(id).get();
+        User user = userRepository.getReferenceById(id);
         user.setActiv(active);
         userRepository.save(user);
     }
 
     public User editUser(ReqUser reqUser) {
-        User user1 = userRepository.findById(reqUser.getId()).get();
+        User user1 = userRepository.getReferenceById(reqUser.getId());
         user1.setFirstName(reqUser.getFirstName());
         user1.setLastName(reqUser.getLastName());
         user1.setPhoneNumber(reqUser.getPhoneNumber());
@@ -110,7 +116,7 @@ public class UserService {
 
     public ApiResponse addRole(ReqRoles reqRoles) {
         if (reqRoles.getRoles().size() != 0) {
-            User user = userRepository.findById(reqRoles.getUserId()).get();
+            User user = userRepository.getReferenceById(reqRoles.getUserId());
             user.setRoles(reqRoles.getRoles());
             userRepository.save(user);
             return new ApiResponse("Userga rol qo'shildi", true);
@@ -149,7 +155,7 @@ public class UserService {
     }
 
     public ApiResponse addPhotos(UUID userId, MultipartFile file) throws IOException {
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.getReferenceById(userId);
 
         if (user.getAttachment() != null) {
             UUID id = user.getAttachment().getId();
@@ -256,5 +262,40 @@ public class UserService {
         String username = decodedJWT.getSubject();
         Optional<User> byUsername = userRepository.findByUsername(username);
         return byUsername.map(User::getId).orElse(null);
+    }
+
+    public void unlockUser() {
+        ipAdressUserRepository.deleteAll();
+    }
+
+    public User getMe(UUID userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
+
+    public List<String> getUserRoles(UUID userId) {
+        return roleRepository.userRolesForAdmin(userId);
+    }
+
+    public HasIMG hasPhoto(String username) {
+        User user = userRepository.findByUsername(username).get();
+        if (user.getFilePath() != null) {
+            return new HasIMG(true);
+        } else {
+            return new HasIMG(false);
+        }
+    }
+
+    @SneakyThrows
+    public void getAvatar(UUID userId, HttpServletResponse response) {
+        FileCopyUtils.copy(
+                new FileInputStream("backend/images/users/" + userId + ".png"),
+                response.getOutputStream()
+        );
+    }
+
+    public ApiResponse getUsernameForEdit(String phone) {
+        return userRepository.findByPhoneNumber(phone)
+                .map(user -> new ApiResponse(user.getUsername(), true))
+                .orElseGet(() -> new ApiResponse("This phone number is not registered", false));
     }
 }

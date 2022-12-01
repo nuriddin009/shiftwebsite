@@ -6,7 +6,7 @@ import com.example.backend.entity.Attachment;
 
 import com.example.backend.entity.User;
 import com.example.backend.entity.UserIpAdress;
-import com.example.backend.entity.studyCenter.Time_table_user;
+import com.example.backend.entity.studyCenter.TimeTableUser;
 import com.example.backend.repository.AttachmentRepository;
 import com.example.backend.entity.shift.*;
 import com.example.backend.repository.IpAdressUserRepository;
@@ -20,7 +20,6 @@ import com.example.backend.repository.telegramBot.ParentRepo;
 import com.example.backend.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -91,7 +90,6 @@ public class ShiftService {
     public AboutComponent PutAbout(AboutComponent aboutComponent, HttpServletRequest request) {
         String lang = request.getHeader("lang");
         AboutComponent about = aboutRepo.findAll().get(0);
-
         if (lang.equals("ENG") || lang.equals("null")) {
             about.setTitle(aboutComponent.getTitle());
             about.setDescription(aboutComponent.getDescription());
@@ -333,10 +331,10 @@ public class ShiftService {
     @Transactional
     public void deleteUser(UUID userId) {
         lessonHashRepository.deleteLessonHashUserId(userId);
-        List<Time_table_user> byUserId = timeTableUsersRepository.findByUserId(userId);
+        List<TimeTableUser> byUserId = timeTableUsersRepository.findByUserId(userId);
         if (byUserId.size() != 0) {
-            for (Time_table_user time_table_user : byUserId) {
-                timeTableUsersDataRepository.deleteTTUDBYUser(time_table_user.getId());
+            for (TimeTableUser time_tableUser : byUserId) {
+                timeTableUsersDataRepository.deleteTTUDBYUser(time_tableUser.getId());
             }
         }
         timeTableUsersRepository.deleteByUserId(userId);

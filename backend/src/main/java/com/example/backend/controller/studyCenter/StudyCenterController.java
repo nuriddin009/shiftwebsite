@@ -24,8 +24,7 @@ import java.util.UUID;
 public class StudyCenterController {
 
     private final StudyCenterService studyCenterService;
-    private final TimeTableUsersDataRepository timeTableUsersDataRepository;
-    private final TimeTableRepository timeTableRepository;
+
 
     @GetMapping("/timeTables/{groupId}")
     public List<Time_table> getTimeTable(@PathVariable UUID groupId) {
@@ -35,17 +34,13 @@ public class StudyCenterController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MENTOR','ROLE_SUPERADMIN')")
     @PatchMapping("/timeTable/{timeTableId}/{isMore}")
     public Time_table lessOrMore(@PathVariable Integer timeTableId, @PathVariable Boolean isMore) {
-        Time_table time_table = timeTableRepository.findById(timeTableId).get();
-        time_table.setIsMore(isMore);
-        return timeTableRepository.save(time_table);
+        return studyCenterService.lessOrMore(timeTableId,isMore);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MENTOR','ROLE_SUPERADMIN')")
     @PatchMapping("/edit/timeTableName/{timeTableId}/{timeTableName}")
     public Time_table editTimeTableName(@PathVariable Integer timeTableId, @PathVariable String timeTableName) {
-        Time_table time_table = timeTableRepository.findById(timeTableId).get();
-        time_table.setTableName(timeTableName);
-        return timeTableRepository.save(time_table);
+       return studyCenterService.editTimeTableName(timeTableId,timeTableName);
     }
 
 
@@ -130,7 +125,7 @@ public class StudyCenterController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
     public void deleteTTUD(@PathVariable Integer id) {
-        timeTableUsersDataRepository.deleteErrorTTUD(id);
+        studyCenterService.deleteTTUD(id);
     }
 
 }

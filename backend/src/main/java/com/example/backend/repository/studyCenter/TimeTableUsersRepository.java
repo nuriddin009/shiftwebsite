@@ -1,7 +1,6 @@
 package com.example.backend.repository.studyCenter;
 
-import com.example.backend.entity.studyCenter.Time_table_user;
-import com.example.backend.entity.telegramBot.Parent;
+import com.example.backend.entity.studyCenter.TimeTableUser;
 import com.example.backend.projection.BotConnectOrProjection;
 import com.example.backend.projection.CustomTimeTableUser;
 import com.example.backend.projection.TimeTableUserDemoProjection;
@@ -17,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-public interface TimeTableUsersRepository extends JpaRepository<Time_table_user, Integer> {
+public interface TimeTableUsersRepository extends JpaRepository<TimeTableUser, Integer> {
 
 
     @Query(value =
@@ -128,7 +127,7 @@ public interface TimeTableUsersRepository extends JpaRepository<Time_table_user,
             "  and tt.group_id = :groupId", nativeQuery = true)
     List<CustomTimeTableUser> findByUserId(UUID userId, UUID groupId);
 
-    List<Time_table_user> findByUserId(UUID userId);
+    List<TimeTableUser> findByUserId(UUID userId);
 
 //
 //    @Query(value = "select p.id as id, amount, description, title,p.date, u.name,p.pay_type as payType from payment p  join users u on u.id = p.user_id where u.name ilike %:user% and p.pay_type like :payType% and concat(p.title,p.description) ilike %:text%\n" +

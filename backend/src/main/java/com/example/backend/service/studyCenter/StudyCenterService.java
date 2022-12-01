@@ -37,7 +37,6 @@ public class StudyCenterService {
     private final BoomStreamService boomStreamService;
     private final LessonUrlRepository lessonUrlRepository;
 
-
     public List<Time_table> getTimeTable(UUID groupId) {
         return timeTableRepository.findAllByGroupIdOrderByName(groupId);
     }
@@ -59,10 +58,10 @@ public class StudyCenterService {
                 for (TimeTableUserDemoProjection timeTableUserProjection : timeTableUsersByTimeTableId) {
                     if (timeTableUserProjection.getGotogroup() == 0) {
                         User user = userRepository.findById(timeTableUserProjection.getUserid()).get();
-                        Time_table_user save = timeTableUsersRepository.save(new Time_table_user(time_table, user, timeTableUserProjection.getPrice(), 0));
+                        TimeTableUser save = timeTableUsersRepository.save(new TimeTableUser(time_table, user, timeTableUserProjection.getPrice(), 0));
                         for (int i = 0; i < (isFree ? 16 : 12); i++) {
-                            Time_table_user_data time_table_user_data = new Time_table_user_data(save, i + 1, false, 0, 0, false, false, false);
-                            timeTableUsersDataRepository.save(time_table_user_data);
+                            TimeTableUserData timeTableUserData = new TimeTableUserData(save, i + 1, false, 0, 0, false, false, false);
+                            timeTableUsersDataRepository.save(timeTableUserData);
                         }
                     }
                 }
@@ -83,21 +82,21 @@ public class StudyCenterService {
                 }
             }
         }
-        Time_table_user save = timeTableUsersRepository.save(new Time_table_user(time_table, user, data.getPrice(), 0));
+        TimeTableUser save = timeTableUsersRepository.save(new TimeTableUser(time_table, user, data.getPrice(), 0));
 
         if (!time_table.getIsFree()) {
             if (timeTableUsersByTimeTableId.isEmpty()) {
                 for (int i = 0; i < (time_table.getIsFree() ? 16 : 12); i++) {
-                    Time_table_user_data time_table_user_data = new Time_table_user_data(save, i + 1, false, 0, 0, false, false, false);
-                    timeTableUsersDataRepository.save(time_table_user_data);
+                    TimeTableUserData timeTableUserData = new TimeTableUserData(save, i + 1, false, 0, 0, false, false, false);
+                    timeTableUsersDataRepository.save(timeTableUserData);
                 }
             } else {
                 for (int i = 0; i < timeTableUsersByTimeTableId.get(0).getLessonData().size(); i++) {
-                    Time_table_user_data time_table_user_data = new Time_table_user_data(
+                    TimeTableUserData timeTableUserData = new TimeTableUserData(
                             save, i + 1, false, 0, 0,
                             timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getDone(),
                             timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getExam(), false);
-                    timeTableUsersDataRepository.save(time_table_user_data);
+                    timeTableUsersDataRepository.save(timeTableUserData);
                 }
             }
             return new ApiResponse("Student qo'shildi", true, null);
@@ -106,15 +105,15 @@ public class StudyCenterService {
         if (all.size() != 0) {
             if (timeTableUsersByTimeTableId.isEmpty()) {
                 for (Lesson lesson : all) {
-                    Time_table_user_data time_table_user_data = new Time_table_user_data(save,
+                    TimeTableUserData timeTableUserData = new TimeTableUserData(save,
                             lesson.getLesson_order(), false, 0, 0,
                             false, false, false);
-                    timeTableUsersDataRepository.save(time_table_user_data);
+                    timeTableUsersDataRepository.save(timeTableUserData);
                 }
             } else {
                 for (int i = 0; i < all.size(); i++) {
-                    Time_table_user_data time_table_user_data = new Time_table_user_data(save, i + 1, false, 0, 0, timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getDone(), timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getExam(), false);
-                    timeTableUsersDataRepository.save(time_table_user_data);
+                    TimeTableUserData timeTableUserData = new TimeTableUserData(save, i + 1, false, 0, 0, timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getDone(), timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getExam(), false);
+                    timeTableUsersDataRepository.save(timeTableUserData);
                 }
 
             }
@@ -127,27 +126,27 @@ public class StudyCenterService {
     }
 
     public void getTimeTableUsersDataLesson(Integer id, Boolean hasinlesson) {
-        Time_table_user_data time_table_user_data = timeTableUsersDataRepository.findById(id).get();
-        time_table_user_data.setHasInLesson(hasinlesson);
-        timeTableUsersDataRepository.save(time_table_user_data);
+        TimeTableUserData timeTableUserData = timeTableUsersDataRepository.findById(id).get();
+        timeTableUserData.setHasInLesson(hasinlesson);
+        timeTableUsersDataRepository.save(timeTableUserData);
     }
 
     public void getTimeTableUsersDatalessonHomework(Integer id, Integer mark, Integer homework) {
-        Time_table_user_data time_table_user_data = timeTableUsersDataRepository.findById(id).get();
-        time_table_user_data.setLessonMark(mark);
-        time_table_user_data.setHomeworkMark(homework);
-        timeTableUsersDataRepository.save(time_table_user_data);
+        TimeTableUserData timeTableUserData = timeTableUsersDataRepository.findById(id).get();
+        timeTableUserData.setLessonMark(mark);
+        timeTableUserData.setHomeworkMark(homework);
+        timeTableUsersDataRepository.save(timeTableUserData);
     }
 
     public void TimeTableUsersDatalessonDone(Integer lessonId, Integer timeTableId, Boolean telegramIsmessage) {
-        List<Time_table_user_data> timeTableData = timeTableUsersDataRepository.findBylessonIdDone(lessonId, timeTableId);
-        for (Time_table_user_data timeTableDatum : timeTableData) {
+        List<TimeTableUserData> timeTableData = timeTableUsersDataRepository.findBylessonIdDone(lessonId, timeTableId);
+        for (TimeTableUserData timeTableDatum : timeTableData) {
             if (timeTableDatum.getDone()) {
                 timeTableDatum.setDone(false);
             } else {
                 timeTableDatum.setDone(true);
                 if (telegramIsmessage) {
-                    if (timeTableDatum.getTime_table_user().getGotogroup() == 0) {
+                    if (timeTableDatum.getTime_tableUser().getGotogroup() == 0) {
                         telegramBot.messageParentTelegram(lessonId, timeTableDatum);
                     }
                 }
@@ -168,11 +167,11 @@ public class StudyCenterService {
 
     public ApiResponse TimeTableDeleteUser(Integer id, UUID userId, ReqTimeTableDeleteUser reqTimeTableDeleteUser) {
         LocalDate date = LocalDate.now();
-        Time_table_user time_table_user = timeTableUsersRepository.findById(id).get();
-        time_table_user.setGotogroup(reqTimeTableDeleteUser.getGotogroup());
-        time_table_user.setWhytogroup(reqTimeTableDeleteUser.getWhytogroup());
-        time_table_user.setDeletedate(date);
-        timeTableUsersRepository.save(time_table_user);
+        TimeTableUser time_tableUser = timeTableUsersRepository.findById(id).get();
+        time_tableUser.setGotogroup(reqTimeTableDeleteUser.getGotogroup());
+        time_tableUser.setWhytogroup(reqTimeTableDeleteUser.getWhytogroup());
+        time_tableUser.setDeletedate(date);
+        timeTableUsersRepository.save(time_tableUser);
         lessonHashRepository.deleteByUserId(userId);
         return new ApiResponse("Student guruhdan haydaldi", true, null);
     }
@@ -186,9 +185,9 @@ public class StudyCenterService {
     }
 
     public ApiResponse exam(Boolean exam, Integer lessnId, Integer timetableId) {
-        List<Time_table_user_data> bylessonIdDone = timeTableUsersDataRepository.findBylessonIdDone(lessnId, timetableId);
-        for (Time_table_user_data time_table_user_data : bylessonIdDone) {
-            time_table_user_data.setExam(exam);
+        List<TimeTableUserData> bylessonIdDone = timeTableUsersDataRepository.findBylessonIdDone(lessnId, timetableId);
+        for (TimeTableUserData timeTableUserData : bylessonIdDone) {
+            timeTableUserData.setExam(exam);
         }
         timeTableUsersDataRepository.saveAll(bylessonIdDone);
         return new ApiResponse("Imtixon boshlandi", true, null);
@@ -196,23 +195,23 @@ public class StudyCenterService {
 
     // this function allow to video
     public ApiResponse getTimeTableUsersDataIsvideoallowed(Integer id, Boolean isvideoallowed) {
-        Time_table_user_data time_table_user_data = timeTableUsersDataRepository.findById(id).get();
-        User user = time_table_user_data.getTime_table_user().getUser();
-        Lesson lesson = lessonRepository.getoneLesson(time_table_user_data.getLesson_Order());
+        TimeTableUserData timeTableUserData = timeTableUsersDataRepository.findById(id).get();
+        User user = timeTableUserData.getTime_tableUser().getUser();
+        Lesson lesson = lessonRepository.getoneLesson(timeTableUserData.getLesson_Order());
         List<Lesson_url> ListLesson = lessonUrlRepository.findLessonId(lesson.getId());
 
         if (ListLesson.size() == 0) {
             return new ApiResponse("Video hali tayyor emas!", false);
         }
-        if (time_table_user_data.getIsvideoallowed()) {
+        if (timeTableUserData.getIsvideoallowed()) {
             List<LessonHash> oneLessonHash = lessonHashRepository.findOneLessonHash(user.getId(), lesson.getId());
             if (oneLessonHash.size() != 0) {
                 for (LessonHash lessonHash : oneLessonHash) {
                     lessonHashRepository.deleteById(lessonHash.getId());
-                    time_table_user_data.setIsvideoallowed(isvideoallowed);
-                    timeTableUsersDataRepository.save(time_table_user_data);
+                    timeTableUserData.setIsvideoallowed(isvideoallowed);
+                    timeTableUsersDataRepository.save(timeTableUserData);
                 }
-                return new ApiResponse(true, time_table_user_data.getIsvideoallowed() ? "Video activated" : "Video deactivated");
+                return new ApiResponse(true, timeTableUserData.getIsvideoallowed() ? "Video activated" : "Video deactivated");
             }
 
         }
@@ -221,13 +220,29 @@ public class StudyCenterService {
                 HashModel hashModel = boomStreamService.addUserEmail(lesson_url.getUrl_video(), user.getPhoneNumber());
                 if (hashModel.getSuccess()) {
                     lessonHashRepository.save(new LessonHash(null, user, lesson, hashModel.getHash(), lesson_url));
-                    time_table_user_data.setIsvideoallowed(isvideoallowed);
-                    timeTableUsersDataRepository.save(time_table_user_data);
+                    timeTableUserData.setIsvideoallowed(isvideoallowed);
+                    timeTableUsersDataRepository.save(timeTableUserData);
                 }
             }
-            return new ApiResponse(true, time_table_user_data.getIsvideoallowed() ? "Video activated" : "Video deactivated");
+            return new ApiResponse(true, timeTableUserData.getIsvideoallowed() ? "Video activated" : "Video deactivated");
         }
         return new ApiResponse(false, null);
 
+    }
+
+    public Time_table lessOrMore(Integer timeTableId, Boolean isMore) {
+        Time_table time_table = timeTableRepository.findById(timeTableId).get();
+        time_table.setIsMore(isMore);
+        return timeTableRepository.save(time_table);
+    }
+
+    public Time_table editTimeTableName(Integer timeTableId, String timeTableName) {
+        Time_table time_table = timeTableRepository.findById(timeTableId).get();
+        time_table.setTableName(timeTableName);
+        return timeTableRepository.save(time_table);
+    }
+
+    public void deleteTTUD(Integer id) {
+        timeTableUsersDataRepository.deleteErrorTTUD(id);
     }
 }

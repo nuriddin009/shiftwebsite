@@ -10,12 +10,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Time_table_user_data {
+public class TimeTableUserData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne
-    Time_table_user time_table_user;
+    TimeTableUser time_tableUser;
     private Integer lesson_Order;
     private Boolean done;
     private Boolean hasInLesson;
@@ -24,8 +24,8 @@ public class Time_table_user_data {
     private Boolean exam;
     private Boolean isvideoallowed;
 
-    public Time_table_user_data(Time_table_user time_table_user, Integer lesson_Order, Boolean hasInLesson, Integer homeworkMark, Integer lessonMark,Boolean done,Boolean exam,Boolean isvideoallowed) {
-        this.time_table_user = time_table_user;
+    public TimeTableUserData(TimeTableUser time_tableUser, Integer lesson_Order, Boolean hasInLesson, Integer homeworkMark, Integer lessonMark, Boolean done, Boolean exam, Boolean isvideoallowed) {
+        this.time_tableUser = time_tableUser;
         this.lesson_Order = lesson_Order;
         this.hasInLesson = hasInLesson;
         this.homeworkMark = homeworkMark;

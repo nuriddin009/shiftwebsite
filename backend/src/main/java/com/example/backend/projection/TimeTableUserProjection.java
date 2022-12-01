@@ -1,7 +1,5 @@
 package com.example.backend.projection;
 
-import com.example.backend.entity.studyCenter.Time_table_user;
-import com.example.backend.entity.telegramBot.Parent;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;

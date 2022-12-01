@@ -1,23 +1,22 @@
 package com.example.backend.controller.shift;
 
 import com.example.backend.config.SecurityConfig;
-import com.example.backend.dto.*;
+import com.example.backend.dto.JwtAuthResponse;
+import com.example.backend.dto.ReqLogin;
+import com.example.backend.dto.ReqUser;
 import com.example.backend.entity.Role;
 import com.example.backend.entity.User;
 import com.example.backend.repository.RoleRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.AuthService;
 import com.example.backend.service.ShiftService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;

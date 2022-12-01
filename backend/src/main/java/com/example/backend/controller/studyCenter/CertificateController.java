@@ -30,93 +30,57 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/certificate")
 public class CertificateController {
 
-    private final GenerateCertificate generateCertificate;
-    private final UserRepository userRepository;
-    private final StudyTypeRepository studyTypeRepository;
-    private final CertificateRepository certificateRepository;
     private final CertificateService certificateService;
 
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')")
     @GetMapping("/allUsers")
     public List<User> getUsers() {
-        return userRepository.findAll();
-    }
-
-    @PostMapping("/studyType")
-    public void saveCertificateType(@RequestBody CertificateTypeDto typeDto) {
-        StudyType studyType = new StudyType();
-    }
-
-    @PutMapping("/studyType")
-    public void editCertificateType() {
-
+        return certificateService.getUsers();
     }
 
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')")
     @PostMapping("/create/studyType")
     public StudyType saveStudyType(@RequestBody StudyTypeDto studyType) {
-        StudyType studyType1 = new StudyType();
-        studyType1.setStudyType(studyType.getStudyType());
-        studyType1.setDescription("Enter the certificate description");
-        return studyTypeRepository.save(studyType1);
+        return certificateService.saveStudyType(studyType);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')")
     @GetMapping("/get/studyTypes")
     public Page<StudyType> getStudyTypes(@RequestParam(defaultValue = "") String search) {
-        Pageable pageable = PageRequest.of(0, 5);
-        return studyTypeRepository.getStudyTypes(search, pageable);
+        return certificateService.getStudyTypes(search, PageRequest.of(0, 5));
     }
 
     @GetMapping("/get/{id}")
     public StudyType getStudyType(@PathVariable UUID id) {
-        return studyTypeRepository.findById(id).get();
+        return certificateService.getStudyType(id);
     }
 
 
     @SneakyThrows
     @GetMapping("/get/one/{id}")
     public void getOne(@PathVariable UUID id, HttpServletResponse response) {
-        Optional<Certificate> byId = certificateRepository.findById(id);
-        if (byId.isPresent()) {
-            Certificate certificate = byId.get();
-            FileCopyUtils.copy(certificate.getCertificatePhoto(), response.getOutputStream());
-        } else {
-            File file = new File("static/images/img.png");
-            InputStream is = new FileInputStream(file);
-            FileCopyUtils.copy(is, response.getOutputStream());
-        }
+        certificateService.getOne(id, response);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')")
     @PatchMapping("/edit/description")
     public StudyType editDescription(@RequestParam UUID studyTypeId, @RequestBody DescDto descDto) {
-        Optional<StudyType> byId = studyTypeRepository.findById(studyTypeId);
-        if (byId.isPresent()) {
-            StudyType studyType = byId.get();
-            studyType.setDescription(descDto.getDescription());
-            return studyTypeRepository.save(studyType);
-        }
-        return null;
+        return certificateService.editDescription(studyTypeId, descDto);
     }
 
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')")
     @PostMapping("/create/{userId}")
-    public void createCertificateUser(
-            @PathVariable UUID userId,
-            @RequestBody UserCertificateDto certificateDto
+    public void createCertificateUser(@PathVariable UUID userId, @RequestBody UserCertificateDto certificateDto
     ) {
         certificateService.generateC(userId, certificateDto);
     }
@@ -128,63 +92,35 @@ public class CertificateController {
             @RequestParam Integer page,
             @RequestParam(defaultValue = "") String search
     ) {
-        return certificateRepository.getAllUsersCertificate(PageRequest.of(page, 5), search);
+        return certificateService.getUsersC(PageRequest.of(page, 5), search);
     }
 
     @SneakyThrows
     @GetMapping("/qrCode/{id}")
     public void getQr(@PathVariable UUID id, HttpServletResponse response) {
-        Certificate certificate = certificateRepository.findById(id).get();
-        FileCopyUtils.copy(certificate.getQrCode(), response.getOutputStream());
+        certificateService.getQr(id, response);
     }
 
     @SneakyThrows
     @GetMapping("/image/{id}")
     public void getC(@PathVariable UUID id, HttpServletResponse response) {
-        Certificate certificate = certificateRepository.findById(id).get();
-        FileCopyUtils.copy(certificate.getCertificatePhoto(), response.getOutputStream());
+        certificateService.getC(id, response);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')")
     @DeleteMapping("/delete/{id}")
     public void deleteC(@PathVariable UUID id) {
-        certificateRepository.deleteById(id);
+        certificateService.deleteC(id);
     }
-
-
-//    @SneakyThrows
-//    @GetMapping("/test")
-//    public void getTest(HttpServletResponse response){
-//        Certificate certificate = certificateRepository.findAll().get(0);
-//        FileCopyUtils.copy(certificate.getCertificatePhoto(), response.getOutputStream());
-//    }
 
     @SneakyThrows
     @GetMapping("/download/{id}")
     public ResponseEntity<?> downloadFile(@PathVariable UUID id) {
-        Optional<Certificate> byId = certificateRepository.findById(id);
-
-        if (byId.isPresent()) {
-            Certificate certificate = byId.get();
-
-            Optional<User> byId1 = userRepository.findById(certificate.getUser().getId());
-            User user = byId1.get();
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
-                            + user.getFirstName() + " " + user.getLastName() + ".jpeg" + "\"")
-                    .body(certificate.getCertificatePhoto());
-        }
-        return null;
+        return certificateService.downloadFile(id);
     }
 
     @GetMapping("/check/{id}")
     public ApiResponse checkCertificate(@PathVariable UUID id) {
-        Optional<Certificate> byId = certificateRepository.findById(id);
-        if (byId.isPresent()) {
-            return new ApiResponse("Certificate found", true);
-        }
-        return new ApiResponse("Certificate not found!", false);
+        return certificateService.checkCertificate(id);
     }
 }

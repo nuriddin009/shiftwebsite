@@ -1,6 +1,6 @@
 package com.example.backend.repository.studyCenter;
 
-import com.example.backend.entity.studyCenter.Time_table_user_data;
+import com.example.backend.entity.studyCenter.TimeTableUserData;
 import com.example.backend.projection.LessonDataProjection;
 import com.example.backend.projection.TimeTableDataUserProjection;
 import com.example.backend.projection.UserIdProjection;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface TimeTableUsersDataRepository extends JpaRepository<Time_table_user_data, Integer> {
+public interface TimeTableUsersDataRepository extends JpaRepository<TimeTableUserData, Integer> {
     @Query(value = "select cast(t.id as varchar) as id,\n" +
             "       t.lesson_order        as Lessonorder,\n" +
             "       t.has_in_lesson       as Hasinlesson,\n" +
@@ -46,11 +46,11 @@ public interface TimeTableUsersDataRepository extends JpaRepository<Time_table_u
 
     @Query(value = "select ttd\n" +
             "from Time_table t\n" +
-            "         join Time_table_user ttu on t.id = ttu.time_table.id\n" +
-            "         join Time_table_user_data ttd on ttu.id = ttd.time_table_user.id\n" +
+            "         join TimeTableUser ttu on t.id = ttu.time_table.id\n" +
+            "         join TimeTableUserData ttd on ttu.id = ttd.time_tableUser.id\n" +
             "where t.id = :timeTableId\n" +
             "  and ttd.lesson_Order = :lessonId")
-    List<Time_table_user_data> findBylessonIdDone(Integer lessonId, Integer timeTableId);
+    List<TimeTableUserData> findBylessonIdDone(Integer lessonId, Integer timeTableId);
 
 
     @Query(value = "select ttud.id,\n" +
@@ -87,7 +87,7 @@ public interface TimeTableUsersDataRepository extends JpaRepository<Time_table_u
     List<UserLessonProjection> getAllLessonForMentor(@Param("userId") UUID userId);
 
     @Query(value = "select * from time_table_user_data ttud  where ttud.time_table_user_id=:userId", nativeQuery = true)
-    Optional<Time_table_user_data> getTTUD(Integer userId);
+    Optional<TimeTableUserData> getTTUD(Integer userId);
 
 
     @Transactional

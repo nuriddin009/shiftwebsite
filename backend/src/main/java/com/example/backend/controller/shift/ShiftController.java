@@ -32,71 +32,80 @@ public class ShiftController {
 
     @PostMapping("/saveWhyUs/{fileId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public WhyUS saveWhyUses(@PathVariable UUID fileId, @RequestBody WhyUS whyUS){
-        return shiftService.saveWhyUs(fileId,whyUS);
+    public WhyUS saveWhyUses(@PathVariable UUID fileId, @RequestBody WhyUS whyUS) {
+        return shiftService.saveWhyUs(fileId, whyUS);
     }
+
     @PostMapping("/saveCourses/{fileId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public Course saveCourses(@PathVariable UUID fileId, @RequestBody Course course){
-        return shiftService.saveCourses(fileId,course);
+    public Course saveCourses(@PathVariable UUID fileId, @RequestBody Course course) {
+        return shiftService.saveCourses(fileId, course);
     }
+
     @PostMapping("/saveOurTeam/{fileId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public OurTeam saveOurTeam(@PathVariable UUID fileId, @RequestBody OurTeam ourTeam){
-        return shiftService.saveOurTeam(fileId,ourTeam);
+    public OurTeam saveOurTeam(@PathVariable UUID fileId, @RequestBody OurTeam ourTeam) {
+        return shiftService.saveOurTeam(fileId, ourTeam);
     }
+
     @PostMapping("/gallery/{fileId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public Gallery saveGallery(@PathVariable UUID fileId){
+    public Gallery saveGallery(@PathVariable UUID fileId) {
         return shiftService.saveGallery(fileId);
     }
+
     @PutMapping("/title")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public TitleComponent editTitle(@RequestBody TitleComponent titleComponent,HttpServletRequest request) {
-        return shiftService.PutTitle(titleComponent,request);
+    public TitleComponent editTitle(@RequestBody TitleComponent titleComponent, HttpServletRequest request) {
+        return shiftService.PutTitle(titleComponent, request);
     }
 
     @PutMapping("/about")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public AboutComponent editAbout(@RequestBody AboutComponent aboutComponent, HttpServletRequest request) {
-        return shiftService.PutAbout(aboutComponent,request);
+        return shiftService.PutAbout(aboutComponent, request);
     }
+
     @PutMapping("/wyhus/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public WhyUS editWhyUs(@PathVariable UUID id, @RequestBody ReqTD reqTD, HttpServletRequest request) {
-     return shiftService.whyUs(id,reqTD,request);
+        return shiftService.whyUs(id, reqTD, request);
     }
+
     @PutMapping("/courses/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public Course editCourses(@PathVariable UUID id, @RequestBody ReqTD reqTD, HttpServletRequest request) {
-        return shiftService.courses(id,reqTD, request);
+        return shiftService.courses(id, reqTD, request);
     }
 
 
     @PutMapping("/ourTeam/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public OurTeam editOurTeam(@PathVariable UUID id, @RequestBody ReqOurTeam reqOurTeam, HttpServletRequest request) {
-        return shiftService.ourTeam(id, reqOurTeam,request);
+        return shiftService.ourTeam(id, reqOurTeam, request);
     }
+
     @DeleteMapping("/ourTeam/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public void deleteOurTeam(@PathVariable UUID id) {
         shiftService.deleteOurTeam(id);
     }
+
     @PutMapping("/address")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public Address editAddress(@RequestBody Address address, HttpServletRequest request) {
-        return shiftService.address(address,request);
+        return shiftService.address(address, request);
     }
+
     @PutMapping("/followUs/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public FollowUs editFollowUs(@PathVariable UUID id, @RequestBody FollowUs followUs) {
-        return shiftService.followUs(id,followUs);
+        return shiftService.followUs(id, followUs);
     }
 
     @CrossOrigin("*")
     @GetMapping("/file")
-    public void getFileURL(@RequestParam String fileName,HttpServletResponse response) throws IOException {
+    public void getFileURL(@RequestParam String fileName, HttpServletResponse response) throws IOException {
         if (!fileName.equals("")) {
             FileCopyUtils.copy(new FileInputStream("frontend/src/shift/file/image/imageShift/" + fileName), response.getOutputStream());
         }
@@ -106,10 +115,10 @@ public class ShiftController {
     @SneakyThrows
     @PostMapping("/file/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public String editFile(@PathVariable UUID id, @RequestParam MultipartFile file){
-        String type =file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        String fileName=id+ type;
-        FileCopyUtils.copy(file.getInputStream(),new FileOutputStream("frontend/src/shift/file/image/imageShift/"+fileName));
+    public String editFile(@PathVariable UUID id, @RequestParam MultipartFile file) {
+        String type = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        String fileName = id + type;
+        FileCopyUtils.copy(file.getInputStream(), new FileOutputStream("frontend/src/shift/file/image/imageShift/" + fileName));
         return fileName;
     }
 

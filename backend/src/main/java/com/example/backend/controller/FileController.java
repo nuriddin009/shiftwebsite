@@ -8,19 +8,12 @@ import com.example.backend.service.FileService;
 import com.example.backend.service.ShiftService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -60,29 +53,12 @@ public class FileController {
 
     }
 
-//    @SneakyThrows
-//    @PutMapping("/editFile/{fatherId}/home/{item}")
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')")
-//    public UUID editHomePageImages(
-//            @PathVariable UUID fatherId,
-//            @PathVariable String item,
-//            @RequestParam MultipartFile file
-//    ) {
-//        String fileName = "images/home/" + item + "/" + fatherId + ".png";
-//        FileCopyUtils.copy(
-//                file.getInputStream(),
-//                new FileOutputStream(fileName)
-//        );
-////        return shiftService.editFile(id, fatherId, item, file);
-//        return fatherId;
-//    }
 
     @PutMapping("/editFile/{id}/{fatherId}/{item}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')")
     public UUID editFile(@PathVariable UUID id, @PathVariable UUID fatherId, @PathVariable String item, @RequestParam MultipartFile file) {
         return shiftService.editFile(id, fatherId, item, file);
     }
-
 
 
     @SneakyThrows
@@ -103,17 +79,6 @@ public class FileController {
     @SneakyThrows
     @PostMapping("/createProfile")
     public void createFile(@RequestParam MultipartFile file, @RequestParam UUID userId) {
-//        Attachment attachment = new Attachment();
-//        attachment.setFile(file.getBytes());
-//        Attachment save = attachmentRepository.save(attachment);
-//        Optional<User> byId = userRepository.findById(userId);
-//        if (byId.isPresent()) {
-//            User user = byId.get();
-//            user.setAttachment(save);
-//            userRepository.save(user);
-//        }
-//        return save.getId();
-
         String fileName = "backend/images/users/" + userId + ".png";
         FileCopyUtils.copy(
                 file.getInputStream(),

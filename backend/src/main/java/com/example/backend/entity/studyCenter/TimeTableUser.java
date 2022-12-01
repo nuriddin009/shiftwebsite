@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Time_table_user {
+public class TimeTableUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -27,7 +27,7 @@ public class Time_table_user {
     private String whytogroup;
     private LocalDate deletedate;
 
-    public Time_table_user(Time_table time_table, User user, String price, Integer gotogroup) {
+    public TimeTableUser(Time_table time_table, User user, String price, Integer gotogroup) {
         this.time_table = time_table;
         this.user = user;
         this.price = price;

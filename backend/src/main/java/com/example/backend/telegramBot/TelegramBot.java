@@ -1,14 +1,13 @@
 package com.example.backend.telegramBot;
 
 import com.example.backend.entity.User;
-import com.example.backend.entity.studyCenter.Time_table_user_data;
+import com.example.backend.entity.studyCenter.TimeTableUserData;
 import com.example.backend.entity.telegramBot.Parent;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.repository.telegramBot.ParentRepo;
 import com.example.backend.telegramBot.QueryStep.BotSteps;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -98,13 +97,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     @SneakyThrows
-    public void messageParentTelegram(Integer lessonId, Time_table_user_data timeTableDatum) {
+    public void messageParentTelegram(Integer lessonId, TimeTableUserData timeTableDatum) {
 
-        Optional<Parent> parent = parentRepo.findByPhoneNumber(timeTableDatum.getTime_table_user().getUser().getFatherPhoneNumber());
+        Optional<Parent> parent = parentRepo.findByPhoneNumber(timeTableDatum.getTime_tableUser().getUser().getFatherPhoneNumber());
         if (parent.isPresent()) {
             SendMessage sendMessage = new SendMessage();
             String text = "X";
-            String fullName = "\uD83D\uDC68\u200D\uD83D\uDCBB O'quvchi: " + timeTableDatum.getTime_table_user().getUser().getFirstName() + " " + timeTableDatum.getTime_table_user().getUser().getLastName();
+            String fullName = "\uD83D\uDC68\u200D\uD83D\uDCBB O'quvchi: " + timeTableDatum.getTime_tableUser().getUser().getFirstName() + " " + timeTableDatum.getTime_tableUser().getUser().getLastName();
             if (timeTableDatum.getHasInLesson()) {
                 String todayInfo;
                 if (timeTableDatum.getExam() == null || timeTableDatum.getExam()) {
