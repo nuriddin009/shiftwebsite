@@ -30,11 +30,10 @@ instance.interceptors.response.use(
         console.log("kikikikik")
         const originalRequest = error.config
         if (error.response.status === 403 && originalRequest && !originalRequest._isRetry) {
-            console.log("jajajajajajajajja")
             originalRequest._isRetry = true
             try {
                 const {data} = await axios({
-                    url: `${API_BASE_URL}/v1/auth/token/refresh`,
+                    url: `${API_BASE_URL}/token/refresh`,
                     method: 'post',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem(AUTH_TOKEN)}`,
