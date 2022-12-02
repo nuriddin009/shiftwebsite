@@ -4,12 +4,11 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.backend.config.SecurityConfig;
 import com.example.backend.dto.*;
 import com.example.backend.entity.Attachment;
-
 import com.example.backend.entity.User;
 import com.example.backend.entity.UserIpAdress;
+import com.example.backend.entity.shift.*;
 import com.example.backend.entity.studyCenter.TimeTableUser;
 import com.example.backend.repository.AttachmentRepository;
-import com.example.backend.entity.shift.*;
 import com.example.backend.repository.IpAdressUserRepository;
 import com.example.backend.repository.RoleRepository;
 import com.example.backend.repository.UserRepository;
@@ -77,15 +76,20 @@ public class ShiftService {
     public TitleComponent PutTitle(TitleComponent titleComponent, HttpServletRequest request) {
         String lang = request.getHeader("lang");
         TitleComponent title = titleRepo.findAll().get(0);
-        if (lang.equals("ENG") || lang.equals("null")) {
-            title.setTitle(titleComponent.getTitle());
-            title.setDescription(titleComponent.getDescription());
-        } else if (lang.equals("UZB")) {
-            title.setTitle_UZB(titleComponent.getTitle());
-            title.setDescription_UZB(titleComponent.getDescription());
-        } else if (lang.equals("RUS")) {
-            title.setTitle_RUS(titleComponent.getTitle());
-            title.setDescription_RUS(titleComponent.getDescription());
+        switch (lang) {
+            case "ENG":
+            case "null":
+                title.setTitle(titleComponent.getTitle());
+                title.setDescription(titleComponent.getDescription());
+                break;
+            case "UZB":
+                title.setTitle_UZB(titleComponent.getTitle());
+                title.setDescription_UZB(titleComponent.getDescription());
+                break;
+            case "RUS":
+                title.setTitle_RUS(titleComponent.getTitle());
+                title.setDescription_RUS(titleComponent.getDescription());
+                break;
         }
         return titleRepo.save(title);
     }
@@ -93,15 +97,20 @@ public class ShiftService {
     public AboutComponent PutAbout(AboutComponent aboutComponent, HttpServletRequest request) {
         String lang = request.getHeader("lang");
         AboutComponent about = aboutRepo.findAll().get(0);
-        if (lang.equals("ENG") || lang.equals("null")) {
-            about.setTitle(aboutComponent.getTitle());
-            about.setDescription(aboutComponent.getDescription());
-        } else if (lang.equals("UZB")) {
-            about.setDescription_UZB(aboutComponent.getDescription());
-            about.setTitle_UZB(aboutComponent.getTitle());
-        } else if (lang.equals("RUS")) {
-            about.setTitle_RUS(aboutComponent.getTitle());
-            about.setDescription_RUS(aboutComponent.getDescription());
+        switch (lang) {
+            case "ENG":
+            case "null":
+                about.setTitle(aboutComponent.getTitle());
+                about.setDescription(aboutComponent.getDescription());
+                break;
+            case "UZB":
+                about.setDescription_UZB(aboutComponent.getDescription());
+                about.setTitle_UZB(aboutComponent.getTitle());
+                break;
+            case "RUS":
+                about.setTitle_RUS(aboutComponent.getTitle());
+                about.setDescription_RUS(aboutComponent.getDescription());
+                break;
         }
         return aboutRepo.save(about);
     }
@@ -111,15 +120,20 @@ public class ShiftService {
         Optional<WhyUS> byId = whyUsRepo.findById(id);
         if (byId.isPresent()) {
             WhyUS whyUS = byId.get();
-            if (lang.equals("ENG") || lang.equals("null")) {
-                whyUS.setTitle(reqTD.getTitle());
-                whyUS.setDescription(reqTD.getDescription());
-            } else if (lang.equals("UZB")) {
-                whyUS.setTitle_UZB(reqTD.getTitle());
-                whyUS.setDescription_UZB(reqTD.getDescription());
-            } else if (lang.equals("RUS")) {
-                whyUS.setTitle_RUS(reqTD.getTitle());
-                whyUS.setDescription_RUS(reqTD.getDescription());
+            switch (lang) {
+                case "ENG":
+                case "null":
+                    whyUS.setTitle(reqTD.getTitle());
+                    whyUS.setDescription(reqTD.getDescription());
+                    break;
+                case "UZB":
+                    whyUS.setTitle_UZB(reqTD.getTitle());
+                    whyUS.setDescription_UZB(reqTD.getDescription());
+                    break;
+                case "RUS":
+                    whyUS.setTitle_RUS(reqTD.getTitle());
+                    whyUS.setDescription_RUS(reqTD.getDescription());
+                    break;
             }
             return whyUsRepo.save(whyUS);
         }
@@ -131,15 +145,20 @@ public class ShiftService {
         Optional<Course> byId = courseRepo.findById(id);
         if (byId.isPresent()) {
             Course course = byId.get();
-            if (lang.equals("ENG") || lang.equals("null")) {
-                course.setTitle(reqTD.getTitle());
-                course.setDescription(reqTD.getDescription());
-            } else if (lang.equals("UZB")) {
-                course.setTitle_UZB(reqTD.getTitle());
-                course.setDescription_UZB(reqTD.getDescription());
-            } else if (lang.equals("RUS")) {
-                course.setTitle_RUS(reqTD.getTitle());
-                course.setDescription_RUS(reqTD.getDescription());
+            switch (lang) {
+                case "ENG":
+                case "null":
+                    course.setTitle(reqTD.getTitle());
+                    course.setDescription(reqTD.getDescription());
+                    break;
+                case "UZB":
+                    course.setTitle_UZB(reqTD.getTitle());
+                    course.setDescription_UZB(reqTD.getDescription());
+                    break;
+                case "RUS":
+                    course.setTitle_RUS(reqTD.getTitle());
+                    course.setDescription_RUS(reqTD.getDescription());
+                    break;
             }
             return courseRepo.save(course);
         }
@@ -151,15 +170,20 @@ public class ShiftService {
         Optional<OurTeam> byId = ourTeamRepo.findById(id);
         if (byId.isPresent()) {
             OurTeam ourTeam = byId.get();
-            if (lang.equals("ENG") || lang.equals("null")) {
-                ourTeam.setName(reqOurTeam.getName());
-                ourTeam.setDescription(reqOurTeam.getDescription());
-            } else if (lang.equals("UZB")) {
-                ourTeam.setName(reqOurTeam.getName());
-                ourTeam.setDescription_UZB(reqOurTeam.getDescription());
-            } else if (lang.equals("RUS")) {
-                ourTeam.setName(reqOurTeam.getName());
-                ourTeam.setDescription_RUS(reqOurTeam.getDescription());
+            switch (lang) {
+                case "ENG":
+                case "null":
+                    ourTeam.setName(reqOurTeam.getName());
+                    ourTeam.setDescription(reqOurTeam.getDescription());
+                    break;
+                case "UZB":
+                    ourTeam.setName(reqOurTeam.getName());
+                    ourTeam.setDescription_UZB(reqOurTeam.getDescription());
+                    break;
+                case "RUS":
+                    ourTeam.setName(reqOurTeam.getName());
+                    ourTeam.setDescription_RUS(reqOurTeam.getDescription());
+                    break;
             }
             return ourTeamRepo.save(ourTeam);
 
@@ -178,12 +202,17 @@ public class ShiftService {
     public Address address(Address address, HttpServletRequest request) {
         String lang = request.getHeader("lang");
         Address address1 = addressRepo.findAll().get(0);
-        if (lang.equals("ENG") || lang.equals("null")) {
-            address1.setAddress(address.getAddress());
-        } else if (lang.equals("UZB")) {
-            address1.setAddress_UZB(address.getAddress());
-        } else if (lang.equals("RUS")) {
-            address1.setAddress_RUS(address.getAddress());
+        switch (lang) {
+            case "ENG":
+            case "null":
+                address1.setAddress(address.getAddress());
+                break;
+            case "UZB":
+                address1.setAddress_UZB(address.getAddress());
+                break;
+            case "RUS":
+                address1.setAddress_RUS(address.getAddress());
+                break;
         }
         address1.setNumber(address.getNumber());
         return addressRepo.save(address1);
@@ -225,24 +254,27 @@ public class ShiftService {
         Attachment attachment1 = new Attachment();
         attachment1.setFile(file.getBytes());
         Attachment save = attachmentRepository.save(attachment1);
-        if (item.equals("gallery")) {
-            Gallery gallery = galleryRepo.findById(fatherId).get();
-            gallery.setAttachment(save);
-            galleryRepo.save(gallery);
-        }
-        else if (item.equals("whyUs")) {
-            WhyUS whyUS = whyUsRepo.findById(fatherId).get();
-            whyUS.setAttachment(save);
-            whyUsRepo.save(whyUS);
-        }
-        else if (item.equals("courses")) {
-            Course course = courseRepo.findById(fatherId).get();
-            course.setAttachment(save);
-            courseRepo.save(course);
-        } else if (item.equals("ourteam")) {
-            OurTeam ourTeam = ourTeamRepo.findById(fatherId).get();
-            ourTeam.setAttachment(save);
-            ourTeamRepo.save(ourTeam);
+        switch (item) {
+            case "gallery":
+                Gallery gallery = galleryRepo.findById(fatherId).get();
+                gallery.setAttachment(save);
+                galleryRepo.save(gallery);
+                break;
+            case "whyUs":
+                WhyUS whyUS = whyUsRepo.findById(fatherId).get();
+                whyUS.setAttachment(save);
+                whyUsRepo.save(whyUS);
+                break;
+            case "courses":
+                Course course = courseRepo.findById(fatherId).get();
+                course.setAttachment(save);
+                courseRepo.save(course);
+                break;
+            case "ourteam":
+                OurTeam ourTeam = ourTeamRepo.findById(fatherId).get();
+                ourTeam.setAttachment(save);
+                ourTeamRepo.save(ourTeam);
+                break;
         }
         if (!id.equals("b0f85a63-3c0b-4abd-9867-cc355d02c741")) {
             attachmentRepository.deleteById(id);
@@ -311,13 +343,14 @@ public class ShiftService {
             user = (User) authentication.getPrincipal();
             System.out.println(user);
             String accessToken = jwtTokenProvider.generateAccessToken(userPrincipal);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(userPrincipal.getUsername());
             if (byIpAdress.isPresent()) {
                 byIpAdress.get().setCount(0);
                 byIpAdress.get().setUser(user);
                 ipAdressUserRepository.save(byIpAdress.get());
             }
 
-            return new JwtAuthResponse(true, accessToken, user.getRoles(), user.getUsername());
+            return new JwtAuthResponse(true, accessToken, user.getRoles(), user.getUsername(), refreshToken);
 
         } catch (Exception exception) {
             if (byIpAdress.isPresent()) {

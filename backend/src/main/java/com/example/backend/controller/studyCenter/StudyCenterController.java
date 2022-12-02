@@ -26,6 +26,7 @@ public class StudyCenterController {
     private final StudyCenterService studyCenterService;
 
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MENTOR','ROLE_SUPERADMIN')")
     @GetMapping("/timeTables/{groupId}")
     public List<Time_table> getTimeTable(@PathVariable UUID groupId) {
         return studyCenterService.getTimeTable(groupId);
@@ -50,6 +51,7 @@ public class StudyCenterController {
         return studyCenterService.TimeTableGetDeleteUser(page, fullname, stardate, enddate);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MENTOR','ROLE_SUPERADMIN')")
     @GetMapping("/timeTableUsers/{timeTableid}")
     public List<TimeTableUserProjection> getTimeTableUsers(@PathVariable Integer timeTableid) {
         return studyCenterService.getTimeTableUsers(timeTableid);

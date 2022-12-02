@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -21,17 +23,23 @@ public class JwtTokenProvider {
     private String jwtSecret;
     @Value("${app.refreshJwtExpirationInMs}")
     private String refreshJwtExpirationInMs;
+    @Value("${app.accessJwtExpirationInMs}")
+    private String accessTokenExpiration;
 
     @Autowired
     UserRepository userRepository;
     public String generateAccessToken(UserDetails userPrincipal) {
         Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
+        Instant issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Instant expiration = issuedAt.plus(1, ChronoUnit.MINUTES);
         User user = userRepository.findByUsername(userPrincipal.getUsername()).orElseThrow(() -> new ServiceException("User not found"));
         String result = user.getRoles().stream()
                 .map(n -> String.valueOf(n.getRoleName()))
                 .collect(Collectors.joining(","));
         return JWT.create()
                 .withSubject(userPrincipal.getUsername())
+                .withIssuedAt(Date.from(issuedAt))
+                .withExpiresAt(Date.from(expiration))
                 .withClaim("roles",
                            result
                 )
@@ -48,10 +56,12 @@ public class JwtTokenProvider {
 
     public String generateRefreshToken(String username) {
         Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
+        Instant issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Instant expiration = issuedAt.plus(30, ChronoUnit.DAYS);
         return JWT.create()
                 .withSubject(username)
-                .withExpiresAt(new Date(System.currentTimeMillis() + refreshJwtExpirationInMs))
-                .withIssuedAt(new Date(System.currentTimeMillis()))
+                .withIssuedAt(Date.from(issuedAt))
+                .withExpiresAt(Date.from(expiration))
                 .sign(algorithm);
     }
 

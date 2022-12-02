@@ -10,6 +10,8 @@ import app from "../../service/firebase.config";
 import {getAuth, RecaptchaVerifier, signInWithPhoneNumber} from "firebase/auth";
 import {BsBoxArrowLeft} from "react-icons/bs"
 import startsWith from 'lodash.startswith';
+import instance from "../utils/instance";
+import {AUTH_TOKEN, REFRESH_TOKEN} from "../utils/Config";
 
 function Index(props) {
     const {register, reset, handleSubmit, formState: {errors}} = useForm()
@@ -30,9 +32,11 @@ function Index(props) {
     const auth = getAuth(app);
 
     function mySubmit(data) {
-        request("/login", "post", data).then(res => {
+        instance.post("/login",data).then(res => {
+            console.log(res)
             if (res.data.success) {
-                localStorage.setItem("token", res.data.token)
+                localStorage.setItem(AUTH_TOKEN, res.data.token)
+                localStorage.setItem(REFRESH_TOKEN, res.data.refreshToken)
                 if (res.data.roles.length <= 1) {
                     let a = [];
                     a.push(res.data.roles[0].roleName)
@@ -55,6 +59,31 @@ function Index(props) {
             }
 
         })
+        // request("/login", "post", data).then(res => {
+        //     if (res.data.success) {
+        //         localStorage.setItem("token", res.data.token)
+        //         if (res.data.roles.length <= 1) {
+        //             let a = [];
+        //             a.push(res.data.roles[0].roleName)
+        //             if (res.data.roles[0].roleName === "ROLE_STUDENT") {
+        //                 localStorage.setItem("role", JSON.stringify(a))
+        //                 navigate("/")
+        //             } else if (res.data.roles[0].roleName === "ROLE_ADMIN") {
+        //                 localStorage.setItem("role", JSON.stringify(a))
+        //                 navigate("/selectAdmin")
+        //                 //    /admin/title
+        //             } else if (res.data.roles[0].roleName === "ROLE_MENTOR") {
+        //                 localStorage.setItem("role", JSON.stringify(a))
+        //                 navigate("/Mentor")
+        //             }
+        //         } else {
+        //             navigate("/selectRole")
+        //         }
+        //     } else {
+        //         toast.error(res.data.username)
+        //     }
+        //
+        // })
     }
 
     function setupRecaptcha() {

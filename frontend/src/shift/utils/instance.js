@@ -2,19 +2,6 @@ import axios from "axios";
 import {API_BASE_URL, AUTH_TOKEN, REFRESH_TOKEN} from "./Config";
 import {toast} from "react-toastify";
 
-export default function request(url, method, data) {
-    return axios({
-        baseURL: "http://localhost:81/api",
-        url,
-        method,
-        data,
-        headers: {
-            'Authorization': localStorage.getItem("token"),
-            'lang': localStorage.getItem("lang")
-        }
-    })
-}
-
 
 const instance = axios.create({
     baseURL: API_BASE_URL,
@@ -36,11 +23,14 @@ instance.interceptors.request.use(
 )
 instance.interceptors.response.use(
     (response) => {
-        return response.data
+        console.log("kikikikik")
+        return response
     },
     async (error) => {
+        console.log("kikikikik")
         const originalRequest = error.config
         if (error.response.status === 403 && originalRequest && !originalRequest._isRetry) {
+            console.log("jajajajajajajajja")
             originalRequest._isRetry = true
             try {
                 const {data} = await axios({
@@ -65,4 +55,4 @@ instance.interceptors.response.use(
         return Promise.reject(error.response);
     }
 )
-    // export default instance;
+export default instance;

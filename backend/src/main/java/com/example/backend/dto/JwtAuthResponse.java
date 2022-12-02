@@ -20,20 +20,21 @@ public class JwtAuthResponse {
     private Boolean success;
     private UUID attachmentid;
 
-    public JwtAuthResponse(Boolean success,String token, List<Role> roles, String username) {
+    public JwtAuthResponse(Boolean success, String token, List<Role> roles, String username,String refreshToken) {
         this.success = success;
         this.token = token;
         this.roles = roles;
         this.username = username;
+        this.refreshToken = refreshToken;
     }
 
-    public JwtAuthResponse(List<Role> roles, String username,UUID attachmentid) {
+    public JwtAuthResponse(List<Role> roles, String username, UUID attachmentid) {
         this.roles = roles;
         this.username = username;
-        this.attachmentid=attachmentid;
+        this.attachmentid = attachmentid;
     }
 
-    public  JwtAuthResponse(Boolean success,String username) {
+    public JwtAuthResponse(Boolean success, String username) {
         this.success = success;
         this.username = username;
     }
