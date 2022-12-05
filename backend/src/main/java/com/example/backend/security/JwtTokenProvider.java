@@ -31,7 +31,7 @@ public class JwtTokenProvider {
     public String generateAccessToken(UserDetails userPrincipal) {
         Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
         Instant issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Instant expiration = issuedAt.plus(1, ChronoUnit.MINUTES);
+        Instant expiration = issuedAt.plus(24, ChronoUnit.HOURS);
         User user = userRepository.findByUsername(userPrincipal.getUsername()).orElseThrow(() -> new ServiceException("User not found"));
         String result = user.getRoles().stream()
                 .map(n -> String.valueOf(n.getRoleName()))
