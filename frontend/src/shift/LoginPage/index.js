@@ -131,7 +131,7 @@ function Index(props) {
     function counter() {
         setInterval(() => {
             if (count <= 0) {
-                return;
+
             } else {
                 setCount(count => count - 1)
             }

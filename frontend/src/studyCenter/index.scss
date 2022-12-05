@@ -2,6 +2,30 @@ $primary-color: #023247;
 $color: #00C3FF;
 $bg-color: #ffffff;
 
+.archiveGroup{
+  position: fixed;
+  right: 35px;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  i{
+    font-size: 50px;
+  }
+}
+
+.opt-con{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.archiveGroup1 {
+  position: fixed;
+  right: 5px;
+  top: 65px;
+}
+
 
 .centerDiv {
   width: 100%;
@@ -74,6 +98,7 @@ $bg-color: #ffffff;
           color: white;
           background-color: $primary-color;
           position: relative;
+          transform: scaleY(1.1);
         }
       }
     }

@@ -11,6 +11,7 @@ import PhoneInput from 'react-phone-input-2';
 
 import logo from "../../../shift/file/image/imageShift/logo2.svg";
 import Select from 'react-select'
+import instance from "../../../shift/utils/instance";
 
 function Index(props) {
 
@@ -32,8 +33,8 @@ function Index(props) {
     let location = useLocation();
 
     function getUsers(input, active, page, role) {
-        request("/user?page=" + page + "&input=" + input
-            + "&active=" + active + "&role=" + role, "get").then(res => {
+        instance.get(`/user?page=${page}&input=${input}
+        &active=${active}&role=${role}`).then(res => {
             setUsers(res.data.content)
             setTotalPages(res.data.totalPages);
             setCurrentPageNumber(res.data.number)
@@ -41,7 +42,7 @@ function Index(props) {
     }
 
     function getRole() {
-        request("/user/role", "get").then(res => {
+        instance.get("/user/role").then(res => {
             let a = [];
             res.data.map(item => a.push({value: item.id, label: item.roleName}))
             setRoles(a)
@@ -103,7 +104,7 @@ function Index(props) {
         }
         if (modalUserEdit) {
             if (data.password === data.password_repid) {
-                request("/user/edit", "post", data).then(res => {
+                instance.post("/user/edit", data).then(res => {
                     rodalVisisble()
                     setModalUserEdit(null);
                     getUsers("", active, 0, filterRole);
@@ -114,7 +115,7 @@ function Index(props) {
             return;
         }
         if (data.password === data.password_repid) {
-            request("/user", "post", data).then(res => {
+            instance.post("/user", data).then(res => {
                 if (res.data.success) {
                     getUsers("", active, 0, filterRole);
                     rodalVisisble()
@@ -128,7 +129,7 @@ function Index(props) {
     }
 
     function editActive(e, id) {
-        request("/user/editActive?id=" + id + "&activ=" + e.target.checked, "patch").then(res => {
+        instance.patch(`/user/editActive?id=${id}&activ=${e.target.checked}`).then(res => {
             getUsers(input, active, page, filterRole)
         })
     }
@@ -161,7 +162,7 @@ function Index(props) {
 
     function enter(e) {
         if (e.key === 'Enter') {
-            request("/user/edit", "post", currentUser).then(res => {
+            instance.post("/user/edit", currentUser).then(res => {
                 setEdituser(null)
             })
         }
@@ -181,7 +182,7 @@ function Index(props) {
 
         e.map(item => a.push({id: item.value, roleName: item.label}))
         let data = {userId: item.id, roles: a}
-        request("/user/role", "post", data).then(res => {
+        instance.post("/user/role", data).then(res => {
             if (res.data.success) {
                 toast.success(res.data.message)
                 getUsers("", active, page, filterRole)
@@ -202,11 +203,10 @@ function Index(props) {
     function deleteUser(item, index) {
 
         if (window.confirm("Rostdan ham " + item.firstName + " " + item.lastName + " ni o'chirmoqchimisiz?")) {
-            request("/deleteUser?userId=" + item.id, "delete").then(res => {
-                getUsers("", "", 0, "")
-                toast.success(item.firstName + " " + item.lastName + " user o'chirildi")
-            })
-
+           instance.delete(`"/deleteUser?userId=${item.id}`).then(res => {
+               getUsers("", "", 0, "")
+               toast.success(item.firstName + " " + item.lastName + " user o'chirildi")
+           })
         }
 
     }

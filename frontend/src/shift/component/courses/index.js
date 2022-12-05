@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 
 import "./index.scss"
-import Carousel from "react-elastic-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import {useLocation} from "react-router-dom";
 import request from "../../utils/request";
 import {toast} from "react-toastify";
@@ -10,6 +10,14 @@ import {selectLAngWhyUs} from "../../utils/selectLang";
 import load from "./load.png";
 import {LazyLoadImage} from "react-lazy-load-image-component";
 import Fade from 'react-reveal/Fade';
+import {Swiper, SwiperSlide} from 'swiper/react';
+import 'swiper/scss';
+import 'swiper/scss/navigation';
+import 'swiper/scss/pagination';
+import "swiper/css/bundle";
+import "swiper/css/zoom";
+import {A11y, Autoplay, Navigation, EffectFade, Zoom, EffectCube} from 'swiper';
+
 
 function Index(props) {
     const [courses, setCourses] = useState([]);
@@ -44,7 +52,6 @@ function Index(props) {
         {width: 1, itemsToShow: 1},
         {width: 500, itemsToShow: 2},
         {width: 900, itemsToShow: 3},
-
     ];
 
     function editTitle(index) {
@@ -132,89 +139,97 @@ function Index(props) {
                     role === "ROLE_ADMIN" ? <AddWhyUsComponent courses={courses} getShift={props?.getShift}/> : ""
                 }
                 <div className="container">
-                    <Carousel
-                        breakPoints={breakPoints}
-                        pagination={false}
-                        disableArrowsOnEnd={false}
-                        enableAutoPlay={(!role)}
-                        autoPlaySpeed={3000}
-                        showArrows={courses.length > 3}
+                    <Swiper
+                        centeredSlides={true}
+                        spaceBetween={window.innerWidth > 1000 ? 50 : window.innerWidth > 500 ? 40 : 15}
+                        slidesPerView={window.innerWidth > 1000 ? 3 : window.innerWidth > 500 ? 2 : 1}
+                        loop={true}
+                        autoplay={{
+                            delay: 2500,
+                            disableOnInteraction: false,
+                        }}
+                        modules={[Autoplay, A11y, Navigation, Zoom, EffectFade, EffectCube]}
+                        className={pathname === "/" ? "mySwiper" : ""}
                     >
+
                         {
-                            courses?.map((item, index) => <div key={item.id} className="article">
-                                {
-                                    pathname !== "/" ?
-                                        <label className={"my-label"}>
-                                            <img
-                                                src={"http://localhost:81/api/img/" + item.attachment}
-                                                width={100}
-                                                alt="ua"
-                                            />
-                                            <input accept={"image/*"} style={{display: "none"}}
-                                                   onChange={e => handleFile(e, item, index)}
-                                                   type="file"/>
-                                        </label>
-                                        :
-                                        <div className="img">
-                                            <div>
-                                                <LazyLoadImage
-                                                    alt={"section-1"}
-                                                    effect="blur"
-                                                    src={"http://localhost:81/api/img/" + item.attachment}
-                                                    placeholderSrc={load}
-                                                    width={window.innerWidth > 900 ? "70px"
-                                                        : "51.09px"}
-                                                    height={window.innerWidth > 900 ? "62px"
-                                                        : "31.11px"}
-                                                />
-                                            </div>
-                                        </div>
-                                }
-                                <div className="content">
+                            courses?.map((item, index) => <SwiperSlide key={item.id}>
+                                <div className="article1">
                                     {
-                                        doubleTitle[index] ?
-                                            <input onKeyPress={(e) => enter(e, item, index, "title")}
-                                                   className={"form-control h1-title"}
-                                                   onChange={e => handleInput(e, "title", index)} type="text"
-                                                   autoFocus
-                                                   value={courses[index]?.title} placeholder={"Title"}/>
+                                        pathname !== "/" ?
+                                            <label className={"my-label"}>
+                                                <img
+                                                    src={"http://localhost:81/api/img/" + item.attachment}
+                                                    width={100}
+                                                    alt="ua"
+                                                />
+                                                <input accept={"image/*"} style={{display: "none"}}
+                                                       onChange={e => handleFile(e, item, index)}
+                                                       type="file"/>
+                                            </label>
                                             :
-                                            <Fade bottom>
+                                            <div className="img">
+                                                <div>
+                                                    <LazyLoadImage
+                                                        alt={"section-1"}
+                                                        effect="blur"
+                                                        src={"http://localhost:81/api/img/" + item.attachment}
+                                                        placeholderSrc={load}
+                                                        width={window.innerWidth > 900 ? "70px"
+                                                            : "51.09px"}
+                                                        height={window.innerWidth > 900 ? "62px"
+                                                            : "31.11px"}
+                                                    />
+                                                </div>
+                                            </div>
+                                    }
+                                    <div className="content">
+                                        {
+                                            doubleTitle[index] ?
+                                                <input onKeyPress={(e) => enter(e, item, index, "title")}
+                                                       className={"form-control h1-title"}
+                                                       onChange={e => handleInput(e, "title", index)} type="text"
+                                                       autoFocus
+                                                       value={courses[index]?.title} placeholder={"Title"}/>
+                                                :
+                                                <Fade bottom>
                                                  <pre>
                                                 <h4 onDoubleClick={() => editTitle(index)}>{item.title ? item.title
                                                     : "Lorem ipsum dolor sit amet"}</h4>
                                             </pre>
-                                            </Fade>
+                                                </Fade>
 
-                                    }
-                                    {
-                                        doubleDesc[index] ?
-                                            <div>
-                                                <button onClick={() => saveDesc(item, index)}
-                                                        className={"btn btn-dark btn-save"}>Save
-                                                </button>
+                                        }
+                                        {
+                                            doubleDesc[index] ?
+                                                <div>
+                                                    <button onClick={() => saveDesc(item, index)}
+                                                            className={"btn btn-dark btn-save"}>Save
+                                                    </button>
 
-                                                <textarea style={{height: "100px"}} cols="50" rows="10"
-                                                          className={"form-control t1-desc"}
-                                                          onChange={e => handleInput(e, "description", index)}
-                                                          placeholder={"Description"}
-                                                          value={courses[index]?.description}
-                                                          autoFocus
-                                                          onKeyPress={(e) => enter(e, item, index, "description")}/>
-                                            </div>
-                                            :
-                                            <Fade bottom>
-                                                <p onDoubleClick={() => editDescription(index)}>
-                                                    {item.description ? item.description
-                                                        : "Lorem ipsum dolor sit amet, consectetur" +
-                                                        " adipisicing elit. Dolor, similique."}
-                                                </p>
-                                            </Fade>
-                                    }
+                                                    <textarea style={{height: "100px"}} cols="50" rows="10"
+                                                              className={"form-control t1-desc"}
+                                                              onChange={e => handleInput(e, "description", index)}
+                                                              placeholder={"Description"}
+                                                              value={courses[index]?.description}
+                                                              autoFocus
+                                                              onKeyPress={(e) => enter(e, item, index, "description")}/>
+                                                </div>
+                                                :
+                                                <Fade bottom>
+                                                    <p onDoubleClick={() => editDescription(index)}>
+                                                        {item.description ? item.description
+                                                            : "Lorem ipsum dolor sit amet, consectetur" +
+                                                            " adipisicing elit. Dolor, similique."}
+                                                    </p>
+                                                </Fade>
+                                        }
+                                    </div>
                                 </div>
-                            </div>)
+                            </SwiperSlide>)
                         }
-                    </Carousel>
+
+                    </Swiper>
                 </div>
             </div>
         </div>

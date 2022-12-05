@@ -21,6 +21,7 @@ function Index(props) {
     const [users, setUsers] = useState(null)
     const [user, setUser] = useState(null)
     const [rodal, setRodal] = useState(false);
+    const [con, setCon] = useState(false);
     const [input, setInput] = useState("")
     const [showPri, setShowPri] = useState(false)
     const [userId, setUserId] = useState("")
@@ -28,6 +29,7 @@ function Index(props) {
     const [lessOrMore, setLessOrMore] = useState(false)
     const [currentNew, setCurrentNew] = useState(false)
     const [blockSave, setBlockSave] = useState(false)
+    const [groupIndex1, setGroupIndex1] = useState("")
 
     // create user
     const [rodalCreateUser, setRodalCreateUser] = useState(false);
@@ -39,6 +41,7 @@ function Index(props) {
     let {reset: reset1, handleSubmit: handleSubmitCloseLesson, register: registerCloseLesson} = useForm()
     let {reset: reset2, handleSubmit: handleSubmitDeleteUser, register: registerDeleteUser} = useForm()
     let {reset: reset3, handleSubmit: handleSubmitStartMonth, register: registerStartMonth} = useForm()
+
 
     function getGroups(search) {
         request("/group?search=" + search, "get").then(res => {
@@ -52,6 +55,7 @@ function Index(props) {
         setGroup(groupId)
 
         let groupIndex = localStorage.getItem("groupIndex");
+        setGroupIndex1(groupIndex);
         let timeTableId = localStorage.getItem("timeTableId");
         let timeTableIndex = localStorage.getItem("timeTableIndex");
         let timeTableItem = JSON.parse(localStorage.getItem("timeTableItem"));
@@ -74,6 +78,10 @@ function Index(props) {
     function rodalVisible() {
         setInput("")
         setRodal(p => !p)
+    }
+
+    function rodalVisibleCon() {
+        setCon(p=>!p)
     }
 
 
@@ -121,6 +129,7 @@ function Index(props) {
         setGroupIndex(index)
         localStorage.setItem("groupIndex", index);
         getTimeTables(item?.id);
+        setGroupIndex1(index)
     }
 
 
@@ -226,12 +235,13 @@ function Index(props) {
         setInput("")
         let data = {...item, price: input}
         let groupId = localStorage.getItem("groupId");
-        request("/studyCenter/timeTablesStart/" + timeTab?.id, "post", data).then(res => {
-            getTimeTables(groupId);
-            getTimeTab(res.data?.id)
-            setTimeTab(res.data)
-            startMonth()
-        })
+        request("/studyCenter/timeTablesStart/" + timeTab?.id, "post", data)
+            .then(res => {
+                getTimeTables(groupId);
+                getTimeTab(res.data?.id)
+                setTimeTab(res.data)
+                startMonth()
+            })
     }
 
     const [rodal3, setRodal3] = useState(false);
@@ -428,9 +438,6 @@ function Index(props) {
         }
     }
 
-    function getLessOrMore(e) {
-
-    }
 
     const [editTimeTableIndex, setEditTimeTableIndex] = useState(null);
     const [timeTableName, setTimeTableName] = useState("");
@@ -482,6 +489,13 @@ function Index(props) {
 
     return (
         <div className={`studyCenter  ${pathname === "/Mentor" ? "mw-100" : ""}`}>
+           <div className={"archiveGroup"}>
+               <i
+                   className="fa-solid fa-inbox text-danger archiveGroup"
+                   title={"Archive group"}
+               />
+           </div>
+            <p className={"archiveGroup1"}>Archived&nbsp;groups</p>
             <div className={"all-time"}>
                 <input
                     type="search"
@@ -516,11 +530,13 @@ function Index(props) {
                                         : <button
                                             className={`btn  btnjon ${groupIndex == index ? 'bg-primary' : ''}`}
                                             onClick={() => clickGroup(item, index)}>{item.name}&nbsp;&nbsp;
-                                            <i
-                                                style={{fontSize: "20px"}}
-                                                className="fa-solid fa-pen-to-square text-danger"
-                                                onClick={() => editGroupName(item)}
-                                            />
+                                            {
+                                                index == groupIndex1 ? <i
+                                                    style={{fontSize: "20px"}}
+                                                    className="fa-solid fa-pen-to-square text-danger"
+                                                    onClick={() => editGroupName(item)}
+                                                /> : ""
+                                            }
                                         </button>
                                 }
                             </div>)
@@ -569,12 +585,15 @@ function Index(props) {
                                             : <button key={item?.id} onClick={() => clickTimeTable(item, index)}
                                                       className={`btnjon btn ${timeTableIndex == index ? 'bg-primary' : ""}`}>
                                 <span className={"d-block"}>
-                                    <i
-                                        className="fa-solid fa-pencil"
-                                        onClick={() => editTimeTable(item)}
-                                    />
+                                    {
+                                        timeTableIndex == index ? <i
+                                            className="fa-solid fa-pencil"
+                                            onClick={() => editTimeTable(item)}
+                                        /> : ""
+                                    }
+
                                     <br/>
-                                    {item.tableName ? item.tableName : index + "-month"}
+                                    {item.tableName ? item.tableName : (index + 1) + "-month"}
                                 </span>
                                                 <span className={"d-block"}>
                                 Price={(item?.price ? item?.price : 0)}
@@ -1116,6 +1135,9 @@ function Index(props) {
                         <button type={'submit'} form={"my-form-lesson"} className={"btn btn-outline-dark"}>Save</button>
                     </div>
                 </div>
+            </Rodal>
+            <Rodal visible={con} height={300} onClose={rodalVisibleCon}>
+                <h1>Hello</h1>
             </Rodal>
         </div>
     );

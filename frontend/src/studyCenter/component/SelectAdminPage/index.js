@@ -36,7 +36,7 @@ function Index(props) {
             navigate("/Mentor")
         } else if (item.roleName === "ROLE_STUDENT") {
             localStorage.setItem("role", JSON.stringify(a))
-            navigate("/")
+            navigate(`/userPage/${user.username}/user`)
         }
     }
 

@@ -86,7 +86,7 @@ public class StudyCenterService {
 
         if (!time_table.getIsFree()) {
             if (timeTableUsersByTimeTableId.isEmpty()) {
-                for (int i = 0; i < (time_table.getIsFree() ? 16 : 12); i++) {
+                for (int i = 0; i < 12; i++) {
                     TimeTableUserData timeTableUserData = new TimeTableUserData(save, i + 1, false, 0, 0, false, false, false);
                     timeTableUsersDataRepository.save(timeTableUserData);
                 }

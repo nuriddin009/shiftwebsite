@@ -57,14 +57,20 @@ function Index(props) {
                         </NavLink>
                     </NavItem>
 
-                    <NavItem>
-                        <NavLink to={"/Mentor"} style={({isActive}) => isActive ? activeStyle : nowActive}>
-                            <h4>Mentor</h4>
-                        </NavLink>
-                    </NavItem>
+                    {/*<NavItem>*/}
+                    {/*    <NavLink to={"/Mentor"} style={({isActive}) => isActive ? activeStyle : nowActive}>*/}
+                    {/*        <h4>Mentor</h4>*/}
+                    {/*    </NavLink>*/}
+                    {/*</NavItem>*/}
                     <NavItem>
                         <NavLink to={"/selectadmin/lesson"} style={({isActive}) => isActive ? activeStyle : nowActive}>
                             <h4>Lesson</h4>
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink to={"/selectadmin/rooms"}
+                                 style={({isActive}) => isActive ? activeStyle : nowActive}>
+                            <h4>Rooms</h4>
                         </NavLink>
                     </NavItem>
                     <NavItem>

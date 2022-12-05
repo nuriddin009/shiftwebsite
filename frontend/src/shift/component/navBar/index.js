@@ -61,7 +61,7 @@ function Index(props) {
 
     function clickBtn() {
         if (user) {
-            navigate(`/userPage/${user.username}`)
+            navigate(`selectRole`)
         } else {
             navigate("/login")
         }

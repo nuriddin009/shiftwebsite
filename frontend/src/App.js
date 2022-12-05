@@ -28,6 +28,8 @@ import Lesson from "./shift/UserPage/LessonPage/Lesson";
 import LessonPageAdmin from "./studyCenter/component/Lessonpage";
 import CertificatePage from "./shift/CertificatePage";
 import Certificate from "./studyCenter/component/Certificate/Certificate";
+import Room from "./studyCenter/component/Room";
+import instance from "./shift/utils/instance";
 
 function App() {
     const [shift, setShift] = useState(null);
@@ -93,7 +95,7 @@ function App() {
 
         if (token !== null) {
             const items = JSON.parse(localStorage.getItem('role'));
-            request("/user/me", "get").then(res => {
+            instance.get("/user/me").then(res => {
                 if (isBlockedPage()) {
                     items?.map(item => {
                         if (hasRole(item)) {
@@ -131,6 +133,7 @@ function App() {
                     <Route path={"/selectAdmin/users"} element={<UsersAdmin/>}/>
                     <Route path={"/selectAdmin/lesson"} element={<LessonPageAdmin/>}/>
                     <Route path={"/selectAdmin/certificate"} element={<Certificate/>}/>
+                    <Route path={"/selectAdmin/rooms"} element={<Room/>}/>
                     <Route path={"/selectAdmin/delete/users"} element={<DeleteUserAdmin/>}/>
                 </Route>
                 <Route path={"/admin"} element={<Admin/>}>

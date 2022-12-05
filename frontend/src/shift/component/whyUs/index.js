@@ -133,7 +133,7 @@ function Index({getShift, whyUses}) {
                         autoPlaySpeed={3000}
                         breakPoints={breakPoints}
                         pagination={false}
-                        showArrows={whyUs.length > 3}
+                        showArrows={false}
                         disableArrowsOnEnd={false}
 
                     >

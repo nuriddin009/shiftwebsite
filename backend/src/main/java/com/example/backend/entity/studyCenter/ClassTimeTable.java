@@ -3,19 +3,19 @@ package com.example.backend.entity.studyCenter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "groups")
-public class Group {
+@Table(name = "class_time_table")
+public class ClassTimeTable {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -23,15 +23,10 @@ public class Group {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private UUID id;
-    private String name;
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
 
-    private Boolean isArchive = false;
+    @Column(nullable = false)
+    private String time;
 
-
-    public Group(String name) {
-        this.name = name;
-    }
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Room> rooms;
 }
