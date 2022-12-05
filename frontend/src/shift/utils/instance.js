@@ -23,13 +23,13 @@ instance.interceptors.request.use(
 )
 instance.interceptors.response.use(
     (response) => {
-        console.log("kikikikik")
+
         return response
     },
     async (error) => {
-        console.log("kikikikik")
+
         const originalRequest = error.config
-        if (error.response.status === 403 && originalRequest && !originalRequest._isRetry) {
+        if ((error.response.status === 403 || error.response.status === 500) && originalRequest && !originalRequest._isRetry) {
             originalRequest._isRetry = true
             try {
                 const {data} = await axios({
@@ -41,7 +41,7 @@ instance.interceptors.response.use(
                     }
                 })
                 console.log(data)
-                localStorage.setItem(AUTH_TOKEN, data?.data?.accessToken)
+                localStorage.setItem(AUTH_TOKEN, data?.data?.token)
                 localStorage.setItem(REFRESH_TOKEN, data?.data?.refreshToken)
                 return instance.request(originalRequest)
             } catch (error) {

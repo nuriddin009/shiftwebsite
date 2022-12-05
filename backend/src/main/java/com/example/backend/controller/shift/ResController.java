@@ -85,7 +85,7 @@ public class ResController {
     }
 
 
-    @PostMapping("token/refresh")
+    @PostMapping("api/token/refresh")
     public HttpEntity<ApiResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         return ResponseEntity.ok(shiftService.refreshToken(request, response));
     }

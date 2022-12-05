@@ -18,6 +18,7 @@ import SeeGallery from "./shift/component/Gallery/allGallery/index";
 import SelectAdmin from "./shift/adminPage/selectAdmin";
 import StudyCenter from "./studyCenter";
 import DeleteUserAdmin from "./studyCenter/component/DeleteUserAdmin";
+import IncomeAdmin from "./studyCenter/component/IncomeAdmin";
 import RegisterUserPage from "./shift/registerUserPage";
 import SuccessUserPage from "./shift/succesUserPage";
 import SelectAdminPage from "./studyCenter/component/SelectAdminPage";
@@ -135,6 +136,7 @@ function App() {
                     <Route path={"/selectAdmin/certificate"} element={<Certificate/>}/>
                     <Route path={"/selectAdmin/rooms"} element={<Room/>}/>
                     <Route path={"/selectAdmin/delete/users"} element={<DeleteUserAdmin/>}/>
+                    <Route path={"/selectAdmin/income/:tab"} element={<IncomeAdmin/>} />
                 </Route>
                 <Route path={"/admin"} element={<Admin/>}>
                     <Route path={"/admin/title"} element={<AdminTitle title={shift?.title} getShift={getShift}/>}/>

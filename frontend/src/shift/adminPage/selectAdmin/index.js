@@ -89,7 +89,7 @@ function Index(props) {
                     <h4> Unlock users</h4>
                 </li>
             </div>
-            <Outlet/>
+            <Outlet />
         </div>
     );
 }
