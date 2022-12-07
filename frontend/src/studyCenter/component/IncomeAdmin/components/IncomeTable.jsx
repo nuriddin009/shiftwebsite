@@ -13,6 +13,7 @@ import {Box, Button, Card, Dialog, FormControl, Grid, InputLabel, MenuItem, Sele
 import myStyles from "./index.module.css"
 import dayjs from "dayjs";
 import {DatePicker} from "@mui/x-date-pickers";
+import FormAsyncSelectInput from "./FormAsyncSelectInput";
 
 function IncomeTable() {
     const params = useParams()
@@ -20,6 +21,7 @@ function IncomeTable() {
     const [age, setAge] = React.useState('');
     const [startDate, setStartDate] = useState(1659312000000);
     const [value, setValue] = React.useState("");
+    const [positionTypes, setPositionTypes] = React.useState([]);
 
     const handleChange = (event) => {
         setAge(event.target.value);
@@ -228,48 +230,37 @@ function IncomeTable() {
                 <div className={myStyles.modalSt} style={{padding: "1rem"}}>
                     <div className={myStyles.modalSt2}>
                         <div className={myStyles.flex_}>
-                            <FormControl sx={{m: 1, minWidth: 200, width: "50%"}}>
-                                <Box sx={{minWidth: 220}}>
-                                    <InputLabel style={{background: "white"}}
-                                                id="demo-simple-select-label">User</InputLabel>
-                                    <Select
-                                        sx={{minWidth: 200, width: "100%"}}
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={age}
-                                        label="Age"
-                                        onChange={handleChange}
-                                    >
-                                        <MenuItem value="">
-                                            <em>None</em>
-                                        </MenuItem>
-                                        <MenuItem value={10}>Ten</MenuItem>
-                                        <MenuItem value={20}>Twenty</MenuItem>
-                                        <MenuItem value={30}>Thirty</MenuItem>
-                                    </Select>
-                                </Box>
-                            </FormControl>
-                            <FormControl sx={{m: 1, minWidth: 200, width: "50%"}}>
-                                <Box sx={{minWidth: 220}}>
-                                    <InputLabel style={{background: "white"}}
-                                                id="demo-simple-select-label">IncomeType</InputLabel>
-                                    <Select
-                                        sx={{minWidth: 200, width: "100%"}}
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={age}
-                                        label="Age"
-                                        onChange={handleChange}
-                                    >
-                                        <MenuItem value="">
-                                            <em>None</em>
-                                        </MenuItem>
-                                        <MenuItem value={10}>Ten</MenuItem>
-                                        <MenuItem value={20}>Twenty</MenuItem>
-                                        <MenuItem value={30}>Thirty</MenuItem>
-                                    </Select>
-                                </Box>
-                            </FormControl>
+                            <Grid sx={{width: "50%"}}>
+                                <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
+                                    <Box sx={{minWidth: 220}}>
+                                        <InputLabel style={{background: "white"}}
+                                                    id="demo-simple-select-label">User</InputLabel>
+                                        <Select
+                                            sx={{minWidth: 200, width: "100%"}}
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={age}
+                                            label="Age"
+                                            onChange={handleChange}
+                                        >
+                                            <MenuItem value="">
+                                                <em>None</em>
+                                            </MenuItem>
+                                            <MenuItem value={10}>Ten</MenuItem>
+                                            <MenuItem value={20}>Twenty</MenuItem>
+                                            <MenuItem value={30}>Thirty</MenuItem>
+                                        </Select>
+                                    </Box>
+                                </FormControl>
+
+                            </Grid>
+                            <Grid xs={6} sx={{width: "40%"}}>
+                                <TextField style={{height: 30}} sx={{m: 1, height: 30, width: "95%"}}
+                                           id="outlined-basic"
+                                           label="Amount"
+                                           variant="outlined" type={'number'}/>
+                            </Grid>
+
                         </div>
                         <div className={myStyles.flex_}>
                             <Grid sx={{width: "50%"}}>
@@ -295,13 +286,31 @@ function IncomeTable() {
                                     </Box>
                                 </FormControl>
                             </Grid>
-
-                            <Grid xs={6} sx={{width: "40%"}}>
-                                <TextField style={{height: 30}} sx={{m: 1, height: 30, width: "95%"}}
-                                           id="outlined-basic"
-                                           label="Amount"
-                                           variant="outlined" type={'number'}/>
+                            <Grid sx={{width: "50%"}}>
+                                <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
+                                    <Box sx={{minWidth: 220}}>
+                                        <InputLabel style={{background: "white"}}
+                                                    id="demo-simple-select-label">IncomeType</InputLabel>
+                                        <Select
+                                            sx={{minWidth: 200, width: "100%"}}
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={age}
+                                            label="Age"
+                                            onChange={handleChange}
+                                        >
+                                            <MenuItem value="">
+                                                <em>None</em>
+                                            </MenuItem>
+                                            <MenuItem value={10}>Ten</MenuItem>
+                                            <MenuItem value={20}>Twenty</MenuItem>
+                                            <MenuItem value={30}>Thirty</MenuItem>
+                                        </Select>
+                                    </Box>
+                                </FormControl>
                             </Grid>
+
+
                         </div>
                         <TextField
                             multiline

@@ -56,6 +56,8 @@ public class User implements UserDetails {
 
     private String filePath = "/users/" + getId();
 
+    private int balance=0;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
