@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import "./index.scss"
 import request from "../../../shift/utils/request";
+import instance from "../../../shift/utils/instance";
 
 function Index(props) {
 
@@ -13,7 +14,7 @@ function Index(props) {
 
     function getUser(fullname, stardate, enddate, page) {
 
-        request("/studyCenter/timeTableUsers/getDeleteUsers/" + page + "?fullname=" + fullname + "&stardate=" + stardate + "&enddate=" + enddate, "get").then(res => {
+        instance.get("/studyCenter/timeTableUsers/getDeleteUsers/" + page + "?fullname=" + fullname + "&stardate=" + stardate + "&enddate=" + enddate).then(res => {
             setTotalPages(res.data.totalPages);
             setCurrentPageNumber(res.data.number)
             setUsers(res.data.content)

@@ -17,6 +17,7 @@ import 'swiper/scss/pagination';
 import "swiper/css/bundle";
 import "swiper/css/zoom";
 import {A11y, Autoplay, Navigation, EffectFade, Zoom, EffectCube} from 'swiper';
+import instance from "../../utils/instance";
 
 
 function Index(props) {
@@ -39,7 +40,7 @@ function Index(props) {
         let token = localStorage.getItem("token");
         if (token !== null) {
 
-            request("/user/me").then(res => {
+            instance.get("/user/me").then(res => {
                 setRole(res.data.roles
                     .filter(item => item.roleName === "ROLE_ADMIN"
                         || item.roleName === "ROLE_SUPERADMIN").length > 0 ? "ROLE_ADMIN" : "")
@@ -90,7 +91,7 @@ function Index(props) {
             if (title === "title") {
                 if (item.title !== "") {
                     let data = item;
-                    request("/shift/courses/" + item.id, "put", data).then(res => {
+                    instance.put("/shift/courses/" + item.id,  data).then(res => {
                         toast.success("O'zgartirildi")
                         a[index] = null;
                         setDoubleTitle(a)
@@ -109,7 +110,7 @@ function Index(props) {
         let b = item.attachment ? item.attachment : "b0f85a63-3c0b-4abd-9867-cc355d02c741"
 
         data.append("file", e.target.files[0])
-        request("/img/editFile/" + b + "/" + item.id + "/courses", "put", data).then(res => {
+        instance.put("/img/editFile/" + b + "/" + item.id + "/courses",  data).then(res => {
             a[index].attachment = res.data
             toast.success("rasm o'zgardi")
             setCourses(a)
@@ -122,7 +123,7 @@ function Index(props) {
 
         if (item.description !== "") {
             let data = item;
-            request("/shift/courses/" + item.id, "put", data).then(res => {
+            instance.put("/shift/courses/" + item.id, data).then(res => {
                 toast.success("O'zgartirildi")
                 c[index] = null;
                 setDoubleDesc(c)

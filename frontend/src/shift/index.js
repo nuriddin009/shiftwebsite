@@ -9,12 +9,13 @@ import Gallery from "./component/Gallery/index"
 import OurTeam from "./component/ourTeam/index"
 import Footer from "./component/footer/index"
 import request from "./utils/request";
+import instance from "./utils/instance";
 
 function Index(props) {
     const [shift, setShift] = useState(null)
 
     function getShift() {
-        request("shift", "get").then(res => {
+        instance.get("shift").then(res => {
             setShift(res.data)
         })
     }

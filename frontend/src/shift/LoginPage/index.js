@@ -109,7 +109,7 @@ function Index(props) {
     }
 
     function submitNewForm(data) {
-        request("/user/reset-password/" + username, "put", data).then(res => {
+        instance.put("/user/reset-password/" + username,  data).then(res => {
             if (res.data.success) {
                 toast.success(res.data.message + "\nQaytadan login qiling")
                 navigate("/")
@@ -142,7 +142,7 @@ function Index(props) {
     function submitForm(data) {
         if (isValid) {
             if (data.password === data.password1) {
-                request("/user/getUsername/" + phone, "get").then(res => {
+                instance.get("/user/getUsername/" + phone).then(res => {
                     if (res.data.success) {
                         onSignInSubmit()
                         setCode1(true)

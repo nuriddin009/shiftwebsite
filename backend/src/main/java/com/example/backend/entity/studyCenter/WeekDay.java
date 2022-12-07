@@ -1,20 +1,24 @@
 package com.example.backend.entity.studyCenter;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
 @Entity
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Table(name = "rooms")
-public class Room {
+@Table(name = "week_day")
+public class WeekDay {
+
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -23,9 +27,7 @@ public class Room {
     )
     private UUID id;
 
-    @Column(nullable = false)
-    private String roomName;
+    private String name;
 
-    @ManyToMany
-    private List<WeekDay> weekDays;
+    private Integer order;
 }

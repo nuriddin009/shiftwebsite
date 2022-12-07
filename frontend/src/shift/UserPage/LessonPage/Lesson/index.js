@@ -2,48 +2,26 @@ import React, {useEffect, useState} from 'react';
 import {useLocation, useParams} from "react-router-dom";
 import request from "../../../utils/request";
 import "./index.scss"
+import instance from "../../../utils/instance";
 
 function Index() {
     const {username} = useParams()
     const {pathname} = useLocation();
     const [lesson, setLesson] = useState([]);
-    const [hash, setHash] = useState(null);
     const [path, setPath] = useState("");
-    const [userId, setUserId] = useState("");
-    const [isMentor, setIsMentor] = useState(false)
+
 
     const {id} = useParams()
     useEffect(() => {
         setPath("")
-        // getMe()
-        // getUserId()
-        // if (!isMentor) {
-            request("/UserLesson/lesson/" + id + "/" + username, "get").then(res => {
+
+        instance.get("/UserLesson/lesson/" + id + "/" + username).then(res => {
                 setLesson(res.data)
             })
-        // }
-        // else {
-        //     request("/UserLesson/mentor/lessons?userId=" + userId, "get").then(res => {
-        //         setLesson(res.data)
-        //     })
-        // }
+
     }, [pathname])
 
-    // function getMe() {
-    //     request("/user/me", "get").then(({data}) => {
-    //         console.log(data.roles.filter(item => item.roleName === "ROLE_MENTOR").length > 0)
-    //         if (data.roles.filter(item => item.roleName === "ROLE_MENTOR").length > 0) {
-    //             setIsMentor(true)
-    //         }
-    //     })
-    // }
-    //
-    // function getUserId() {
-    //     request("/user/myId", "get").then(res => {
-    //         setUserId(res.data)
-    //         localStorage.setItem("userId", JSON.stringify(res.data))
-    //     })
-    // }
+
 
 
     function clickVideo(item) {

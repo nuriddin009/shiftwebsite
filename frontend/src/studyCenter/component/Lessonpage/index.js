@@ -4,6 +4,7 @@ import Rodal from "rodal";
 import {useForm} from "react-hook-form";
 import {toast} from "react-toastify";
 import "./index.scss"
+import instance from "../../../shift/utils/instance";
 
 function Index(props) {
     const [lesson, setLesson] = useState([])
@@ -15,22 +16,21 @@ function Index(props) {
     }, [])
 
     function getLessons() {
-        request("/lessons", "get").then(res => {
+        instance.get("/lessons").then(res => {
             setLesson(res.data)
         })
     }
 
     
     function handle(id) {
-        request(`/lessons?id=${id}`, "Delete")
-
+        instance.delete(`/lessons?id=${id}`)
     }
 
     const [oneLes, setOneLes] = useState(null)
 
     function addVideo(item, index) {
         setOneLes(item);
-        request("/lessons/urls/" + item.id, "get").then(res => {
+        instance.get("/lessons/urls/" + item.id).then(res => {
             setUrls(res.data)
             setRodalUrl(p => !p)
         })
@@ -43,8 +43,8 @@ function Index(props) {
     }
 
     function addUrl() {
-        request("/lessons/urls/" + oneLes.id, "post").then(res => {
-            request("/lessons/urls/" + oneLes.id, "get").then(res => {
+        instance.post("/lessons/urls/" + oneLes.id).then(res => {
+            instance.get("/lessons/urls/" + oneLes.id).then(res => {
                 setUrls(res.data)
             })
         })
@@ -52,16 +52,16 @@ function Index(props) {
 
     function handleInputUrl(e, item, index) {
         let data = {id: item.id, url: e.target.value}
-        request("/lessons/urls/url", "put", data).then(res => {
-            request("/lessons/urls/" + oneLes.id, "get").then(res => {
+        instance.put("/lessons/urls/url",  data).then(res => {
+            instance.get("/lessons/urls/" + oneLes.id).then(res => {
                 setUrls(res.data)
             })
         })
     }
 
     function deleteUrl(id) {
-        request("/lessons/urls/" + id, "delete").then(res => {
-            request("/lessons/urls/" + oneLes.id, "get").then(res => {
+        instance.delete("/lessons/urls/" + id).then(res => {
+            instance.get("/lessons/urls/" + oneLes.id).then(res => {
                 setUrls(res.data)
             })
         })
@@ -69,7 +69,7 @@ function Index(props) {
 
     function addLesson() {
         if (window.confirm("Rostdan ham yangi dars qo'shmoqchimisiz?")) {
-            request("/lessons/addNewLesson", "get").then(res => {
+            instance.get("/lessons/addNewLesson").then(res => {
                 getLessons()
                 toast.success("Yangi dars qo'shildi")
             })
@@ -79,7 +79,7 @@ function Index(props) {
     function deleteLesson(item, index) {
 
         if (window.confirm("Rostdan ham " + index + " chi darsni o'chirmoqchimisiz?")){
-            request("/lessons/deleteLesson/" + item.id, "delete")
+            instance.delete("/lessons/deleteLesson/" + item.id)
                 .then(r => {
                     getLessons()
                     toast.success("Dars o'chirildi")

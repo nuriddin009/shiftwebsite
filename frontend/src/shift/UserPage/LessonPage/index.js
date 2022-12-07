@@ -6,6 +6,7 @@ import request from "../../utils/request";
 import logo from "../../file/image/imageShift/logo2.svg";
 import {Nav, NavItem} from "reactstrap";
 import {toast} from "react-toastify";
+import instance from "../../utils/instance";
 
 function Index(props) {
     const [user, setUser] = useState()
@@ -27,7 +28,7 @@ function Index(props) {
     const [lessons, setLesson] = useState([])
 
     useEffect(() => {
-        request("/UserLesson/" + username, "get").then(res => {
+        instance.get("/UserLesson/" + username).then(res => {
             setLesson(res.data);
         })
     }, [pathname])

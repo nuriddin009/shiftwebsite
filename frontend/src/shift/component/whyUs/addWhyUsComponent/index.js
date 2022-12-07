@@ -7,6 +7,7 @@ import request from "../../../utils/request";
 import {toast} from "react-toastify";
 import {useLocation} from "react-router-dom";
 import upload from "../upload.png";
+import instance from "../../../utils/instance";
 
 function Index(props) {
     const [buttonIs, setButtonIs] = useState(false);
@@ -33,7 +34,7 @@ function Index(props) {
     function handleFile(e) {
         let data = new FormData();
         data.append("file", e.target.files[0])
-        request("/img/newFile", "post", data).then(res => {
+        instance.post("/img/newFile",  data).then(res => {
             setFileId(res.data)
         })
     }
@@ -44,7 +45,7 @@ function Index(props) {
                 setButtonIs(true)
                 let data = {...input}
                 if (locationStateLocation.pathname === "/admin/whyUs") {
-                    request("/shift/saveWhyUs/" + fileId, "post", data).then(res => {
+                    instance.post("/shift/saveWhyUs/" + fileId,  data).then(res => {
                         rodalVisible()
                         props.getShift()
                         setInput({
@@ -58,7 +59,7 @@ function Index(props) {
                         setButtonIs(false)
                     })
                 } else if (locationStateLocation.pathname === "/admin/courses") {
-                    request("/shift/saveCourses/" + fileId, "post", data).then(res => {
+                    instance.post("/shift/saveCourses/" + fileId,  data).then(res => {
                         rodalVisible()
                         props.getShift()
                         setInput({

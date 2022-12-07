@@ -4,6 +4,7 @@ import logo from "../file/image/imageShift/logo2.svg";
 import {Nav, NavItem} from "reactstrap";
 import {NavLink, Outlet, useLocation, useNavigate, useParams} from "react-router-dom";
 import request from "../utils/request";
+import instance from "../utils/instance";
 
 function Index(props) {
     const {username} = useParams()
@@ -17,7 +18,7 @@ function Index(props) {
 
         document.title = "User page"
 
-        request("/UserLesson/" + username, "get").then(res => {
+        instance.get("/UserLesson/" + username).then(res => {
             setLessons(res.data)
         })
         getMe()
@@ -31,7 +32,7 @@ function Index(props) {
     }
 
     function getMe() {
-        request("/user/me", "get").then(({data}) => {
+        instance.get("/user/me").then(({data}) => {
             if (data.roles.filter(item => item.roleName === "ROLE_ADMIN"
                 || item.roleName === "ROLE_SUPERADMIN").length > 0) {
                 setIsAdmin(true)

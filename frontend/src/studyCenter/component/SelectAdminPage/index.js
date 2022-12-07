@@ -3,6 +3,7 @@ import "./index.scss"
 import request from "../../../shift/utils/request";
 import {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
+import instance from "../../../shift/utils/instance";
 
 function Index(props) {
     const [user, setUser] = useState(null);
@@ -15,7 +16,7 @@ function Index(props) {
     function getMe() {
         let token = localStorage.getItem("token");
         if (token !== null) {
-            request("/user/me", "get").then(res => {
+            instance.get("/user/me").then(res => {
                 setUser(res.data)
             })
         }

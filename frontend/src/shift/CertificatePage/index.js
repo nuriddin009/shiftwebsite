@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useLocation, useParams} from "react-router-dom";
 import "./index.scss";
 import request from "../utils/request";
+import instance from "../utils/instance";
 
 
 function Index(props) {
@@ -12,7 +13,7 @@ function Index(props) {
     const [found, setFound] = useState(false)
 
     useEffect(() => {
-        request("/certificate/check/" + id, "get").then(res => {
+        instance.get("/certificate/check/" + id).then(res => {
             if (res.data.success) {
                 setFound(true)
             }

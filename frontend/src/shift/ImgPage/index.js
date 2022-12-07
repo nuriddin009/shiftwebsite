@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import "./index.scss"
 import request from "../utils/request";
+import instance from "../utils/instance";
 function Index(props) {
     const [img,setImg]=useState(null)
     const [post,setPosts]=useState([])
@@ -11,7 +12,7 @@ function Index(props) {
     function handleFile(e) {
         let data = new FormData();
         data.append("file", e.target.files[0])
-        request("/img","post",data).then(res=>{
+        instance.post("/img",data).then(res=>{
 
         })
     }

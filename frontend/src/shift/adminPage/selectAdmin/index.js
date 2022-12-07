@@ -2,10 +2,20 @@ import React, {useEffect} from 'react';
 import "./index.scss"
 import logo from "../../file/image/imageShift/logo2.svg";
 import {Nav, NavItem} from "reactstrap";
-import {NavLink, Outlet} from "react-router-dom";
-import request from "../../utils/request";
+import {Link, NavLink, Outlet} from "react-router-dom";
 import {toast} from "react-toastify";
 import verify from "./verified.png";
+import instance from "../../utils/instance";
+import Box from "@mui/material/Box";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+import ListItemText from "@mui/material/ListItemText";
+import Divider from "@mui/material/Divider";
+
 
 function Index(props) {
     let activeStyle = {
@@ -22,18 +32,26 @@ function Index(props) {
 
     function unlockUsers() {
         if (window.confirm("Rostdan ham userlarni unlock qilmoqchimisiz?")) {
-            request("/user/unlockUsers", "delete").then(res => {
+            instance.post("/user/unlockUsers").then(res => {
                 toast.success("Userlar unlock qilindi !")
             })
         }
     }
 
+
+
     return (
         <div className={"selectadmin_ "}>
+
+
+
             <div className={"navbarAdmin"}>
-                <a href="/">
+                <Link to="/">
                     <img className={"mx-4"} src={logo} alt="logo"/>
-                </a>
+                </Link>
+
+
+
                 <Nav vertical>
                     <NavItem>
                         <NavLink to={"/admin/title"} style={({isActive}) => isActive ? activeStyle : nowActive}><h4

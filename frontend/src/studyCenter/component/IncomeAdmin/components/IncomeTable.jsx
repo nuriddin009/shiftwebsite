@@ -225,15 +225,15 @@ function IncomeTable() {
 
             </Paper>
             <Dialog open={true}>
-                <div className={myStyles.modalSt}>
+                <div className={myStyles.modalSt} style={{padding: "1rem"}}>
                     <div className={myStyles.modalSt2}>
                         <div className={myStyles.flex_}>
-                            <FormControl sx={{m: 1, minWidth: 200}}>
+                            <FormControl sx={{m: 1, minWidth: 200, width: "50%"}}>
                                 <Box sx={{minWidth: 220}}>
                                     <InputLabel style={{background: "white"}}
                                                 id="demo-simple-select-label">User</InputLabel>
                                     <Select
-                                        sx={{minWidth: 200}}
+                                        sx={{minWidth: 200, width: "100%"}}
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
                                         value={age}
@@ -249,12 +249,12 @@ function IncomeTable() {
                                     </Select>
                                 </Box>
                             </FormControl>
-                            <FormControl sx={{m: 1, minWidth: 200}}>
+                            <FormControl sx={{m: 1, minWidth: 200, width: "50%"}}>
                                 <Box sx={{minWidth: 220}}>
                                     <InputLabel style={{background: "white"}}
                                                 id="demo-simple-select-label">IncomeType</InputLabel>
                                     <Select
-                                        sx={{minWidth: 200}}
+                                        sx={{minWidth: 200, width: "100%"}}
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
                                         value={age}
@@ -272,13 +272,13 @@ function IncomeTable() {
                             </FormControl>
                         </div>
                         <div className={myStyles.flex_}>
-                            <Grid xs={6}>
-                                <FormControl sx={{m: 1, minWidth: 200}}>
+                            <Grid sx={{width: "50%"}}>
+                                <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
                                     <Box sx={{minWidth: 220}}>
                                         <InputLabel style={{background: "white"}}
                                                     id="demo-simple-select-label">PayType</InputLabel>
                                         <Select
-                                            sx={{minWidth: 200}}
+                                            sx={{minWidth: 200, width: "100%"}}
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
                                             value={age}
@@ -296,12 +296,21 @@ function IncomeTable() {
                                 </FormControl>
                             </Grid>
 
-                            <Grid xs={6} sx={{m: 1}}>
-                                <TextField style={{height: 30}} sx={{height: 30}} id="outlined-basic" label="Amount"
+                            <Grid xs={6} sx={{width: "40%"}}>
+                                <TextField style={{height: 30}} sx={{m: 1, height: 30, width: "95%"}}
+                                           id="outlined-basic"
+                                           label="Amount"
                                            variant="outlined" type={'number'}/>
                             </Grid>
                         </div>
-                        <TextField sx={{height: 40}} id="outlined-basic" label="Description" variant="outlined"/>
+                        <TextField
+                            multiline
+                            rows={4}
+                            sx={{height: 40, m: 1, width: "98%"}}
+                            id="outlined-multiline-static"
+                            label="Description"
+                            variant="outlined"
+                        />
                     </div>
                 </div>
             </Dialog>

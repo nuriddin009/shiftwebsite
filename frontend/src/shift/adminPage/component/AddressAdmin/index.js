@@ -6,6 +6,7 @@ import {toast} from "react-toastify";
 import {useEffect} from "react";
 import {useLocation} from "react-router-dom";
 import NavBar from "../../../component/navBar";
+import instance from "../../../utils/instance";
 
 function Index(props) {
 
@@ -24,7 +25,7 @@ function Index(props) {
         setInput(selectLangAddress(props.address))
         let token = localStorage.getItem("token");
         if (token !== null) {
-            request("/user/me").then(res => {
+            instance.get("/user/me").then(res => {
                 setRole(res.data.roles[0].roleName)
             })
         }
@@ -48,7 +49,7 @@ function Index(props) {
     function save() {
         if (input.address !== "" && input.number !== "") {
             let data = input;
-            request("/shift/address", "put", data).then(res => {
+            instance.put("/shift/address", data).then(res => {
                 setInput({address: "", number: ""})
                 toast.success("O'zgartirildi")
                 setDoubleAddress(null)
@@ -70,7 +71,7 @@ function Index(props) {
             let a = [...follow]
             let data = new FormData();
             data.append("file", e.target.files[0])
-            request("/img/followUs/" + id, "post", data).then(res => {
+            instance.post("/img/followUs/" + id,  data).then(res => {
                 a[index].attachment.id = res.data
             })
             setFollow(a)
@@ -80,7 +81,7 @@ function Index(props) {
     function saveFollow(item, index) {
         if (follow[index].url !== "") {
             let data = item
-            request("/shift/followUs/" + item.id, "put", data).then(res => {
+            instance.put("/shift/followUs/" + item.id,  data).then(res => {
                 toast.success("O'zgartirildi")
 
                 props.getShift();

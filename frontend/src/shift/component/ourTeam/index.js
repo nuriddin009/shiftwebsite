@@ -7,6 +7,7 @@ import {toast} from "react-toastify";
 import Carousel from "react-elastic-carousel";
 import AddOurTeamComponent from "../courses/addOurTeamComponent";
 import {selectLangOurTeamDesc} from "../../utils/selectLang";
+import instance from "../../utils/instance";
 
 function Index(props) {
     const [ourTeam, setOurTeam] = useState([]);
@@ -32,7 +33,7 @@ function Index(props) {
         setDoupleDesc(a)
         let token = localStorage.getItem("token");
         if (token !== null) {
-            request("/user/me").then(res => {
+            instance.get("/user/me").then(res => {
                 setRole(res.data.roles[0].roleName)
             })
         }
@@ -77,7 +78,7 @@ function Index(props) {
 
             if (item.name !== "" && item.description !== "") {
                 let data = {name: item.name, description: item.description};
-                request("/shift/ourTeam/" + item.id, "put", data).then(res => {
+                instance.put("/shift/ourTeam/" + item.id, data).then(res => {
                     toast.success("O'zgartirildi")
                     a[index] = null;
                     SetdoubleName(a)
@@ -95,7 +96,7 @@ function Index(props) {
 
         let data = new FormData();
         data.append("file", e.target.files[0])
-        request("/img/editFile/" + b + "/" + item.id + "/ourteam", "put", data).then(res => {
+        instance.put("/img/editFile/" + b + "/" + item.id + "/ourteam", data).then(res => {
             a[index].attachment = res.data
             toast.success("rasm o'zgardi")
             props.getShift()
@@ -107,7 +108,7 @@ function Index(props) {
     function deleteTeam(id) {
         // eslint-disable-next-line no-restricted-globals
         if (confirm("Tasdiqlang o'chirishni")) {
-            request("/shift/ourTeam/" + id, "delete").then(res => {
+            instance.delete("/shift/ourTeam/" + id).then(res => {
                 props.getShift()
             })
         }

@@ -5,6 +5,7 @@ import logo from "../../file/image/imageShift/logo2.svg";
 import menu from "../../file/image/imageShift/menu-icon.png";
 import request from "../../utils/request";
 import userImg from "../../file/image/imageShift/user.png";
+import instance from "../../utils/instance";
 
 
 function Index(props) {
@@ -21,7 +22,7 @@ function Index(props) {
     useEffect(() => {
         let token = localStorage.getItem("token");
         if (token !== null) {
-            request("/user/me", "get").then(res => {
+            instance.get("/user/me").then(res => {
                 setUser(res.data)
             })
         }

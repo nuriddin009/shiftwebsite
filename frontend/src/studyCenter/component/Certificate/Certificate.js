@@ -10,6 +10,7 @@ import {toast} from "react-toastify";
 import Rodal from "rodal";
 import Cropper from "react-easy-crop";
 import getCroppedImg from "./cropImage";
+import instance from "../../../shift/utils/instance";
 
 
 function Certificate(props) {
@@ -55,7 +56,7 @@ function Certificate(props) {
 
 
     function loadUsers(inputValue, load) {
-        request("/user/search?input=" + inputValue, "get").then(res => {
+        instance.get("/user/search?input=" + inputValue).then(res => {
             load(res.data.content.map(item => {
                 return {value: item.id, label: item.firstName + " " + item.lastName}
             }))
@@ -64,7 +65,7 @@ function Certificate(props) {
 
 
     function getUsers() {
-        request("/certificate/allUsers", "get")
+        instance.get("/certificate/allUsers")
             .then(res => {
                 setIUser(res.data)
             })
@@ -99,7 +100,7 @@ function Certificate(props) {
                 + "\nstudyTypeni qo'shmoqchimisiz?")) {
                 setIsNewStudyType(true)
                 let obj = {studyType: item.label.toUpperCase()}
-                request("/certificate/create/studyType", "post", obj)
+                instance.post("/certificate/create/studyType", obj)
                     .then(res => {
                         setType(res.data)
                         setDesc(res.data.description)
@@ -107,7 +108,7 @@ function Certificate(props) {
                 setIsNewStudyType(true)
             }
         } else {
-            request("/certificate/get/" + item.value, "get")
+            instance.get("/certificate/get/" + item.value)
                 .then(({data}) => {
                     setStudy(data)
                     setType({studyType: data.studyType, description: data.description})
@@ -116,7 +117,7 @@ function Certificate(props) {
     }
 
     function handleInputChangeStudyType(item) {
-        request("/certificate/get/studyTypes?search=" + item, "get")
+        instance.get("/certificate/get/studyTypes?search=" + item)
             .then(res => {
                 let a = [];
                 res.data.content.map(item =>
@@ -142,7 +143,7 @@ function Certificate(props) {
 
     function editDescription() {
         let obj = {description: desc}
-        request("/certificate/edit/description?studyTypeId=" + study?.id, "patch", obj)
+        instance.patch("/certificate/edit/description?studyTypeId=" + study?.id, obj)
             .then(res => {
                     setStudy(res.data)
                     setDesc(res.data.description)
@@ -163,7 +164,7 @@ function Certificate(props) {
 
             let dataC = {...data, studyType: study?.studyType, description: study?.description}
             toast.success("Birozdan so'ng tayyor bo'ladi!")
-            request("/certificate/create/" + user.value, "post", dataC)
+            instance.post("/certificate/create/" + user.value, dataC)
                 .then(res => {
                     reset({
                         firstName: "",
@@ -182,7 +183,7 @@ function Certificate(props) {
     }
 
     function getUsersC(page, search) {
-        request("/certificate/users?page=" + page + "&search=" + search, "get")
+        instance.get("/certificate/users?page=" + page + "&search=" + search)
             .then(res => {
                 setUsersC(res.data.content)
                 setTotalPages(res.data.totalPages)
@@ -192,7 +193,7 @@ function Certificate(props) {
     function deleteC(item) {
         if (window.confirm("Rostdan ham "
             + item.firstName + " " + item.lastName + " userning sertifikatini o'chirmoqchimisiz?")) {
-            request("/certificate/delete/" + item.certificateId, "delete")
+            instance.delete("/certificate/delete/" + item.certificateId)
                 .then(r => {
                     getUsersC(page, search)
                 })
@@ -237,9 +238,9 @@ function Certificate(props) {
         let file = new File([data1], "test.jpg", metadata);
         let data = new FormData()
         data.append("file", file)
-        request("/user/addPhoto/" + userId, "put", data)
+        instance.put("/user/addPhoto/" + userId, data)
             .then(res => {
-                request("/user/" + username, "get").then(res => {
+                instance.get("/user/" + username).then(res => {
                     if (res.data.success) {
                         setAttachmentId(res.data.data.attachment.id)
                         setLoading(false)

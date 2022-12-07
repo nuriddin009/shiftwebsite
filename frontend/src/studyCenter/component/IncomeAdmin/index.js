@@ -38,7 +38,7 @@ const StyledButton = (props) => {
 function Index(props) {
    const {tab}= useParams()
     const navigate= useNavigate()
-    console.log(tab)
+
 
 
     return (

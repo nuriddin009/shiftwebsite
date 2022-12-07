@@ -5,6 +5,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
 import {Modal, Button} from 'react-bootstrap';
 import upload from "./upload.webp";
+import instance from "../../utils/instance";
 
 function Index(props) {
 
@@ -33,7 +34,7 @@ function Index(props) {
     useEffect(() => {
         let token = localStorage.getItem("token");
         if (token !== null) {
-            request("/user/me").then(res => {
+            instance.get("/user/me").then(res => {
                 setRole(res.data.roles[0].roleName)
             })
         }
@@ -45,17 +46,17 @@ function Index(props) {
     function getGallery() {
 
         if (size[0] > 992) {
-            request("/gallery/see", "get").then(res => {
+            instance.get("/gallery/see").then(res => {
                 setSeeGallery(res.data.content)
 
             })
         } else if (size[0] <= 992 && size[0] >= 768) {
-            request("/gallery/see/four", "get").then(res => {
+            instance.get("/gallery/see/four").then(res => {
                 setSeeGallery(res.data.content)
 
             })
         } else if (size[0] <= 768 && size[0] !== 0) {
-            request("/gallery/see/two", "get").then(res => {
+            instance.get("/gallery/see/two").then(res => {
 
                 setSeeGallery(res.data.content)
 
@@ -71,14 +72,14 @@ function Index(props) {
     function handleFile(e) {
         let data = new FormData();
         data.append("file", e.target.files[0])
-        request("/img/newFile", "post", data).then(res => {
+        instance.post("/img/newFile",  data).then(res => {
             setFileId(res.data)
         })
     }
 
     function saveGallery() {
         if (fileId) {
-            request("/shift/gallery/" + fileId, "post").then(res => {
+            instance.post("/shift/gallery/" + fileId).then(res => {
                 props.getShift();
                 setAddModalShow(false)
                 setFileId(null);
@@ -112,7 +113,7 @@ function Index(props) {
 
     const drop = (e) => {
         if (pathname !== "/") {
-            request(`/gallery/dragdrob?first=${firstPhoto}&&last=${lastPhoto}`, "put").then(res => {
+            instance.put(`/gallery/dragdrob?first=${firstPhoto}&&last=${lastPhoto}`).then(res => {
                 getGallery()
             })
             const copyListItems = [...seeGallery];
@@ -154,7 +155,7 @@ function Index(props) {
     function CloseModal() {
         setAddModalShow(false)
         if (fileId) {
-            request("/img/" + fileId, "delete")
+            instance.delete("/img/" + fileId)
         }
         setFileId("")
     }

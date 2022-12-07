@@ -2,6 +2,7 @@ import React, {useEffect, useLayoutEffect, useState} from 'react';
 import "./index.scss"
 import request from "../../../utils/request";
 import {Button, Modal} from "react-bootstrap";
+import instance from "../../../utils/instance";
 
 
 function Index(props) {
@@ -23,7 +24,7 @@ function Index(props) {
     }, []);
 
     function getAllGallery() {
-        request("/gallery", "get").then(res => {
+        instance.get("/gallery").then(res => {
             setAllGallery(res.data)
         })
     }
@@ -32,7 +33,7 @@ function Index(props) {
         getAllGallery()
         let token = localStorage.getItem("token");
         if (token !== null) {
-            request("/user/me").then(res => {
+            instance.get("/user/me").then(res => {
                 // setRole(res.data.roles[0].roleName)
                 if (res.data.roles.filter(item => item.roleName === "ROLE_ADMIN").length > 0) {
                     setRole("ROLE_ADMIN")
@@ -51,7 +52,7 @@ function Index(props) {
     function editImg(e) {
         let data = new FormData();
         data.append("file", e.target.files[0])
-        request("/img/editFile/" + imgId.attachment.id + "/" + imgId.id + "/gallery", "put", data).then(res => {
+        instance.put("/img/editFile/" + imgId.attachment.id + "/" + imgId.id + "/gallery", data).then(res => {
             getAllGallery()
             setCurrentImgId(res.data)
         })
@@ -60,7 +61,7 @@ function Index(props) {
     function editCheck(e, item) {
         let data = {...item, see: e.target.checked}
 
-        request("/gallery/check", "patch", data).then(res => {
+        instance.patch("/gallery/check", data).then(res => {
 
         })
 
@@ -69,7 +70,7 @@ function Index(props) {
     function deletePhoto(item) {
         let b = window.confirm("Tasdiqlang");
         if (b) {
-            request("/gallery/" + item.id, "delete").then(res => {
+            instance.delete("/gallery/" + item.id).then(res => {
                 getAllGallery()
             })
         }

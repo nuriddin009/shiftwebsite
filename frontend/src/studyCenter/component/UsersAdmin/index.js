@@ -1,23 +1,40 @@
 import React, {useEffect, useState} from 'react';
 import "./index.scss"
-import {useLocation, useParams} from "react-router-dom";
-import request from "../../../shift/utils/request";
-import {useForm, Controller} from "react-hook-form";
+import {useLocation} from "react-router-dom";
+import {Controller, useForm} from "react-hook-form";
 import Rodal from "rodal";
 import 'react-phone-number-input/style.css'
 import {toast} from "react-toastify";
-import {isValidPhoneNumber} from "react-phone-number-input";
 import PhoneInput from 'react-phone-input-2';
-
 import logo from "../../../shift/file/image/imageShift/logo2.svg";
 import Select from 'react-select'
 import instance from "../../../shift/utils/instance";
+import {styled} from '@mui/material/styles';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, {tableCellClasses} from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import SelectMui from '@mui/material/Select';
+import Pagination from '@mui/material/Pagination';
+import Box from '@mui/material/Box';
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 function Index(props) {
 
     const [rodal, setRodal] = useState(false);
     const [input, setInput] = useState("");
-    const [active, setActive] = useState("");
+    const [active, setActive] = useState(false);
     const [users, setUsers] = useState(null);
     const [modalUserEdit, setModalUserEdit] = useState(null);
     const [totalPages, setTotalPages] = useState([]);
@@ -33,8 +50,7 @@ function Index(props) {
     let location = useLocation();
 
     function getUsers(input, active, page, role) {
-        instance.get(`/user?page=${page}&input=${input}
-        &active=${active}&role=${role}`).then(res => {
+        instance.get(`/user`, {params: {input, active, page, role}}).then(res => {
             setUsers(res.data.content)
             setTotalPages(res.data.totalPages);
             setCurrentPageNumber(res.data.number)
@@ -71,10 +87,9 @@ function Index(props) {
         })
     }
 
-    function goToPage(index) {
-        setPage(index)
-        getUsers("", "", index, filterRole);
-
+    function goToPage(event, page) {
+        setPage(page)
+        getUsers("", "", page, filterRole);
     }
 
     function mySubmit(data) {
@@ -107,39 +122,41 @@ function Index(props) {
                 instance.post("/user/edit", data).then(res => {
                     rodalVisisble()
                     setModalUserEdit(null);
-                    getUsers("", active, 0, filterRole);
+                    getUsers("", "", 0, filterRole);
                 })
             } else {
                 toast.error("Parol bir xil emas")
             }
             return;
-        }
-        if (data.password === data.password_repid) {
-            instance.post("/user", data).then(res => {
-                if (res.data.success) {
-                    getUsers("", active, 0, filterRole);
-                    rodalVisisble()
-                } else {
-                    toast.error(res.data.message)
-                }
-            })
         } else {
-            toast.error("Parol bir xil emas")
+            if (data.password === data.password_repid) {
+                instance.post("/user", data).then(res => {
+                    if (res.data.success) {
+                        getUsers("", "", 0, filterRole);
+                        rodalVisisble()
+                    } else {
+                        toast.error(res.data.message)
+                    }
+                })
+            } else {
+                toast.error("Parol bir xil emas")
+            }
         }
+
     }
 
     function editActive(e, id) {
         instance.patch(`/user/editActive?id=${id}&activ=${e.target.checked}`).then(res => {
-            getUsers(input, active, page, filterRole)
+            getUsers(input, "", page, filterRole)
         })
     }
 
     function handleInput(e) {
-        getUsers(e.target.value, active, 0, filterRole)
+        getUsers(e.target.value, "", 0, filterRole)
         setInput(e.target.value)
     }
 
-    function heandlecheck(e) {
+    function handleCheck(e) {
         getUsers(input, e.target.checked, 0, filterRole)
         setActive(e.target.checked)
     }
@@ -155,18 +172,6 @@ function Index(props) {
         setCurrentUser(user);
     }
 
-    function heandleInput(e, item, index) {
-        users[index][item] = e.target.value;
-        setUsers([...users])
-    }
-
-    function enter(e) {
-        if (e.key === 'Enter') {
-            instance.post("/user/edit", currentUser).then(res => {
-                setEdituser(null)
-            })
-        }
-    }
 
     function editRodal(item, index) {
         rodalVisisble()
@@ -185,7 +190,7 @@ function Index(props) {
         instance.post("/user/role", data).then(res => {
             if (res.data.success) {
                 toast.success(res.data.message)
-                getUsers("", active, page, filterRole)
+                getUsers("", "", page, filterRole)
             } else {
                 toast.error(res.data.message)
             }
@@ -203,177 +208,244 @@ function Index(props) {
     function deleteUser(item, index) {
 
         if (window.confirm("Rostdan ham " + item.firstName + " " + item.lastName + " ni o'chirmoqchimisiz?")) {
-           instance.delete(`"/deleteUser?userId=${item.id}`).then(res => {
-               getUsers("", "", 0, "")
-               toast.success(item.firstName + " " + item.lastName + " user o'chirildi")
-           })
+            instance.delete("/deleteUser", {params: {userId: item.id}}).then(res => {
+                getUsers("", "", 0, "")
+                toast.success(item.firstName + " " + item.lastName + " user o'chirildi")
+            })
         }
 
     }
 
     function filterByRole(e) {
-        setFilterRole(e.target.value);
-        getUsers(input, active, 0, e.target.value)
+        let selectRoleValue = e.target.value !== "ROLE FILTER" ? e.target.value : "";
+        setFilterRole(selectRoleValue);
+        getUsers(input, "", 0, selectRoleValue)
     }
 
+    const StyledTableCell = styled(TableCell)(({theme}) => ({
+        [`&.${tableCellClasses.head}`]: {
+            backgroundColor: theme.palette.common.black,
+            color: theme.palette.common.white,
+        },
+        [`&.${tableCellClasses.body}`]: {
+            fontSize: 14,
+        },
+    }));
+
+    const StyledTableRow = styled(TableRow)(({theme}) => ({
+        '&:nth-of-type(odd)': {
+            backgroundColor: theme.palette.action.hover,
+        },
+        // hide last border
+        '&:last-child td, &:last-child th': {
+            border: 0,
+        },
+    }));
+
+
+    const IOSSwitch = styled((props) => (
+        <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+    ))(({theme}) => ({
+        width: 42,
+        height: 26,
+        padding: 0,
+        '& .MuiSwitch-switchBase': {
+            padding: 0,
+            margin: 2,
+            transitionDuration: '300ms',
+            '&.Mui-checked': {
+                transform: 'translateX(16px)',
+                color: '#fff',
+                '& + .MuiSwitch-track': {
+                    backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#65C466',
+                    opacity: 1,
+                    border: 0,
+                },
+                '&.Mui-disabled + .MuiSwitch-track': {
+                    opacity: 0.5,
+                },
+            },
+            '&.Mui-focusVisible .MuiSwitch-thumb': {
+                color: '#33cf4d',
+                border: '6px solid #fff',
+            },
+            '&.Mui-disabled .MuiSwitch-thumb': {
+                color:
+                    theme.palette.mode === 'light'
+                        ? theme.palette.grey[100]
+                        : theme.palette.grey[600],
+            },
+            '&.Mui-disabled + .MuiSwitch-track': {
+                opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+            },
+        },
+        '& .MuiSwitch-thumb': {
+            boxSizing: 'border-box',
+            width: 22,
+            height: 22,
+        },
+        '& .MuiSwitch-track': {
+            borderRadius: 26 / 2,
+            backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
+            opacity: 1,
+            transition: theme.transitions.create(['background-color'], {
+                duration: 500,
+            }),
+        },
+    }));
 
     return (
         <div className={"UsersAdmin m-3 "}>
-            <h1>Students</h1>
+            <h1>Users</h1>
             <div>
-                <div className={"d-flex gap-3"}>
-                    <button className={"btn btn-dark"} onClick={rodalVisisble}>
-                        AddUser
-                    </button>
-                    <input value={input} type="text" placeholder={"FirstName..."} className={"form-control w-50"}
-                           onChange={handleInput}/>
-                    <label className={"d-flex justify-content-start"}>
-                        <p>
-                            Active
-                        </p>
-                        <input checked={active} className="form-check-input mx-3 mb-3" type="checkbox"
-                               id="flexSwitchCheckChecked " onChange={heandlecheck}/>
-                    </label>
+                <div className={"d-flex gap-3 my-2"}>
+                    <Button
+                        onClick={rodalVisisble}
+                        variant="contained"
+                        color="primary"
+                    >Add&nbsp;user</Button>
+
+                    <TextField
+                        value={input}
+                        onChange={handleInput}
+                        id="outlined-search"
+                        label="Search users"
+                        type="search"
+                    />
+
+                    <FormControlLabel
+                        label="Active"
+                        control={<IOSSwitch
+                            sx={{m: 1}}
+                            checked={active}
+                            onChange={handleCheck}
+                        />}
+                    />
+
                     {
-                        input !== "" || active !== "" ?
-                            <button onClick={resetI} className={"btn btn-dark"}>Reset</button>
+                        input !== "" || active !== false ?
+                            <Button
+                                onClick={resetI}
+                                variant="contained"
+                                color="error"
+                            >Reset</Button>
                             :
                             ""
                     }
-                    <br/>
-                    <select
-                        onChange={filterByRole}
-                        className={"form-select role_select"}
-                        style={{width: "200px"}}
-                    >
-                        <option value="">ROLE FILTER</option>
-                        <option value="ROLE_STUDENT">ROLE_STUDENT</option>
-                        <option value="ROLE_ADMIN">ROLE_ADMIN</option>
-                        <option value="ROLE_MENTOR">ROLE_MENTOR</option>
-                        <option value="ROLE_SUPERADMIN">ROLE_SUPERADMIN</option>
-                    </select>
+                    <FormControl sx={{minWidth: 120, borderTop: "2px solid", borderRadius: "7px"}}>
+                        <SelectMui
+                            value={filterRole}
+                            onChange={filterByRole}
+                        >
+                            <MenuItem value="">
+                                <em>ROLE FILTER</em>
+                            </MenuItem>
+                            <MenuItem value={"ROLE_STUDENT"}>ROLE_STUDENT</MenuItem>
+                            <MenuItem value={"ROLE_ADMIN"}>ROLE_ADMIN</MenuItem>
+                            <MenuItem value={"ROLE_MENTOR"}>ROLE_MENTOR</MenuItem>
+                            <MenuItem value={"ROLE_SUPERADMIN"}>ROLE_SUPERADMIN</MenuItem>
+                        </SelectMui>
+                    </FormControl>
                 </div>
-                <table className="table">
-                    <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Login</th>
-                        <th>Phone Number</th>
-                        <th>ParentPhoneNumber</th>
-                        <th>Age</th>
-                        <th>Adrress</th>
-                        <th>IsActive</th>
-                        <th>Role</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
-                        users?.map((item, index) => <tr key={index}>
-                            {
-                                edituser?.index === index && edituser?.item === "firstName" ?
-                                    <td><input className={"form-control"} autoFocus
-                                               style={{width: "150px", border: "none"}} onKeyUp={enter}
-                                               type="text" value={item.firstName}
-                                               onChange={e => heandleInput(e, "firstName", index)}/></td>
-                                    :
-                                    <td onDoubleClick={() => editusers("firstName", index, item)}>{item.firstName}</td>
-                            }
-                            {
-                                edituser?.index === index && edituser?.item === "lastName" ?
-                                    <td><input className={"form-control"} autoFocus
-                                               style={{width: "150px", border: "none"}} onKeyUp={enter}
-                                               type="text" value={item.lastName}
-                                               onChange={e => heandleInput(e, "lastName", index)}/></td>
-                                    :
-                                    <td onDoubleClick={() => editusers("lastName", index, item)}>{item.lastName}</td>
-                            }
 
-                            <td>{item.username}</td>
 
-                            {
-                                edituser?.index === index && edituser?.item === "phoneNumber" ?
-                                    <td><input className={"form-control"} autoFocus
-                                               style={{width: "150px", border: "none"}} onKeyUp={enter}
-                                               type="text" value={item.phoneNumber}
-                                               onChange={e => heandleInput(e, "phoneNumber", index)}/></td>
-                                    :
-                                    <td onDoubleClick={() => editusers("phoneNumber", index, item)}>{item.phoneNumber}</td>
-                            }
-                            {
-                                edituser?.index === index && edituser?.item === "fatherPhoneNumber" ?
-                                    <td><input className={"form-control"} autoFocus onKeyUp={enter}
-                                               style={{width: "150px", border: "none"}}
-                                               type="text" value={item.fatherPhoneNumber}
-                                               onChange={e => heandleInput(e, "fatherPhoneNumber", index)}/></td>
-                                    :
-                                    <td onDoubleClick={() => editusers("fatherPhoneNumber", index, item)}>{item.fatherPhoneNumber}</td>
-                            }
-                            {
-                                edituser?.index === index && edituser?.item === "age" ?
-                                    <td><input className={"form-control"} autoFocus
-                                               style={{width: "40px", border: "none"}} onKeyUp={enter}
-                                               type="number" value={item.age}
-                                               onChange={e => heandleInput(e, "age", index)}/></td>
-                                    :
-                                    <td onDoubleClick={() => editusers("age", index, item)}>{item.age}</td>
-                            }
-                            {
-                                edituser?.index === index && edituser?.item === "address" ?
-                                    <td><textarea className={"form-control"} autoFocus onKeyUp={enter}
-                                                  style={{width: "80px", border: "none"}}
-                                                  type="text" value={item.address}
-                                                  onChange={e => heandleInput(e, "address", index)}/></td>
-                                    :
-                                    <td onDoubleClick={() => editusers("address", index, item)}><pre>
-                                {item.address}
-                            </pre>
-                                    </td>
-                            }
-                            <td><input style={{transform: 'scale(1.5)'}} className="form-check-input "
-                                       id="flexSwitchCheckChecked"
-                                       type="checkbox" checked={item.activ}
-                                       onChange={(e) => editActive(e, item.id)}/>
-                            </td>
-                            <td>
-                                <Select
-                                    styles={styleSelect}
-                                    isMulti
-                                    name="colors"
-                                    onChange={(e) => selectRoles(e, item, index)}
-                                    options={roles}
-                                    //(item.roles.map(item => ({value: item.id, label: item.roleName})))
-                                    value={item.roles.map(item => ({value: item.id, label: item.roleName}))}
-                                    className="basic-multi-select"
-                                    classNamePrefix="select"
-                                    placeholder={"Roles..."}
-                                />
-                            </td>
-                            <td>
-                                <div className={"btn-group"}>
-                                    <button className={"btn btn-outline-primary"}
-                                            onClick={() => editRodal(item, index)}>edit
-                                    </button>
-                                    <button
-                                        onClick={() => deleteUser(item, index)}
-                                        className={"btn btn-outline-danger"}>
-                                        delete
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>)
-                    }
-                    </tbody>
-                </table>
-                {totalPages > 1 ?
-                    new Array(totalPages).fill(0).map((item, index) => <button key={index}
-                                                                               className={(currentPageNumber === index ? "btn btn-secondary" : "btn btn-dark")}
-                                                                               onClick={() => goToPage(index)}>
-                        {index + 1}
+                <TableContainer component={Paper}>
+                    <Table sx={{minWidth: 700}} aria-label="customized table">
+                        <TableHead>
+                            <TableRow>
+                                <StyledTableCell>FirstName</StyledTableCell>
+                                <StyledTableCell align="left">LastName</StyledTableCell>
+                                <StyledTableCell align="left">Username</StyledTableCell>
+                                <StyledTableCell align="left">Phone number</StyledTableCell>
+                                <StyledTableCell align="left">Parent number</StyledTableCell>
+                                <StyledTableCell align="left">Age</StyledTableCell>
+                                <StyledTableCell align="left">Address</StyledTableCell>
+                                <StyledTableCell align="left">Active</StyledTableCell>
+                                <StyledTableCell align="left">Roles</StyledTableCell>
+                                <StyledTableCell align="left">Action</StyledTableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {users?.map((user, index) => (
+                                <StyledTableRow key={user.id}>
+                                    <StyledTableCell component="th" scope="row">
+                                        {user.firstName}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="left">{user.lastName}</StyledTableCell>
+                                    <StyledTableCell align="left">{user.username}</StyledTableCell>
+                                    <StyledTableCell align="left">{user.phoneNumber}</StyledTableCell>
+                                    <StyledTableCell align="left">{user.fatherPhoneNumber}</StyledTableCell>
+                                    <StyledTableCell align="left">{user.age}</StyledTableCell>
+                                    <StyledTableCell align="left">{user.address}</StyledTableCell>
+                                    <StyledTableCell align="left">
+                                        <FormControlLabel
+                                            control={<IOSSwitch sx={{m: 1}} checked={user.activ}
+                                                                onChange={(e) => editActive(e, user.id)}
+                                            />}
+                                        />
+                                    </StyledTableCell>
+                                    <StyledTableCell align="left">
+                                        <Select
+                                            styles={styleSelect}
+                                            isMulti
+                                            name="colors"
+                                            onChange={(e) => selectRoles(e, user, index)}
+                                            options={roles}
+                                            //(item.roles.map(item => ({value: item.id, label: item.roleName})))
+                                            value={user.roles.map(item => ({value: item.id, label: item.roleName}))}
+                                            className="basic-multi-select"
+                                            classNamePrefix="select"
+                                            placeholder={"Roles..."}
+                                        />
+                                    </StyledTableCell>
+                                    <StyledTableCell align="left">
+                                        <Stack direction="row" spacing={2}>
+                                            <Button
+                                                variant="contained"
+                                                color="error"
+                                                startIcon={<DeleteIcon/>}
+                                                onClick={() => deleteUser(user, index)}
+                                            >
+                                                delete
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                startIcon={<EditIcon/>}
+                                                onClick={() => editRodal(user, index)}
+                                            >
+                                                edit
+                                            </Button>
+                                        </Stack>
+                                    </StyledTableCell>
 
-                    </button>) : ""
+                                </StyledTableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
+
+                {
+                    totalPages > 1 ? <Box
+                        sx={{
+                            width: "100%",
+                            height: "80px",
+                            display: "flex", alignItems: "center"
+                        }}
+                    >
+                        <Stack>
+                            <Pagination
+                                count={totalPages}
+                                color="primary"
+                                size="large"
+                                onChange={goToPage}
+                            />
+                        </Stack>
+                    </Box> : ""
                 }
+
+
             </div>
             <Rodal height={530} width={800} visible={rodal} onClose={rodalVisisble}>
                 <div style={{overflowY: "auto"}} className="card register-card">

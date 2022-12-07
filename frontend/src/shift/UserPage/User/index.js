@@ -5,6 +5,7 @@ import "./index.scss"
 import request from "../../utils/request";
 import {toast} from "react-toastify";
 import userImg from "../../file/image/imageShift/user.png"
+import instance from "../../utils/instance";
 
 function Index(props) {
     const {handleSubmit, register, reset} = useForm()
@@ -12,7 +13,7 @@ function Index(props) {
     const [user, setUser] = useState()
     useEffect(() => {
         document.title = "Profile : " + username;
-        request("/user/" + username, "get").then(res => {
+        instance.get("/user/" + username).then(res => {
             if (res.data.success) {
                 setUser(res.data.data)
             }
@@ -37,7 +38,7 @@ function Index(props) {
             age: user.age,
             phoneNumber: user.phoneNumber
         }
-        request("/user/oneUser", "post", data).then(res => {
+        instance.post("/user/oneUser",  data).then(res => {
             if (res.data.success) {
                 toast.success(res.data.message)
             } else {
@@ -48,7 +49,7 @@ function Index(props) {
 
     function forPassword(data) {
 
-        request("/user/edit_password/" + username, "put", data).then(res => {
+        instance.put("/user/edit_password/" + username,  data).then(res => {
             if (res.data.success) {
                 toast.success(res.data.message)
                 reset({confirmPassword: "", newPassword: "", oldPassword: ""})
@@ -62,8 +63,8 @@ function Index(props) {
     function handleFile(e) {
         let data = new FormData();
         data.append("file", e.target.files[0])
-        request("/user/addphoto/" + username, "put", data).then(res => {
-            request("/user/" + username, "get").then(res => {
+        instance.put("/user/addphoto/" + username,  data).then(res => {
+            instance.get("/user/" + username).then(res => {
                 if (res.data.success) {
                     setUser(res.data.data)
                 }

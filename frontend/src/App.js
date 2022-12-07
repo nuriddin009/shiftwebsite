@@ -1,8 +1,7 @@
 import './App.css';
-import {Route, Routes, useLocation, useNavigate, useParams} from "react-router-dom";
+import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import NotFoundPage from "./shift/NotFoundPage";
 import {useEffect, useState} from "react";
-import request from "./shift/utils/request";
 import ShiftPage from "./shift/index"
 import LoginPage from "./shift/LoginPage";
 import Admin from "./shift/adminPage/index";
@@ -60,7 +59,6 @@ function App() {
         getMe();
         getShift();
         pathAdmin();
-
     }, [pathname])
 
 
@@ -87,7 +85,7 @@ function App() {
     }
 
     function getShift() {
-        request("/shift", "get").then(res => {
+        instance.get("/shift").then(res => {
             setShift(res.data)
         })
     }

@@ -9,6 +9,7 @@ import AddWhyUsComponent from "./addWhyUsComponent";
 import {useLocation} from "react-router-dom";
 import {selectLAngWhyUs} from "../../utils/selectLang";
 import Fade from 'react-reveal/Fade';
+import instance from "../../utils/instance";
 
 
 function Index({getShift, whyUses}) {
@@ -30,7 +31,7 @@ function Index({getShift, whyUses}) {
         setDoubleDesc(a)
         let token = localStorage.getItem("token");
         if (token !== null) {
-            request("/user/me").then(res => {
+            instance.get("/user/me").then(res => {
                 setRole(res.data.roles[0].roleName)
             })
         }
@@ -83,7 +84,7 @@ function Index({getShift, whyUses}) {
             if (title === "title") {
                 if (item.title !== "") {
                     let data = {title: item.title, description: item.description};
-                    request("/shift/wyhus/" + item.id, "put", data).then(res => {
+                    instance.put("/shift/wyhus/" + item.id,  data).then(res => {
                         toast.success("O'zgartirildi")
                         a[index] = null;
                         setDoubleTitle(a)
@@ -98,7 +99,7 @@ function Index({getShift, whyUses}) {
         let data = {title: item.title, description: item.description};
         let c = [...doubleDesc]
         if (item.description !== "") {
-            request("/shift/wyhus/" + item.id, "put", data).then(res => {
+            instance.put("/shift/wyhus/" + item.id,  data).then(res => {
                 toast.success("O'zgartirildi")
                 c[index] = null;
                 setDoubleDesc(c)
@@ -110,7 +111,7 @@ function Index({getShift, whyUses}) {
         let a = item.attachment ? item.attachment : "b0f85a63-3c0b-4abd-9867-cc355d02c741"
         let data = new FormData();
         data.append("file", e.target.files[0])
-        request("/img/editFile/" + a + "/" + item.id + "/whyUs", "put", data).then(res => {
+        instance.put("/img/editFile/" + a + "/" + item.id + "/whyUs",  data).then(res => {
             getShift()
             // a[index].attachment = res.data
             // setWhyUs(a)

@@ -11,6 +11,7 @@ import {useLocation} from "react-router-dom";
 import logo from "../shift/file/image/imageShift/logo2.svg";
 // import PhoneInput, {isValidPhoneNumber} from "react-phone-number-input";
 import PhoneInput from 'react-phone-input-2';
+import instance from "../shift/utils/instance";
 
 function Index(props) {
     const [groups, setGroups] = useState([])
@@ -44,7 +45,7 @@ function Index(props) {
 
 
     function getGroups(search) {
-        request("/group?search=" + search, "get").then(res => {
+        instance.get("/group", {params: {search}}).then(res => {
             setGroups(res.data)
         })
     }
@@ -60,9 +61,11 @@ function Index(props) {
         let timeTableIndex = localStorage.getItem("timeTableIndex");
         let timeTableItem = JSON.parse(localStorage.getItem("timeTableItem"));
         // setLessOrMore(JSON.parse(localStorage.getItem("less")).less)
-        request(`/studyCenter/timeTable/${timeTableId}/${true}`, "patch").then(res => {
-            getTimeTab(timeTableId)
-        })
+
+        // instance.patch(`/studyCenter/timeTable/${timeTableId}/${true}`).then(res => {
+        //     getTimeTab(timeTableId)
+        // })
+
         if (groupId != null) {
             getTimeTables(groupId)
             setGroupIndex(groupIndex)
@@ -81,7 +84,7 @@ function Index(props) {
     }
 
     function rodalVisibleCon() {
-        setCon(p=>!p)
+        setCon(p => !p)
     }
 
 
@@ -89,7 +92,7 @@ function Index(props) {
 
     function addGroup() {
         if (add) {
-            request("/group/" + input, "post").then(res => {
+            instance.post("/group/" + input).then(res => {
                 getGroups(searchGroup)
                 setAddGroup(null)
                 setInput("")
@@ -114,7 +117,7 @@ function Index(props) {
     function getTimeTables(id) {
         localStorage.setItem("groupId", id);
         let groupIndex = localStorage.getItem("groupIndex");
-        request("/studyCenter/timeTables/" + id, "get").then(res => {
+        instance.get(`/studyCenter/timeTables/${id}`).then(res => {
             setTimeTables(res.data)
             setGroupIndex(groupIndex)
             setUsers(null)
@@ -135,7 +138,7 @@ function Index(props) {
 
     function getTimeTab(id) {
         localStorage.setItem("timeTableId", id);
-        request("/studyCenter/timeTableUsers/" + id, "get").then(res => {
+        instance.get(`/studyCenter/timeTableUsers/${id}`).then(res => {
             setUsers(res.data)
         })
     }
@@ -155,7 +158,7 @@ function Index(props) {
     const [userItem, setUserItem] = useState(null);
 
     function loadUsers(inputValue, load) {
-        request("/user/search?input=" + inputValue, "get").then(res => {
+        instance.get(`/user/search`, {params: {input: inputValue}}).then(res => {
             load(res.data.content.map(item => {
                 setUserItem(item)
                 return user ? user : ({value: item?.id, label: item.firstName + " " + item.lastName})
@@ -166,7 +169,7 @@ function Index(props) {
 
     function selectUser(item) {
         setUser(item)
-        request("/user/me/" + item?.value, "get").then(res => {
+        instance.get(`/user/me/${item?.value}`).then(res => {
             console.log(res.data)
             setUserItem(res.data)
         })
@@ -182,7 +185,7 @@ function Index(props) {
 
     function addUsers() {
         let data = {userid: user.value, timetableId: timeTab?.id, price: input ? input : timeTab?.price}
-        request("/studyCenter/timeTableUsers", "post", data).then(res => {
+        instance.post("/studyCenter/timeTableUsers", data).then(res => {
             if (res.data.success) {
                 getTimeTab(timeTab?.id)
                 rodalVisible()
@@ -196,7 +199,7 @@ function Index(props) {
     }
 
     function lessonCheck(e, item1, item) {
-        request("/studyCenter/timeTableUsersData/hasinlesson/" + item1?.id + "/" + e.target.checked, "patch")
+        instance.patch(`/studyCenter/timeTableUsersData/hasinlesson/${item1?.id}/${e.target.checked}`)
     }
 
     const [isFree, setIsFree] = useState(false);
@@ -216,7 +219,7 @@ function Index(props) {
         }
         setUsers(a);
         if (item1.lessonmark >= 0 && item1.homeworkmark >= 0 && item1.lessonmark <= 5 && item1.homeworkmark <= 5) {
-            request("/studyCenter/timeTableUsersData/lessonhomework/" + item1?.id + "/" + item1.lessonmark + "/" + item1.homeworkmark, "patch").then(res => {
+            instance.patch(`/studyCenter/timeTableUsersData/lessonhomework/${item1?.id}/${item1.lessonmark}/${item1.homeworkmark}`).then(res => {
             })
         } else {
             toast.error("Baholash tizimiga xatolik")
@@ -235,7 +238,7 @@ function Index(props) {
         setInput("")
         let data = {...item, price: input}
         let groupId = localStorage.getItem("groupId");
-        request("/studyCenter/timeTablesStart/" + timeTab?.id, "post", data)
+        instance.post("/studyCenter/timeTablesStart/" + timeTab?.id, data)
             .then(res => {
                 getTimeTables(groupId);
                 getTimeTab(res.data?.id)
@@ -260,7 +263,7 @@ function Index(props) {
     function deleteUserTimeTable(data) {
 
         if (data.gotogroup >= 1 && data.gotogroup <= 12) {
-            request("/studyCenter/timeTableUsers/deleteUser/" + timeTabUser?.id + "/" + userId, "post", data).then(res => {
+            instance.post("/studyCenter/timeTableUsers/deleteUser/" + timeTabUser?.id + "/" + userId, data).then(res => {
 
                 if (res.data.success) {
                     reset2({gotogroup: "", whytogroup: ""})
@@ -317,11 +320,11 @@ function Index(props) {
 
 
         if (blockSave) {
-            request("/user/edit", "post", data).then(res => {
+            instance.post("/user/edit",  data).then(res => {
                 rodalVisisble()
             })
         } else {
-            request("/user", "post", data).then(res => {
+            instance.post("/user", data).then(res => {
                 let customData = res.data.data;
                 setUser({value: customData.id, label: customData.firstName + " " + customData.lastName})
                 console.log(res.data)
@@ -360,14 +363,14 @@ function Index(props) {
             }
         }))
         if (done || !e.telegramIsmessage) {
-            request(`/studyCenter/timeTableUsersData/lessondone?lessonId=${e.lessonId}&timeTableId=${timeTab?.id}&telegramIsmessage=false`, "patch").then(res => {
+            instance.patch(`/studyCenter/timeTableUsersData/lessondone?lessonId=${e.lessonId}&timeTableId=${timeTab?.id}&telegramIsmessage=false`).then(res => {
                 getTimeTab(timeTab?.id)
                 closeLesson();
             })
         } else {
             let b = window.confirm("Studentlarni darsdagi yoki uyga vazifadagi bahosi 0 ga teng bo'lganlar\n\n" + a + "\nTasdiqlang");
             if (b) {
-                request(`/studyCenter/timeTableUsersData/lessondone?lessonId=${e.lessonId}&timeTableId=${timeTab?.id}&telegramIsmessage=${e.telegramIsmessage}`, "patch").then(res => {
+                instance.patch(`/studyCenter/timeTableUsersData/lessondone?lessonId=${e.lessonId}&timeTableId=${timeTab?.id}&telegramIsmessage=${e.telegramIsmessage}`).then(res => {
                     getTimeTab(timeTab?.id)
                     closeLesson();
                 })
@@ -378,7 +381,7 @@ function Index(props) {
     }
 
     function exam(e, item) {
-        request("/studyCenter/timeTableUsers/exam/" + e.target.checked + "/" + item.lessonorder + "/" + timeTab?.id, "post").then(res => {
+        instance.post("/studyCenter/timeTableUsers/exam/" + e.target.checked + "/" + item.lessonorder + "/" + timeTab?.id).then(res => {
             getTimeTab(timeTab?.id)
         })
     }
@@ -386,14 +389,14 @@ function Index(props) {
 
     function seeUser(item) {
         setBlockSave(true)
-        request("/user/getoneUser/" + item.userid, "get").then(res => {
+        instance.get("/user/getoneUser/" + item.userid).then(res => {
             rodalVisisble()
             reset(res.data.data)
         })
     }
 
     function isvideoallowedCheck(e, item, item1) {
-        request("/studyCenter/timeTableUsersData/isvideoallowed/" + item?.id + "/" + e.target.checked, "patch").then(res => {
+        instance.patch("/studyCenter/timeTableUsersData/isvideoallowed/" + item?.id + "/" + e.target.checked).then(res => {
             if (res.data.success) {
                 toast.success(res.data.message)
             } else {
@@ -405,7 +408,7 @@ function Index(props) {
 
     function deleteTTUD(id, item) {
         if (window.confirm("Are you sure? " + id)) {
-            request("/UserLesson/deleteT?id=" + id, "delete").then(res => {
+            instance.delete("/UserLesson/deleteT?id=" + id).then(res => {
 
             })
         }
@@ -428,7 +431,7 @@ function Index(props) {
 
     function editGroupNameReq(item) {
         if (input !== "") {
-            request("/group/edit/" + item?.id + "/" + input, "patch").then(res => {
+            instance.patch("/group/edit/" + item?.id + "/" + input).then(res => {
                 setInput("")
                 setEditGroupIndex(null)
                 getGroups(searchGroup)
@@ -451,7 +454,7 @@ function Index(props) {
     function addTimeTableR() {
         if (timeTableName !== "") {
             let groupId = localStorage.getItem("groupId");
-            request("/studyCenter/timeTables/" + groupId + "/" + timeTableName + "/" + isFree, "post").then(res => {
+            instance.post("/studyCenter/timeTables/" + groupId + "/" + timeTableName + "/" + isFree).then(res => {
                 getTimeTables(groupId);
                 setTimeTableIndex(null)
                 setTimeTableName("")
@@ -475,7 +478,7 @@ function Index(props) {
     function editTimeTable1() {
         let groupId = localStorage.getItem("groupId");
         if (timeTableName !== "") {
-            request("/studyCenter/edit/timeTableName/" + editIndex + "/" + timeTableName, "patch").then(res => {
+            instance.patch("/studyCenter/edit/timeTableName/" + editIndex + "/" + timeTableName).then(res => {
                 getTimeTables(groupId)
                 getTimeTab(editIndex)
                 setEditTimeTableIndex(null)
@@ -489,12 +492,12 @@ function Index(props) {
 
     return (
         <div className={`studyCenter  ${pathname === "/Mentor" ? "mw-100" : ""}`}>
-           <div className={"archiveGroup"}>
-               <i
-                   className="fa-solid fa-inbox text-danger archiveGroup"
-                   title={"Archive group"}
-               />
-           </div>
+            <div className={"archiveGroup"}>
+                <i
+                    className="fa-solid fa-inbox text-danger archiveGroup"
+                    title={"Archive group"}
+                />
+            </div>
             <p className={"archiveGroup1"}>Archived&nbsp;groups</p>
             <div className={"all-time"}>
                 <input

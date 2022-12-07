@@ -8,6 +8,7 @@ import {selectAboutTitle} from "../../utils/selectLang";
 import {LazyLoadImage} from 'react-lazy-load-image-component';
 import pSrc from "./section1.jpg";
 import Fade from 'react-reveal/Fade';
+import instance from "../../utils/instance";
 
 
 function Index(props) {
@@ -23,7 +24,7 @@ function Index(props) {
         setTitle(selectAboutTitle(props?.title))
         let token = localStorage.getItem("token");
         if (token !== null) {
-            request("/user/me").then(res => {
+            instance.get("/user/me").then(res => {
                 setRole(res.data.roles[0].roleName)
             })
         }
@@ -61,7 +62,7 @@ function Index(props) {
         let data;
         if (title.title !== "" && title.description !== "") {
             data = title
-            request("/shift/title", "put", data).then(res => {
+            instance.put("/shift/title",  data).then(res => {
                 setDoubleTitle(null)
                 setDoubleDesc(null)
                 toast.success("O'zgartirildi")

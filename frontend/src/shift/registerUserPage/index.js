@@ -4,8 +4,8 @@ import logo from "../file/image/imageShift/logo2.svg";
 import {Controller, useForm} from "react-hook-form";
 import PhoneInput, {isValidPhoneNumber} from "react-phone-number-input";
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import request from "../utils/request";
 import {toast} from "react-toastify";
+import instance from "../utils/instance";
 
 function Index(props) {
     const {register, reset, handleSubmit, formState: {errors}, control} = useForm()
@@ -15,7 +15,6 @@ function Index(props) {
     const [p2, setP2] = useState("")
     const [age, setAge] = useState("")
     const [un, setUN] = useState("")
-
 
 
     function mySubmit(item) {
@@ -34,7 +33,7 @@ function Index(props) {
         }
         let data = {...item, activ: false}
         if (data.password === data.password_repid) {
-            request("/user", "post", data).then(res => {
+            instance.post("/user", data).then(res => {
                 if (res.data.success) {
                     reset({
                         firstName: "",

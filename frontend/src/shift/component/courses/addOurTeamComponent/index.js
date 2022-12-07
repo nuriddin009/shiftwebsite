@@ -6,6 +6,7 @@ import "./index.scss"
 import request from "../../../utils/request";
 import {toast} from "react-toastify";
 import {useLocation} from "react-router-dom";
+import instance from "../../../utils/instance";
 
 function Index(props) {
     const [fileId, setFileId] = useState(null);
@@ -25,7 +26,7 @@ function Index(props) {
     function handleFile(e) {
         let data = new FormData();
         data.append("file", e.target.files[0])
-        request("/img/newFile", "post", data).then(res => {
+        instance.post("/img/newFile",  data).then(res => {
             setFileId(res.data)
         })
     }
@@ -35,7 +36,7 @@ function Index(props) {
             if (input.name !== "" && input.description !== "") {
                 let data = {...input}
                 setFileId(true)
-                    request("/shift/saveOurTeam/" + fileId, "post", data).then(res => {
+                instance.post("/shift/saveOurTeam/" + fileId,  data).then(res => {
                         rodalVisible()
                         setInput({name: "", description: "", description_UZB: "", description_RUS: ""})
                         props.getShift()

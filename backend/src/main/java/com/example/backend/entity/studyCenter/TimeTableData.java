@@ -5,16 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
 @Entity
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Table(name = "rooms")
-public class Room {
+@Table(name = "time_table_data")
+public class TimeTableData {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -23,9 +25,5 @@ public class Room {
     )
     private UUID id;
 
-    @Column(nullable = false)
-    private String roomName;
 
-    @ManyToMany
-    private List<WeekDay> weekDays;
 }

@@ -1,6 +1,7 @@
 package com.example.backend.controller.studyCenter;
 
 import com.example.backend.dto.ApiResponse;
+import com.example.backend.dto.RoomDto;
 import com.example.backend.repository.studyCenter.ClassTimeTableRepository;
 import com.example.backend.repository.studyCenter.RoomRepository;
 import com.example.backend.service.studyCenter.ClassTimeTableService;
@@ -8,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -30,8 +28,8 @@ public class ClassTimeTableController {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')")
     @PostMapping("/addRoom")
-    public HttpEntity<ApiResponse> addRoom(){
-        return ResponseEntity.ok(classTimeTableService.addRoom());
+    public HttpEntity<ApiResponse> addRoom(@RequestBody RoomDto roomDto){
+        return ResponseEntity.ok(classTimeTableService.addRoom(roomDto));
     }
 
 
