@@ -30,6 +30,7 @@ import LessonPageAdmin from "./studyCenter/component/Lessonpage";
 import CertificatePage from "./shift/CertificatePage";
 import Certificate from "./studyCenter/component/Certificate/Certificate";
 import Room from "./studyCenter/component/Room";
+
 import instance from "./shift/utils/instance";
 
 function App() {
@@ -119,6 +120,7 @@ function App() {
 
 
     return (
+
         <div>
             <Routes>
                 <Route path={"/"} element={<ShiftPage/>}/>

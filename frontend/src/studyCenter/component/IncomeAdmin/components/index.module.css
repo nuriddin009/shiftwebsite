@@ -1,0 +1,28 @@
+.flex_ {
+    display: flex;
+}
+
+.align_right {
+    display: flex;
+    justify-content: end;
+    margin-bottom: 10px;
+}
+
+.between_ {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.modalSt {
+    width: 600px;
+    background: white;
+    min-height: 400px;
+
+}
+
+.modalSt2 {
+    display: flex;
+    flex-direction: column;
+
+}
