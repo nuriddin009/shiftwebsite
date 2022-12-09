@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import "./index.scss"
+// import "./index.scss"
 import {useLocation} from "react-router-dom";
 import {Controller, useForm} from "react-hook-form";
 import Rodal from "rodal";
