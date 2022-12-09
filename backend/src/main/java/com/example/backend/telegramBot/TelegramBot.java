@@ -44,7 +44,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                     } else {
                         SendMessage sendMessage = new SendMessage();
                         sendMessage.setChatId(parent.getChatId());
-                        sendMessage.setText("Shift Academy botidan foydalanish uchun <b>Contact yuborish</b> tugmasini bosing. (Bu jarayon faqatgina bir marta amalga oshiriladi)");
+                        sendMessage.setText("Shift Academy botidan foydalanish uchun" +
+                                " <b>Contact yuborish</b> tugmasini bosing." +
+                                " (Bu jarayon faqatgina bir marta amalga oshiriladi)");
                         sendMessage.setParseMode(ParseMode.HTML);
                         sendMessage.setReplyMarkup(BotUtils.generateContactButton());
                         Message execute = execute(sendMessage);

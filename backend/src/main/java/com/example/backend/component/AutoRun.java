@@ -1,34 +1,24 @@
 package com.example.backend.component;
 
-import com.example.backend.entity.Attachment;
-import com.example.backend.entity.Certificate;
 import com.example.backend.entity.Role;
 import com.example.backend.entity.User;
+import com.example.backend.entity.shift.*;
 import com.example.backend.entity.studyCenter.ApiKey;
 import com.example.backend.entity.studyCenter.Lesson;
-import com.example.backend.entity.shift.*;
-import com.example.backend.entity.studyCenter.WeekDay;
 import com.example.backend.repository.*;
 import com.example.backend.repository.shiftRepo.*;
 import com.example.backend.repository.studyCenter.CertificateRepository;
-import com.example.backend.repository.studyCenter.WeekDayRepository;
+//import com.example.backend.repository.studyCenter.WeekDayRepository;
 import com.example.backend.service.studyCenter.GenerateCertificate;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import javax.imageio.ImageIO;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -49,7 +39,7 @@ public class AutoRun implements CommandLineRunner {
     private final CertificateRepository certificateRepository;
     private final GenerateCertificate generateCertificate;
     private final AttachmentRepository attachmentRepository;
-    private final WeekDayRepository weekDayRepository;
+//    private final WeekDayRepository weekDayRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -64,16 +54,16 @@ public class AutoRun implements CommandLineRunner {
         }
 
 
-        if (weekDayRepository.findAll().size() == 0) {
-            weekDayRepository.saveAll(Arrays.asList(
-                    new WeekDay(null, "Dushanba", 1),
-                    new WeekDay(null, "Seshanba", 2),
-                    new WeekDay(null, "Chorshanba", 3),
-                    new WeekDay(null, "Payshanba", 4),
-                    new WeekDay(null, "Juma", 5),
-                    new WeekDay(null, "Shanba", 6)
-            ));
-        }
+//        if (weekDayRepository.findAll().size() == 0) {
+//            weekDayRepository.saveAll(Arrays.asList(
+//                    new WeekDay(null, "Dushanba", 1),
+//                    new WeekDay(null, "Seshanba", 2),
+//                    new WeekDay(null, "Chorshanba", 3),
+//                    new WeekDay(null, "Payshanba", 4),
+//                    new WeekDay(null, "Juma", 5),
+//                    new WeekDay(null, "Shanba", 6)
+//            ));
+//        }
 
 
 //        User user1 = userRepository.findById(UUID.fromString("315f3bf7-2a36-47f8-9a4b-f1958f66271e")).get();

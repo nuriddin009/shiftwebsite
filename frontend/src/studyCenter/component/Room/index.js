@@ -186,13 +186,14 @@ function Index(props) {
                             type="time"/>
                     </h3></td>
                     {
-                        new Array(40).fill(0).map(item => <td><h3><input
-                            style={{border: "none", outline: "none"}}
-                            type="time"/> -
-                            <input
-                                style={{border: "none"}}
-                                type="time"/>
-                        </h3></td>)
+                        new Array(40).fill(0).map((item, index) =>
+                            <td key={index}><h3><input
+                                style={{border: "none", outline: "none"}}
+                                type="time"/> -
+                                <input
+                                    style={{border: "none"}}
+                                    type="time"/>
+                            </h3></td>)
                     }
                 </tr>
 

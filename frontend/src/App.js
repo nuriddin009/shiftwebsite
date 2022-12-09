@@ -124,6 +124,7 @@ function App() {
             <Routes>
                 <Route path={"/"} element={<ShiftPage/>}/>
                 <Route path={"/404"} element={<NotFoundPage/>}/>
+                <Route path={"*"} element={<NotFoundPage/>}/>
                 <Route path={"/login"} element={<LoginPage/>}/>
                 <Route path={"/registerUser"} element={<RegisterUserPage/>}/>
                 <Route path={"/successUser"} element={<SuccessUserPage/>}/>
