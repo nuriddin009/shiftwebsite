@@ -31,6 +31,7 @@ import Certificate from "./studyCenter/component/Certificate/Certificate";
 import Room from "./studyCenter/component/Room";
 
 import instance from "./shift/utils/instance";
+import ExpenseAdmin from "./studyCenter/component/ExpenseAdmin";
 
 function App() {
     const [shift, setShift] = useState(null);
@@ -137,6 +138,7 @@ function App() {
                     <Route path={"/selectAdmin/rooms"} element={<Room/>}/>
                     <Route path={"/selectAdmin/delete/users"} element={<DeleteUserAdmin/>}/>
                     <Route path={"/selectAdmin/income/:tab"} element={<IncomeAdmin/>} />
+                    <Route path={"/selectAdmin/expense/:tab"} element={<ExpenseAdmin    />} />
                 </Route>
                 <Route path={"/admin"} element={<Admin/>}>
                     <Route path={"/admin/title"} element={<AdminTitle title={shift?.title} getShift={getShift}/>}/>

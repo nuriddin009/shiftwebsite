@@ -12,8 +12,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "income_type")
-public class IncomeType {
+@Table(name = "payment")
+public class Payment {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -25,7 +25,10 @@ public class IncomeType {
     @Column(nullable = false)
     private String type;
 
-    public IncomeType(String type) {
+    @Column(nullable = false)
+    private Integer amount;
+
+    public Payment(String type) {
         this.type = type;
     }
 }

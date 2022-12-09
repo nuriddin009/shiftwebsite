@@ -14,6 +14,10 @@ import myStyles from "./index.module.css"
 import dayjs from "dayjs";
 import {DatePicker} from "@mui/x-date-pickers";
 import FormAsyncSelectInput from "./FormAsyncSelectInput";
+import Autocomplete, {createFilterOptions} from "@mui/material/Autocomplete";
+import instance from "../../../../shift/utils/instance";
+
+const filter = createFilterOptions();
 
 function IncomeTable() {
     const params = useParams()
@@ -22,14 +26,23 @@ function IncomeTable() {
     const [startDate, setStartDate] = useState(1659312000000);
     const [value, setValue] = React.useState("");
     const [positionTypes, setPositionTypes] = React.useState([]);
+    const [options, setOptions] = useState([
+        {label:'type', value: 1},
+        {label:'label', value: 2},
+    ])
 
     const handleChange = (event) => {
         setAge(event.target.value);
     };
     useEffect(() => {
-
+    getPayTypes();
     }, [])
 
+    function getPayTypes(){
+        instance.get("/api/pay_type").then((res)=>{
+            console.log(res)
+        })
+    }
 
     const cols = [
         {
@@ -289,23 +302,69 @@ function IncomeTable() {
                             <Grid sx={{width: "50%"}}>
                                 <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
                                     <Box sx={{minWidth: 220}}>
-                                        <InputLabel style={{background: "white"}}
-                                                    id="demo-simple-select-label">IncomeType</InputLabel>
-                                        <Select
+                                        {/*<InputLabel style={{background: "white"}}*/}
+                                        {/*            id="demo-simple-select-label">IncomeType</InputLabel>*/}
+                                        <Autocomplete
                                             sx={{minWidth: 200, width: "100%"}}
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={age}
-                                            label="Age"
-                                            onChange={handleChange}
-                                        >
-                                            <MenuItem value="">
-                                                <em>None</em>
-                                            </MenuItem>
-                                            <MenuItem value={10}>Ten</MenuItem>
-                                            <MenuItem value={20}>Twenty</MenuItem>
-                                            <MenuItem value={30}>Thirty</MenuItem>
-                                        </Select>
+                                            value={value}
+                                            onChange={(event, newValue) => {
+                                                if (typeof newValue === 'string') {
+                                                    setValue({
+                                                        label: newValue,
+                                                    });
+                                                } else if (newValue && newValue.inputValue) {
+                                                    // Create a new value from the user input
+                                                    setValue({
+                                                        label: newValue.inputValue,
+                                                    });
+                                                } else {
+                                                    setValue(newValue);
+                                                }
+                                            }}
+                                            filterOptions={(options, params) => {
+                                                const filtered = filter(options, params);
+
+                                                const { inputValue } = params;
+                                                // Suggest the creation of a new value
+                                                const isExisting = options.some((option) => inputValue === option.label);
+                                                if (inputValue !== '' && !isExisting) {
+                                                    filtered.push({
+                                                        inputValue,
+                                                        label: `Add "${inputValue}"`,
+                                                    });
+                                                }
+
+                                                return filtered;
+                                            }}
+                                            selectOnFocus
+                                            clearOnBlur
+                                            handleHomeEndKeys
+                                            options={options}
+                                            getOptionLabel={(option) => {
+                                                // Value selected with enter, right from the input
+                                                if (typeof option === 'string') {
+                                                    return option;
+                                                }
+                                                // Add "xxx" option created dynamically
+                                                if (option.inputValue) {
+                                                    return option.inputValue;
+                                                }
+                                                // Regular option
+                                                return option.label;
+                                            }}
+                                            renderOption={(props, option) => <li {...props}>{option.label}</li>}
+                                            freeSolo
+                                            renderInput={(params) => (
+                                                <TextField {...params} label="Income Type" />
+                                            )}
+                                        />
+                                        {/*    <MenuItem value="">*/}
+                                        {/*        <em>None</em>*/}
+                                        {/*    </MenuItem>*/}
+                                        {/*    <MenuItem value={10}>Ten</MenuItem>*/}
+                                        {/*    <MenuItem value={20}>Twenty</MenuItem>*/}
+                                        {/*    <MenuItem value={30}>Thirty</MenuItem>*/}
+                                        {/*</Autocomplete>*/}
                                     </Box>
                                 </FormControl>
                             </Grid>

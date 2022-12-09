@@ -22,6 +22,7 @@ public class TimeTableUser {
     @ManyToOne
     private User user;
     private String price;
+    private int paid=0;
 
     private Integer gotogroup;
     private String whytogroup;

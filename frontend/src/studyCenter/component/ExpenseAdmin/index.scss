@@ -1,0 +1,48 @@
+$primary-color: #023247;
+$secondary-color: #00C3FF;
+$bg-color: #ffffff;
+
+.rodal-close {
+  display: none;
+}
+
+.UsersAdmin {
+
+  .card_body {
+    width: 100%;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+  }
+
+  .register-card {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .text-danger {
+    font-size: 14px;
+  }
+
+  .bgCollor {
+    background-color: $primary-color;
+
+  }
+
+  .role_select {
+
+    font-weight: bold;
+
+    option {
+      margin: 10px 0;
+      border: 10px solid;
+      font-weight: bolder;
+    }
+  }
+
+}

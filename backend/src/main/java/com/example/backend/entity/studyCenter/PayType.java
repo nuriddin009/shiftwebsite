@@ -24,4 +24,8 @@ public class PayType {
 
     @Column(nullable = false)
     private String type;
+
+    public PayType(String type) {
+        this.type = type;
+    }
 }
