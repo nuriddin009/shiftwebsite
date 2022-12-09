@@ -5,10 +5,7 @@ import com.example.backend.service.studyCenter.IncomeTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,5 +18,12 @@ public class IncomeTypeController {
     @PostMapping
     public ResponseEntity<ApiResponse> postIncomeType(@RequestParam String type) {
         return ResponseEntity.ok(incomeService.postIncomeType(type));
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN')")
+    @GetMapping
+    public ResponseEntity<ApiResponse> getIncomeType() {
+        return ResponseEntity.ok(incomeService.getIncomeType());
     }
 }

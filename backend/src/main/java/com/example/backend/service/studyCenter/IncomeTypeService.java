@@ -8,6 +8,8 @@ import com.example.backend.repository.PayTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class IncomeTypeService {
     private final IncomeTypeRepository incomeTypeRepository;
@@ -20,5 +22,10 @@ public class IncomeTypeService {
     public ApiResponse postIncomeType(String type) {
         incomeTypeRepository.save(new IncomeType(type));
         return new ApiResponse(true,"added");
+    }
+
+    public ApiResponse getIncomeType() {
+        List<IncomeType> list = incomeTypeRepository.findAll();
+        return new ApiResponse(true,list);
     }
 }

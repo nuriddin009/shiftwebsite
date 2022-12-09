@@ -26,21 +26,27 @@ function IncomeTable() {
     const [startDate, setStartDate] = useState(1659312000000);
     const [value, setValue] = React.useState("");
     const [positionTypes, setPositionTypes] = React.useState([]);
-    const [options, setOptions] = useState([
-        {label:'type', value: 1},
-        {label:'label', value: 2},
-    ])
+    const [options, setOptions] = useState([    ])
 
     const handleChange = (event) => {
         setAge(event.target.value);
     };
     useEffect(() => {
-    getPayTypes();
+        getPayTypes();
     }, [])
 
-    function getPayTypes(){
-        instance.get("/api/pay_type").then((res)=>{
-            console.log(res)
+    function getPayTypes() {
+        instance.get("/pay_type").then(({data}) => {
+            console.log(data.data)
+            let a = data.data.map(item => ({label: item?.type, value: item?.id,}));
+            setOptions(a)
+        })
+    }
+
+    function postPayType(label) {
+        instance.post("/pay_type?type=" + label,).then(({data}) => {
+            getPayTypes()
+            setValue({label:data.data.type, value: data?.data?.id})
         })
     }
 
@@ -308,15 +314,12 @@ function IncomeTable() {
                                             sx={{minWidth: 200, width: "100%"}}
                                             value={value}
                                             onChange={(event, newValue) => {
+                                                console.log(newValue)
+                                                console.log(event)
                                                 if (typeof newValue === 'string') {
-                                                    setValue({
-                                                        label: newValue,
-                                                    });
-                                                } else if (newValue && newValue.inputValue) {
-                                                    // Create a new value from the user input
-                                                    setValue({
-                                                        label: newValue.inputValue,
-                                                    });
+                                                    postPayType(newValue)
+                                                } else if (newValue?.label.startsWith('Add')) {
+                                                    postPayType(newValue?.inputValue)
                                                 } else {
                                                     setValue(newValue);
                                                 }
@@ -324,7 +327,7 @@ function IncomeTable() {
                                             filterOptions={(options, params) => {
                                                 const filtered = filter(options, params);
 
-                                                const { inputValue } = params;
+                                                const {inputValue} = params;
                                                 // Suggest the creation of a new value
                                                 const isExisting = options.some((option) => inputValue === option.label);
                                                 if (inputValue !== '' && !isExisting) {
@@ -355,7 +358,7 @@ function IncomeTable() {
                                             renderOption={(props, option) => <li {...props}>{option.label}</li>}
                                             freeSolo
                                             renderInput={(params) => (
-                                                <TextField {...params} label="Income Type" />
+                                                <TextField {...params} label="Income Type"/>
                                             )}
                                         />
                                         {/*    <MenuItem value="">*/}

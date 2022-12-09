@@ -6,6 +6,8 @@ import com.example.backend.repository.PayTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PayTypeService {
     private final PayTypeRepository payTypeRepository;
@@ -16,7 +18,12 @@ public class PayTypeService {
     }
 
     public ApiResponse postPayType(String type) {
-        payTypeRepository.save(new PayType(type));
-        return new ApiResponse(true,"added");
+        PayType save = payTypeRepository.save(new PayType(type));
+        return new ApiResponse(true,save);
+    }
+
+    public ApiResponse getPayType() {
+        List<PayType> payTypes = payTypeRepository.findAll();
+        return new ApiResponse(true,payTypes);
     }
 }

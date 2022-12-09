@@ -22,6 +22,8 @@ public class TimeTableUser {
     @ManyToOne
     private User user;
     private String price;
+
+    @Column(nullable = true)
     private int paid=0;
 
     private Integer gotogroup;

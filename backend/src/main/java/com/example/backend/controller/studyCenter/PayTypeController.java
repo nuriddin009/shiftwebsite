@@ -23,4 +23,10 @@ public class PayTypeController {
     public ResponseEntity<ApiResponse> postPayType(@RequestParam String type) {
         return ResponseEntity.ok(payTypeService.postPayType(type));
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN')")
+    @GetMapping
+    public ResponseEntity<ApiResponse> getPayType() {
+        return ResponseEntity.ok(payTypeService.getPayType());
+    }
 }
