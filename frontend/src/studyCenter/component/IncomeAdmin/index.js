@@ -46,10 +46,6 @@ function Index(props) {
         <Card sx elevation={0}>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <ButtonGroup fullWidth={true} variant="contained" aria-label="outlined button group">
-                        <StyledButton onClick={()=>navigate("/selectAdmin/income/timetable")} isActive={tab==="timetable"} >Selection Process</StyledButton>
-                        <StyledButton onClick={()=>navigate("/selectAdmin/income/monthly")} isActive={tab==="monthly"} >Approval Summary</StyledButton>
-                    </ButtonGroup>
                     <IncomeTable/>
                 </Grid>
 

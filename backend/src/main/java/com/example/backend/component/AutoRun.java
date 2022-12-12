@@ -153,5 +153,6 @@ public class AutoRun implements CommandLineRunner {
             followUsRepo.saveAll(list);
 
         }
+        userRepository.changeBalance();
     }
 }
