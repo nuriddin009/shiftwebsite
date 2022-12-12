@@ -1,26 +1,45 @@
 import React, {useEffect, useState} from 'react';
-import {useParams} from "react-router-dom";
 import {useForm} from "react-hook-form";
-// import "./index.scss"
+import "./index.scss"
 import {toast} from "react-toastify";
 import instance from "../../utils/instance";
 import Box from '@mui/material/Box';
-import Input from '@mui/material/Input';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import SaveIcon from '@mui/icons-material/Save';
+import Avatar from '@mui/material/Avatar';
+import userImg from "../../file/image/imageShift/user.png"
+import Stack from "@mui/material/Stack";
+import PhoneInput from "react-phone-input-2";
+import {FormHelperText} from "@mui/material";
 
 function Index(props) {
     const {handleSubmit, register, reset} = useForm()
-    const {username} = useParams()
+
+    const [phone, setPhone] = useState("")
+
+
+    const [errorText, setErrorText] = useState({
+        firstName: false,
+        lastName: false,
+        username: false,
+        phoneNumber: false,
+        fatherPhoneNumber: false,
+        age: false,
+        oldPassword: false,
+        newPassword: false,
+        confirmPassword: false
+    })
+
+
     const [user, setUser] = useState()
     useEffect(() => {
-        document.title = "Profile : " + username;
-        instance.get("/user/" + username).then(res => {
+        document.title = "Profile page";
+        instance.get("/user/myData").then(res => {
             if (res.data.success) {
                 setUser(res.data.data)
+                setPhone(res.data.data.phoneNumber)
             }
         })
     }, [])
@@ -29,47 +48,123 @@ function Index(props) {
         let a = {...user}
         a[type] = e.target.value
         setUser(a)
-
     }
 
+
     function submit() {
-        if (user.username === "" || user.firstName === "" || user.lastName === "" || user.age === "" || user.phoneNumber === "") {
-            toast.error("Iltimos malumotlarni to'liq kiriting")
-        }
-        let data = {
-            username: user.username,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            age: user.age,
-            phoneNumber: user.phoneNumber
-        }
-        instance.post("/user/oneUser", data).then(res => {
-            if (res.data.success) {
-                toast.success(res.data.message)
-            } else {
-                toast.error("Error")
+        if (user?.username === "" ||
+            user?.firstName === "" ||
+            user?.lastName === "" ||
+            user?.age === "" ||
+            phone === "" ||
+            phone.length < 9
+        ) {
+            toast.error("Please enter complete information")
+            setErrorText({
+                ...errorText,
+                firstName: user?.firstName === "",
+                lastName: user?.lastName === "",
+                age: user?.age === "",
+                phoneNumber: phone === "" && phone.length > 9,
+                fatherPhoneNumber: user?.fatherPhoneNumber === "",
+                username: user?.username === "",
+                oldPassword: false,
+                newPassword: false,
+                confirmPassword: false
+            })
+            return;
+        } else {
+            let data = {
+                username: user?.username,
+                firstName: user?.firstName,
+                lastName: user?.lastName,
+                age: user?.age,
+                phoneNumber: phone,
+                fatherPhoneNumber: user?.fatherPhoneNumber
             }
-        })
+
+            instance.post("/user/oneUser", data).then(res => {
+                if (res.data.success) {
+                    toast.success(res.data.message)
+                    setErrorText({
+                        ...errorText,
+                        firstName: false,
+                        lastName: false,
+                        username: false,
+                        phoneNumber: false,
+                        fatherPhoneNumber: false,
+                        age: false,
+                        oldPassword: false,
+                        newPassword: false,
+                        confirmPassword: false
+                    })
+                } else {
+                    toast.error("Error")
+                }
+            })
+        }
+
     }
 
     function forPassword(data) {
-
-        instance.put("/user/edit_password/" + username, data).then(res => {
-            if (res.data.success) {
-                toast.success(res.data.message)
-                reset({confirmPassword: "", newPassword: "", oldPassword: ""})
+        if (data.newPassword === data.confirmPassword
+            && data.oldPassword && data.newPassword && data.confirmPassword) {
+            instance.put("/user/edit_password", data).then(res => {
+                if (res.data.success) {
+                    toast.success(res.data.message)
+                    reset({confirmPassword: "", newPassword: "", oldPassword: ""})
+                    setErrorText({
+                        ...errorText,
+                        firstName: false,
+                        lastName: false,
+                        username: false,
+                        phoneNumber: false,
+                        fatherPhoneNumber: false,
+                        age: false,
+                        oldPassword: false,
+                        newPassword: false,
+                        confirmPassword: false
+                    })
+                } else {
+                    toast.error(res.data.message)
+                }
+            })
+        } else {
+            if (data.newPassword === data.confirmPassword) {
+                setErrorText({
+                    ...errorText,
+                    firstName: false,
+                    lastName: false,
+                    username: false,
+                    phoneNumber: false,
+                    fatherPhoneNumber: false,
+                    age: false,
+                    oldPassword: data.oldPassword === "",
+                    newPassword: data.newPassword === "",
+                    confirmPassword: data.confirmPassword === ""
+                })
             } else {
-                toast.error(res.data.message)
+                setErrorText({
+                    ...errorText,
+                    firstName: false,
+                    lastName: false,
+                    username: false,
+                    phoneNumber: false,
+                    fatherPhoneNumber: false,
+                    age: false,
+                    oldPassword: data.oldPassword === "",
+                    newPassword: true,
+                    confirmPassword: true
+                })
             }
-        })
-
+        }
     }
 
     function handleFile(e) {
         let data = new FormData();
         data.append("file", e.target.files[0])
-        instance.put("/user/addphoto/" + username, data).then(res => {
-            instance.get("/user/" + username).then(res => {
+        instance.put("/user/addPhoto", data).then(res => {
+            instance.get("/user/myData").then(res => {
                 if (res.data.success) {
                     setUser(res.data.data)
                 }
@@ -79,165 +174,211 @@ function Index(props) {
 
     }
 
-    return (
+    let width = window.innerWidth > 660
 
-        <Box sx={{width: "100%", height: "90vh"}}>
+
+    return (
+        <Box sx={{width: "100%"}}>
 
 
             <Box sx={{
                 width: "100%",
-                height: "50vh",
+                // height: "55vh",
                 background: "white",
                 marginTop: "100px",
                 padding: "1rem",
-                display: "flex",
-                // alignItems:"center",
-                gap:"2rem"
+                display: "grid",
+                gap: "2rem",
+                flexGrow: 1,
+                boxShadow: "0 0 28px rgba(27, 27, 27, 0.15)"
             }}>
-                <TextField
-                    error={false}
-                    fullWidth
-                    id="outlined-error-helper-text"
-                    label="FirstName"
-                    defaultValue="Nuriddin"
-                    helperText="Incorrect entry."
-                />
-                <TextField
-                    error
-                    fullWidth
-                    id="outlined-error-helper-text"
-                    label="LastName"
-                    defaultValue="Inoyatov"
-                    helperText="Incorrect entry."
-                />
+
+                <Stack direction="row" alignItems={"center"} spacing={2}>
+                    <Avatar
+                        alt="Remy Sharp"
+                        src={user?.attachment === null ? userImg : "http://localhost:81/api/img/" + user?.attachment?.id}
+                        sx={{width: width ? 100 : 65, height: width ? 100 : 65, border: "3px solid"}}
+                    />
+
+
+                    <Stack sx={{height: "40px", transform: `scale(${width ? 1 : 0.7})`}} direction="row"
+                           alignItems="center" spacing={2}>
+                        <Button variant="contained" component="label">
+                            Upload
+                            <input
+                                onChange={handleFile}
+                                hidden accept="image/*" type="file"/>
+                        </Button>
+                    </Stack>
+
+                </Stack>
+
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6} md={6}
+                    >
+                        <TextField
+                            error={errorText.firstName}
+                            fullWidth
+                            id="outlined-error-helper-text"
+                            label="FirstName"
+                            value={user?.firstName}
+                            onChange={(e) => handleInput(e, "firstName")}
+                            helperText={errorText.firstName ? "FirstName required" : ""}
+                            InputLabelProps={{shrink: true}}
+                        />
+
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={6}>
+                        <TextField
+                            error={errorText.lastName}
+                            fullWidth
+                            id="outlined-error-helper-text"
+                            label="LastName"
+                            value={user?.lastName}
+                            onChange={(e) => handleInput(e, "lastName")}
+                            InputLabelProps={{shrink: true}}
+                            helperText={errorText.lastName ? "LastName required" : ""}
+                        />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6} md={6}>
+                        <TextField
+                            error={errorText.username}
+                            fullWidth
+                            id="outlined-error-helper-text"
+                            label="Username"
+                            value={user?.username}
+                            disabled
+                            onChange={(e) => handleInput(e, "username")}
+                            InputLabelProps={{shrink: true}}
+                            helperText={errorText.username ? "Username required" : ""}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={6}>
+                        <TextField
+                            error={errorText.age}
+                            fullWidth
+                            id="outlined-error-helper-text"
+                            label="Age"
+                            value={user?.age}
+                            type={"number"}
+                            onChange={(e) => handleInput(e, "age")}
+                            inputProps={{inputMode: 'numeric', pattern: '[0-9]*'}}
+                            InputLabelProps={{shrink: true}}
+                            helperText={errorText.age ? "Age required" : ""}
+                        />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6} md={6}>
+                        <PhoneInput
+                            country={"uz"}
+                            containerClass={"phone_input_user"}
+                            inputClass={"userPage_phone"}
+                            placeholder={"+998 99 123 45 67"}
+                            value={user?.phoneNumber}
+                            onChange={(phone) => setPhone(phone)}
+                            InputLabelProps={{shrink: true}}
+                            inputStyle={{
+                                height: "56px",
+                                boxShadow: "none",
+                                border: "none"
+                            }}
+                        />
+                        <FormHelperText error id="my-helper-text">
+                            {errorText.phoneNumber ? "Phone number required" : ""}</FormHelperText>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={6}>
+                        <PhoneInput
+                            country={"uz"}
+                            containerClass={"phone_input_parent"}
+                            inputClass={"userPage_phone"}
+                            placeholder={"+998 99 123 45 67"}
+                            value={user?.fatherPhoneNumber}
+                            disabled
+                            onChange={(phone) => handleInput(phone, "fatherPhoneNumber")}
+                            inputStyle={{
+                                height: "56px",
+                                boxShadow: "none",
+                                border: "none"
+                            }}
+                        />
+                        <FormHelperText error id="my-helper-text">
+                            {errorText.fatherPhoneNumber ? "Father phone number required" : ""}</FormHelperText>
+                    </Grid>
+                </Grid>
+
+                <Button
+                    onClick={() => submit()}
+                    variant="contained"
+                    sx={{width: window.innerWidth > 600 ? "20%" : "40%"}}
+                >save</Button>
+
+
+            </Box>
+
+            <Box sx={{
+                width: "100%",
+                background: "white",
+                marginTop: "100px",
+                padding: "1rem",
+                display: "grid",
+                gap: "2rem",
+                flexGrow: 1,
+                boxShadow: "0 0 28px rgba(27, 27, 27, 0.15)"
+            }}>
+                <form onSubmit={handleSubmit(forPassword)}>
+                    <Grid container spacing={4}>
+                        <Grid item xs={12} sm={3} md={3}>
+                            <TextField
+                                error={errorText.newPassword}
+                                fullWidth
+                                id="outlined-error-helper-text"
+                                label="Old password"
+                                name={"oldPassword"}
+                                {...register("oldPassword")}
+                                type="password"
+                                helperText={errorText.oldPassword ? "Old password required" : ""}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={3} md={3}>
+                            <TextField
+                                error={errorText.newPassword}
+                                fullWidth
+                                id="outlined-error-helper-text"
+                                label="New password"
+                                type="password"
+                                name={"newPassword"}
+                                {...register("newPassword")}
+                                helperText={errorText.newPassword ? "New password required" : ""}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={3} md={3}>
+                            <TextField
+                                error={errorText.confirmPassword}
+                                fullWidth
+                                id="outlined-error-helper-text"
+                                label="Confirm password"
+                                name={"confirmPassword"}
+                                {...register("confirmPassword")}
+                                type="password"
+                                helperText={errorText.confirmPassword ? "Confirm password required" : ""}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={3} md={3}>
+                            <Button
+                                type={"submit"}
+                                sx={{marginTop: "10px"}}
+                                variant="contained"
+                                startIcon={<SaveIcon/>}
+                            >change</Button>
+                        </Grid>
+                    </Grid>
+                </form>
             </Box>
 
         </Box>
-        // <div className={"containerr"}>
-        //     {/*<Container maxWidth="sm" sx={{width: "100%", height: "100vh", display: "flex", alignItems: "center"}}>*/}
-        //     {/*    <Box sx={{bgcolor: '#cfe8fc', height: "60%", width: "900px"}}>*/}
-        //
-        //     {/*        <h1>Hello</h1>*/}
-        //
-        //
-        //     {/*        /!*<div>*!/*/}
-        //     {/*        /!*    *!/*/}
-        //
-        //     {/*        /!*    <div className={"div-img"}>*!/*/}
-        //     {/*        /!*        {*!/*/}
-        //     {/*        /!*            user?.attachment === null ?*!/*/}
-        //     {/*        /!*                <label className={"my-label"}>*!/*/}
-        //     {/*        /!*                    <img src={userImg} alt="user"/>*!/*/}
-        //     {/*        /!*                    <input accept={"image/*"} style={{display: "none"}}*!/*/}
-        //     {/*        /!*                           onChange={e => handleFile(e)}*!/*/}
-        //     {/*        /!*                           type="file"/>*!/*/}
-        //     {/*        /!*                </label>*!/*/}
-        //     {/*        /!*                :*!/*/}
-        //     {/*        /!*                <label className={"my-label"}>*!/*/}
-        //     {/*        /!*                    <img src={"http://localhost:81/pi/img/" + user?.attachment?.id} alt="ua"/>*!/*/}
-        //     {/*        /!*                    <input accept={"image/*"} style={{display: "none"}}*!/*/}
-        //     {/*        /!*                           onChange={e => handleFile(e)}*!/*/}
-        //     {/*        /!*                           type="file"/>*!/*/}
-        //     {/*        /!*                </label>*!/*/}
-        //     {/*        /!*        }*!/*/}
-        //     {/*        /!*    </div>*!/*/}
-        //
-        //     {/*        /!*    <div className={"card"}>*!/*/}
-        //     {/*        /!*        <form onSubmit={handleSubmit(submit)}>*!/*/}
-        //     {/*        /!*            <div className={"card-body"}>*!/*/}
-        //     {/*        /!*                <div className={"form-floating"}>*!/*/}
-        //
-        //     {/*        /!*                    <input id={"floatingInputValue"}*!/*/}
-        //     {/*        /!*                           value={user ? user.username : ""}*!/*/}
-        //     {/*        /!*                           disabled={true}*!/*/}
-        //     {/*        /!*                           type="text"*!/*/}
-        //     {/*        /!*                           className={"form-control my"}/>*!/*/}
-        //     {/*        /!*                    <label htmlFor="floatingInputValue" className={"mb-2"}><b>username</b></label>*!/*/}
-        //     {/*        /!*                </div>*!/*/}
-        //     {/*        /!*                <div className={"my-4 form-floating"}>*!/*/}
-        //
-        //     {/*        /!*                    <input id={"firstname"} value={user ? user.firstName : ""}*!/*/}
-        //     {/*        /!*                           onChange={(e) => handleInput(e, "firstName")}*!/*/}
-        //     {/*        /!*                           type="text" className={"form-control"}/>*!/*/}
-        //     {/*        /!*                    <label htmlFor="firstname" className={"mb-2"}><b>firstname</b></label>*!/*/}
-        //     {/*        /!*                </div>*!/*/}
-        //     {/*        /!*                <div className={"my-4 form-floating"}>*!/*/}
-        //
-        //
-        //     {/*        /!*                    <input id={"lastname"} value={user ? user.lastName : ""}*!/*/}
-        //     {/*        /!*                           onChange={(e) => handleInput(e, "lastName")}*!/*/}
-        //     {/*        /!*                           type="text" className={"form-control  "}/>*!/*/}
-        //     {/*        /!*                    <label htmlFor="lastname" className={"mb-2"}><b>lastname</b></label>*!/*/}
-        //     {/*        /!*                </div>*!/*/}
-        //     {/*        /!*                <div className={"my-4 form-floating"}>*!/*/}
-        //
-        //
-        //     {/*        /!*                    <input id={"age"} value={user ? user.age : ""} onChange={(e) => handleInput(e, "age")}*!/*/}
-        //     {/*        /!*                           type="number"*!/*/}
-        //     {/*        /!*                           className={"form-control"}/>*!/*/}
-        //     {/*        /!*                    <label htmlFor="age" className={"mb-2"}><b>Age</b></label>*!/*/}
-        //     {/*        /!*                </div>*!/*/}
-        //
-        //     {/*        /!*                <div className={"my-4 form-floating"}>*!/*/}
-        //
-        //     {/*        /!*                    <input id={"phone"} value={user ? user.phoneNumber : ""}*!/*/}
-        //     {/*        /!*                           onChange={(e) => handleInput(e, "phoneNumber")}*!/*/}
-        //     {/*        /!*                           type="text" className={"form-control  "}/>*!/*/}
-        //     {/*        /!*                    <label htmlFor="phone" className={"mb-2"}><b>PhoneNumber</b></label>*!/*/}
-        //
-        //     {/*        /!*                </div>*!/*/}
-        //
-        //     {/*        /!*                <div className={"my-4 form-floating"}>*!/*/}
-        //
-        //     {/*        /!*                    <input id={"phonenumber"} value={user ? user.fatherPhoneNumber : ""} disabled={true}*!/*/}
-        //     {/*        /!*                           type="text"*!/*/}
-        //     {/*        /!*                           className={"form-control "}/>*!/*/}
-        //     {/*        /!*                    <label htmlFor="phonenumber" className={"mb-2"}><b>FatherPhoneNumber</b></label>*!/*/}
-        //     {/*        /!*                </div>*!/*/}
-        //
-        //
-        //     {/*        /!*            </div>*!/*/}
-        //     {/*        /!*            <div className={"card-footer"}>*!/*/}
-        //     {/*        /!*                <button className={"btn btn-primary float-end "}>save</button>*!/*/}
-        //     {/*        /!*            </div>*!/*/}
-        //     {/*        /!*        </form>*!/*/}
-        //
-        //
-        //     {/*        /!*        <div className={"section-2 my-5 border p-4"}>*!/*/}
-        //     {/*        /!*            <form onSubmit={handleSubmit(forPassword)}>*!/*/}
-        //     {/*        /!*                <div className={"my-4 form-floating"}>*!/*/}
-        //     {/*        /!*                    <input id={"oldPassword"} {...register("oldPassword")} type={"password"}*!/*/}
-        //     {/*        /!*                           className={"form-control "} placeholder={"oldPassword"}/>*!/*/}
-        //
-        //     {/*        /!*                    <label htmlFor="oldPassword" className={"mb-2"}><b>oldPassword...</b></label>*!/*/}
-        //     {/*        /!*                </div>*!/*/}
-        //     {/*        /!*                <div className={"my-4 form-floating"}>*!/*/}
-        //
-        //     {/*        /!*                    <input id={"newPassword"} {...register("newPassword")} type={"password"}*!/*/}
-        //     {/*        /!*                           className={"form-control "} placeholder={"newPassword"}/>*!/*/}
-        //     {/*        /!*                    <label htmlFor={"newPassword"} className={"mb-2"}><b>NewPassword...</b></label>*!/*/}
-        //     {/*        /!*                </div>*!/*/}
-        //     {/*        /!*                <div className={"my-4 form-floating"}>*!/*/}
-        //
-        //     {/*        /!*                    <input id={"confirmPassword"} {...register("confirmPassword")} type={"password"}*!/*/}
-        //     {/*        /!*                           className={"form-control "} placeholder={"confirmPassword"}/>*!/*/}
-        //     {/*        /!*                    <label htmlFor={"confirmPassword"} className={"mb-2"}><b>Again Password</b></label>*!/*/}
-        //
-        //     {/*        /!*                </div>*!/*/}
-        //     {/*        /!*                <div>*!/*/}
-        //     {/*        /!*                    <button className={"btn btn-primary float-end"}>save</button>*!/*/}
-        //     {/*        /!*                </div>*!/*/}
-        //     {/*        /!*            </form>*!/*/}
-        //
-        //     {/*        /!*        </div>*!/*/}
-        //     {/*        /!*    </div>*!/*/}
-        //     {/*        /!*</div>*!/*/}
-        //     {/*    </Box>*/}
-        //     {/*</Container>*/}
-        //
-
-        // {/*</div>*/
-        // }
     );
 }
 

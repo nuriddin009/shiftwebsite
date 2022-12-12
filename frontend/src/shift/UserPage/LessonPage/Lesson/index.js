@@ -5,7 +5,7 @@ import "./index.scss"
 import instance from "../../../utils/instance";
 
 function Index() {
-    const {username} = useParams()
+    // const {username} = useParams()
     const {pathname} = useLocation();
     const [lesson, setLesson] = useState([]);
     const [path, setPath] = useState("");
@@ -15,7 +15,7 @@ function Index() {
     useEffect(() => {
         setPath("")
 
-        instance.get("/UserLesson/lesson/" + id + "/" + username).then(res => {
+        instance.get("/UserLesson/lesson/" + id).then(res => {
                 setLesson(res.data)
             })
 

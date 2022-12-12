@@ -28,6 +28,10 @@ import TableCell from "@mui/material/TableCell";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import PropTypes from "prop-types";
+import Autocomplete, {createFilterOptions} from "@mui/material/Autocomplete";
+import Stack from "@mui/material/Stack";
+import instance from "../../../../shift/utils/instance";
+
 
 function createData(num, date_year, amount) {
     return {
@@ -97,12 +101,12 @@ function Row(props) {
                                             <TableCell component="th" scope="row">
                                                 {historyRow.date}
                                             </TableCell>
-                                            <TableCell >{historyRow.amount}</TableCell>
-                                            <TableCell >
-                                               Cash
+                                            <TableCell>{historyRow.amount}</TableCell>
+                                            <TableCell>
+                                                Cash
                                             </TableCell>
-                                            <TableCell >
-                                               Bahodirov B
+                                            <TableCell>
+                                                Bahodirov B
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -138,20 +142,32 @@ const rows = [
 
 ];
 
+const filter = createFilterOptions();
 
-function IncomeTable() {
+
+function ExpenseTable() {
     const params = useParams()
     const [open, setOpen] = useState(false)
     const [age, setAge] = React.useState('');
     const [startDate, setStartDate] = useState(1659312000000);
     const [value, setValue] = React.useState("");
     const [positionTypes, setPositionTypes] = React.useState([]);
+    const [currentUser, setCurrentUser] = React.useState(null);
+    const [inputValue, setInputValue] = React.useState('');
+    const [users, setUsers] = useState([])
+    const [options, setOptions] = useState([])
+    const [incomeValue, setIncomeValue] = React.useState("");
+    const [description, setDescription] = React.useState("");
+    const [amount, setAmount] = React.useState("");
+    const [payType, setPayType] = useState("")
+    const [incomeType, setIncomeType] = useState("")
+    const [today, setToday] = React.useState(false);
 
     const handleChange = (event) => {
         setAge(event.target.value);
     };
     useEffect(() => {
-
+        getPayTypes();
     }, [])
 
 
@@ -174,6 +190,60 @@ function IncomeTable() {
         }
     ]
 
+    function toggleModal() {
+        setOpen(!open)
+    }
+
+    function getUsers(inputValue) {
+        instance.get("/user/search?input=" + inputValue).then(({data}) => {
+            let a = data.content.map(item => ({value: item.id, label: item.firstName + " " + item.lastName}))
+            setUsers(a)
+        })
+    }
+
+    function getPayTypes() {
+        instance.get("/pay_type").then(({data}) => {
+            let a = data.data.map(item => ({label: item?.type, value: item?.id,}));
+            setOptions(a)
+        })
+    }
+
+
+
+    function postPayType(label) {
+        instance.post("/pay_type?type=" + label,).then(({data}) => {
+            getPayTypes()
+            setValue({label: data.data.type, value: data?.data?.id})
+        })
+    }
+
+
+
+
+
+    function addNewIncome() {
+        if (currentUser && amount && incomeValue && value) {
+            let data = {
+                amount,
+                payTypeId: value.value,
+                incomeTypeId: incomeValue.value,
+                userId: currentUser.value,
+                description
+            }
+            toggleModal()
+            instance.post("/income", data).then(res => {
+                setCurrentUser(null)
+                setAmount("")
+                setValue("")
+                setIncomeValue("")
+                // getIncomes(payType, incomeType, today)
+            })
+        } else {
+
+        }
+    }
+
+
 
     return (
         <div style={{marginTop: '30px'}}>
@@ -194,7 +264,11 @@ function IncomeTable() {
                     />
                 </div>
 
-                <Button sx={{mr: 4}} variant={"contained"}>+ Add New</Button>
+                <Button
+                    onClick={toggleModal}
+                    sx={{mr: 4}}
+                    variant={"contained"}
+                >+ Add New</Button>
 
             </div>
             <div className={myStyles.align_right}>
@@ -223,7 +297,7 @@ function IncomeTable() {
             </div>
 
             <Paper sx={{width: '100%', overflow: 'hidden'}}>
-                <TableContainer component={Paper} sx={{borderRadius: 4,mb:4}}>
+                <TableContainer component={Paper} sx={{borderRadius: 4, mb: 4}}>
                     <Table stickyHeader sx={{minWidth: 600, px: 3}} aria-label="customized table">
                         <TableHead>
                             <TableRow>
@@ -261,30 +335,32 @@ function IncomeTable() {
                 {/*)}*/}
 
             </Paper>
-            <Dialog open={false}>
+
+            {/*Modal*/}
+
+            <Dialog open={open} onClose={toggleModal}>
                 <div className={myStyles.modalSt} style={{padding: "1rem"}}>
                     <div className={myStyles.modalSt2}>
                         <div className={myStyles.flex_}>
                             <Grid sx={{width: "50%"}}>
+
                                 <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
                                     <Box sx={{minWidth: 220}}>
-                                        <InputLabel style={{background: "white"}}
-                                                    id="demo-simple-select-label">User</InputLabel>
-                                        <Select
-                                            sx={{minWidth: 200, width: "100%"}}
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={age}
-                                            label="Age"
-                                            onChange={handleChange}
-                                        >
-                                            <MenuItem value="">
-                                                <em>None</em>
-                                            </MenuItem>
-                                            <MenuItem value={10}>Ten</MenuItem>
-                                            <MenuItem value={20}>Twenty</MenuItem>
-                                            <MenuItem value={30}>Thirty</MenuItem>
-                                        </Select>
+                                        <Autocomplete
+                                            value={currentUser}
+                                            onChange={(event, newValue) => {
+                                                setCurrentUser(newValue);
+                                            }}
+                                            inputValue={inputValue}
+                                            onInputChange={(event, newInputValue) => {
+                                                setInputValue(newInputValue);
+                                                getUsers(newInputValue)
+                                            }}
+                                            id="controllable-states-demo"
+                                            options={users}
+                                            sx={{width: "100%"}}
+                                            renderInput={(params) => <TextField {...params} label="Users"/>}
+                                        />
                                     </Box>
                                 </FormControl>
 
@@ -293,71 +369,107 @@ function IncomeTable() {
                                 <TextField style={{height: 30}} sx={{m: 1, height: 30, width: "95%"}}
                                            id="outlined-basic"
                                            label="Amount"
+                                           value={amount}
+                                           onChange={(e) => setAmount(e.target.value)}
                                            variant="outlined" type={'number'}/>
                             </Grid>
 
                         </div>
                         <div className={myStyles.flex_}>
-                            <Grid sx={{width: "50%"}}>
-                                <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
+
+                            <Grid sx={{width: "100%"}}>
+                                <FormControl sx={{m: 1, minWidth: 200, width: "97.5%"}}>
                                     <Box sx={{minWidth: 220}}>
-                                        <InputLabel style={{background: "white"}}
-                                                    id="demo-simple-select-label">PayType</InputLabel>
-                                        <Select
+                                        <Autocomplete
                                             sx={{minWidth: 200, width: "100%"}}
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={age}
-                                            label="Age"
-                                            onChange={handleChange}
-                                        >
-                                            <MenuItem value="">
-                                                <em>None</em>
-                                            </MenuItem>
-                                            <MenuItem value={10}>Ten</MenuItem>
-                                            <MenuItem value={20}>Twenty</MenuItem>
-                                            <MenuItem value={30}>Thirty</MenuItem>
-                                        </Select>
+                                            value={value}
+                                            onChange={(event, newValue) => {
+                                                if (typeof newValue === 'string') {
+                                                    postPayType(newValue)
+                                                } else if (newValue?.label.startsWith('Add')) {
+                                                    postPayType(newValue?.inputValue)
+                                                } else {
+                                                    setValue(newValue);
+                                                }
+                                            }}
+                                            filterOptions={(options, params) => {
+                                                const filtered = filter(options, params);
+
+                                                const {inputValue} = params;
+                                                // Suggest the creation of a new value
+                                                const isExisting = options.some((option) => inputValue === option.label);
+                                                if (inputValue !== '' && !isExisting) {
+                                                    filtered.push({
+                                                        inputValue,
+                                                        label: `Add "${inputValue}"`,
+                                                    });
+                                                }
+
+                                                return filtered;
+                                            }}
+                                            selectOnFocus
+                                            clearOnBlur
+                                            handleHomeEndKeys
+                                            options={options}
+                                            getOptionLabel={(option) => {
+                                                // Value selected with enter, right from the input
+                                                if (typeof option === 'string') {
+                                                    return option;
+                                                }
+                                                // Add "xxx" option created dynamically
+                                                if (option.inputValue) {
+                                                    return option.inputValue;
+                                                }
+                                                // Regular option
+                                                return option.label;
+                                            }}
+                                            renderOption={(props, option) => <li {...props}>{option.label}</li>}
+                                            freeSolo
+                                            renderInput={(params) => (
+                                                <TextField {...params} label="Pay Type"/>
+                                            )}
+                                        />
                                     </Box>
                                 </FormControl>
                             </Grid>
-                            <Grid sx={{width: "50%"}}>
-                                <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
-                                    <Box sx={{minWidth: 220}}>
-                                        <InputLabel style={{background: "white"}}
-                                                    id="demo-simple-select-label">IncomeType</InputLabel>
-                                        <Select
-                                            sx={{minWidth: 200, width: "100%"}}
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={age}
-                                            label="Age"
-                                            onChange={handleChange}
-                                        >
-                                            <MenuItem value="">
-                                                <em>None</em>
-                                            </MenuItem>
-                                            <MenuItem value={10}>Ten</MenuItem>
-                                            <MenuItem value={20}>Twenty</MenuItem>
-                                            <MenuItem value={30}>Thirty</MenuItem>
-                                        </Select>
-                                    </Box>
-                                </FormControl>
-                            </Grid>
+
+
                         </div>
                         <TextField
                             multiline
                             rows={4}
-                            sx={{height: 40, m: 1, width: "98%"}}
+                            sx={{height: 40, m: 1, width: "97.5%"}}
                             id="outlined-multiline-static"
                             label="Description"
                             variant="outlined"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
                         />
                     </div>
                 </div>
+                <Stack
+                    direction={"row"}
+                    spacing={2}
+                    sx={{
+                        position: "absolute",
+                        right: "20px",
+                        bottom: "20px"
+                    }}
+                >
+                    <Button
+                        onClick={addNewIncome}
+                        variant={"outlined"}
+                        color={"success"}
+                    >save</Button>
+                    <Button
+                        onClick={toggleModal}
+                        variant={"outlined"}
+                        color={"error"}
+                    >cancel</Button>
+                </Stack>
             </Dialog>
         </div>
     )
 }
 
-export default IncomeTable
+export default ExpenseTable

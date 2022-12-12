@@ -3,6 +3,7 @@ package com.example.backend.controller.studyCenter;
 import com.example.backend.projection.TimeTableDataUserProjection;
 import com.example.backend.projection.UserLessonProjection;
 import com.example.backend.service.UserLessonService;
+import com.example.backend.service.UserSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +17,11 @@ import java.util.UUID;
 public class UserLessonController {
 
     private final UserLessonService service;
+    private final UserSession userSession;
 
-    @GetMapping("/{username}")
-    public List<TimeTableDataUserProjection> getUserLesson(@PathVariable String username) {
-        return service.getUserLesson(username);
+    @GetMapping()
+    public List<TimeTableDataUserProjection> getUserLesson() {
+        return service.getUserLesson(userSession.getUsername());
     }
 
 
@@ -34,9 +36,9 @@ public class UserLessonController {
         return service.getLessonsForMentor(userId);
     }
 
-    @GetMapping("/lesson/{id}/{user}")
-    public List<UserLessonProjection> getUserLesson(@PathVariable Integer id, @PathVariable String user) {
-       return service.getUserLesson(id,user);
+    @GetMapping("/lesson/{id}")
+    public List<UserLessonProjection> getUserLesson(@PathVariable Integer id) {
+       return service.getUserLesson(id, userSession.getUsername());
     }
 
     @GetMapping("all/{userid}/{timetableid}")

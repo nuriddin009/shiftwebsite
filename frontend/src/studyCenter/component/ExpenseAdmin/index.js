@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {Button, ButtonGroup, Card, Grid, Stack, styled, TextField, Typography} from "@mui/material";
-import {useNavigate, useParams} from "react-router-dom";
-import IncomeTable from "./components/IncomeTable";
-
+import React from 'react';
+import {Button, Card, Grid, styled, Typography} from "@mui/material";
+import {useNavigate} from "react-router-dom";
+import ExpenseTable from "./components/ExpenseTable";
 
 
 const MuiStyledButton = styled(Button, {
@@ -36,20 +35,19 @@ const StyledButton = (props) => {
 
 
 function Index(props) {
-   const {tab}= useParams()
+   // const {tab}= useParams()
     const navigate= useNavigate()
 
 
 
     return (
-        <div style={{width:"100%",padding:"0px 5px 0px 5px"}}>
+        <div style={{width:"100%",padding:"60px 5px 0px 5px"}}>
         <Card sx elevation={0}>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Typography>Expense</Typography>
-                    <IncomeTable/>
+                    <ExpenseTable/>
                 </Grid>
-
             </Grid>
         </Card>
         </div>

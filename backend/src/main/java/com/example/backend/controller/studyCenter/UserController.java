@@ -6,6 +6,7 @@ import com.example.backend.entity.User;
 import com.example.backend.projection.CustomUsers;
 import com.example.backend.projection.UserSearchProjection;
 import com.example.backend.service.UserService;
+import com.example.backend.service.UserSession;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final UserSession userSession;
 
     @DeleteMapping("/unlockUsers")
     public void unlockUser() {
@@ -45,9 +47,9 @@ public class UserController {
     }
 
 
-    @GetMapping("{username}")
-    public ApiResponse getOneUser(@PathVariable String username) {
-        return userService.oneUsername(username);
+    @GetMapping("/myData")
+    public ApiResponse getOneUser() {
+        return userService.oneUsername(userSession.getUsername());
     }
 
     @GetMapping("/me/{userId}")
@@ -136,9 +138,9 @@ public class UserController {
     }
 
     @SneakyThrows
-    @PutMapping("/addphoto/{username}")
-    public ApiResponse addPhotos(@PathVariable String username, @RequestParam MultipartFile file) {
-        return userService.addPhotos1(username, file);
+    @PutMapping("/addPhoto")
+    public ApiResponse addPhotos(@RequestParam MultipartFile file) {
+        return userService.addPhotos1(userSession.getUsername(), file);
     }
 
     @SneakyThrows
@@ -147,9 +149,9 @@ public class UserController {
         userService.getAvatar(userId, response);
     }
 
-    @PutMapping("/edit_password/{username}")
-    public HttpEntity<ApiResponse> editPassword(@PathVariable String username, @RequestBody @Valid PasswordDetails passwordDetails) {
-        return ResponseEntity.ok(userService.editPassword(username, passwordDetails));
+    @PutMapping("/edit_password")
+    public HttpEntity<ApiResponse> editPassword(@RequestBody @Valid PasswordDetails passwordDetails) {
+        return ResponseEntity.ok(userService.editPassword(userSession.getUsername(), passwordDetails));
     }
 
     @PutMapping("/reset-password/{username}")

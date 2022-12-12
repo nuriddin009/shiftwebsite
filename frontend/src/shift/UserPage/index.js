@@ -27,7 +27,8 @@ import userImg from "../file/image/imageShift/user.png";
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Button from '@mui/material/Button';
 
-const drawerWidth = 300;
+
+const drawerWidth = window.innerWidth > 660 ? 300 : 200;
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -101,7 +102,6 @@ const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})
 );
 
 function Index(props) {
-    const {username} = useParams()
     const navigate = useNavigate()
     let {pathname} = useLocation()
     const [lessons, setLessons] = useState([])
@@ -120,15 +120,21 @@ function Index(props) {
     };
 
     useEffect(() => {
-
         document.title = "User page"
-
-        instance.get("/UserLesson/" + username).then(res => {
+        instance.get("/UserLesson").then(res => {
             setLessons(res.data)
         })
         getMe()
     }, [pathname])
 
+
+    function colorFunction(path) {
+        return pathname === "/userPage/" + path ?
+            {
+                background: "#fff",
+                color: "#023247"
+            } : {background: "#023247", color: "#fff"}
+    }
 
     //Mobile version
 
@@ -160,10 +166,93 @@ function Index(props) {
                 color: "white"
             }}
             role="presentation"
-            onClick={toggleDrawer(anchor, false)}
-            onKeyDown={toggleDrawer(anchor, false)}
         >
+            <DrawerHeader sx={{padding: "1rem", boxSizing: "border-box"}}>
+                <Link to={"/"}>
+                    <Image
+                        style={{transform: "scale(0.6)"}}
+                        src={logo}
+                        height={50}
+                        width={200}
+                        duration={3000}
+                        showLoading={false}
+                        errorIcon={true}
+                        distance="150px"
+                        bgColor="inherit"
+                    />
+                </Link>
 
+                <IconButton sx={{color: "white"}} onClick={toggleDrawer(anchor, false)}>
+                    {theme.direction === 'rtl' ? <ChevronRightIcon/> : <ChevronLeftIcon/>}
+                </IconButton>
+            </DrawerHeader>
+
+            <Divider/>
+
+            <List>
+                <Link style={{textDecoration: "none"}} to={`/userPage/user`}>
+                    <ListItem
+                        onClick={toggleDrawer(anchor, false)}
+                        disablePadding sx={{display: 'block', ...colorFunction("user")}}>
+                        <ListItemButton
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: open ? 'initial' : 'center',
+                                alignItems: 'center',
+                                gap: '1rem',
+                                px: 2.5,
+                            }}
+                        >
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 0,
+                                    mr: open ? 3 : 'auto',
+                                    justifyContent: 'center'
+                                }}
+                                style={colorFunction("user")}
+                            >
+                                <PersonOutlineSharpIcon sx={{transform: "scale(1.5)"}}/>
+                            </ListItemIcon>
+                            <ListItemText
+                                style={{textDecoration: "none", ...colorFunction("user")}}
+                                primary={"Profile"}/>
+                        </ListItemButton>
+                    </ListItem>
+                </Link>
+                {
+                    lessons.length !== 0 ? <Link style={{textDecoration: "none"}} to={`/userPage/lessons`}>
+                            <ListItem
+                                onClick={toggleDrawer(anchor, false)}
+                                disablePadding sx={{display: 'block', ...colorFunction("lessons")}}>
+                                <ListItemButton
+                                    sx={{
+                                        minHeight: 48,
+                                        justifyContent: open ? 'initial' : 'center',
+                                        alignItems: 'center',
+                                        gap: '1rem',
+                                        px: 2.5,
+                                    }}
+                                >
+                                    <ListItemIcon
+                                        sx={{
+                                            minWidth: 0,
+                                            mr: open ? 3 : 'auto',
+                                            justifyContent: 'center'
+                                        }}
+                                        style={colorFunction("lessons")}
+                                    >
+                                        <OndemandVideoSharpIcon sx={{transform: "scale(1.5)"}}/>
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        style={{textDecoration: "none", ...colorFunction("lessons")}}
+                                        primary={"Lessons"}
+                                    />
+                                </ListItemButton>
+                            </ListItem>
+                        </Link>
+                        : ""
+                }
+            </List>
         </Box>
     );
 
@@ -187,23 +276,15 @@ function Index(props) {
     }
 
 
-    let activeStyle = {
-        backgroundColor: "black",
-        color: "#00C3FF"
-    };
-    let nowActive = {
-        color: "#ffffff",
-    };
+    let width = window.innerWidth > 660
 
-    let backColor = pathname.endsWith("/user") ? "#fff" : ""
-    let colorA = pathname.endsWith("/user") ? "#023247" : "#fff"
 
     return (
         <div className={"_userPage"}>
 
 
             {
-                window.innerWidth > 600 ? <Box sx={{display: 'flex'}}>
+                window.innerWidth > 660 ? <Box sx={{display: 'flex'}}>
                         <CssBaseline/>
                         <AppBar sx={{background: "#023247", color: "white"}} open={open}>
                             <Toolbar>
@@ -250,31 +331,9 @@ function Index(props) {
 
                             <Divider/>
 
-                            {/*<TreeView*/}
-                            {/*    aria-label="multi-select"*/}
-                            {/*    defaultCollapseIcon={<ExpandMoreIcon />}*/}
-                            {/*    defaultExpandIcon={<ChevronRightIcon />}*/}
-                            {/*    multiSelect*/}
-                            {/*    sx={{ height: 216, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}*/}
-                            {/*>*/}
-                            {/*    /!*<TreeItem nodeId="1" label="Applications">*!/*/}
-                            {/*    /!*    <TreeItem nodeId="2" label="Calendar" />*!/*/}
-                            {/*    /!*    <TreeItem nodeId="3" label="Chrome" />*!/*/}
-                            {/*    /!*    <TreeItem nodeId="4" label="Webstorm" />*!/*/}
-                            {/*    /!*</TreeItem>*!/*/}
-                            {/*    /!*<TreeItem nodeId="5" label="Documents">*!/*/}
-                            {/*    /!*    <TreeItem nodeId="6" label="MUI">*!/*/}
-                            {/*    /!*        <TreeItem nodeId="7" label="src">*!/*/}
-                            {/*    /!*            <TreeItem nodeId="8" label="index.js" />*!/*/}
-                            {/*    /!*            <TreeItem nodeId="9" label="tree-view.js" />*!/*/}
-                            {/*    /!*        </TreeItem>*!/*/}
-                            {/*    /!*    </TreeItem>*!/*/}
-                            {/*    /!*</TreeItem>*!/*/}
-                            {/*</TreeView>*/}
-
                             <List>
-                                <Link style={{textDecoration: "none"}} to={`/userPage/${username}/user`}>
-                                    <ListItem disablePadding sx={{display: 'block', background: backColor, color: colorA}}>
+                                <Link style={{textDecoration: "none"}} to={`/userPage/user`}>
+                                    <ListItem disablePadding sx={{display: 'block', ...colorFunction("user")}}>
                                         <ListItemButton
                                             sx={{
                                                 minHeight: 48,
@@ -287,21 +346,20 @@ function Index(props) {
                                                     minWidth: 0,
                                                     mr: open ? 3 : 'auto',
                                                     justifyContent: 'center',
-                                                    color: colorA
                                                 }}
+                                                style={colorFunction("user")}
                                             >
                                                 <PersonOutlineSharpIcon sx={{transform: "scale(1.5)"}}/>
                                             </ListItemIcon>
                                             <ListItemText
-                                                style={{textDecoration: "none", color: colorA}}
-                                                sx={{fontWeight:"bolder"}}
+                                                style={{textDecoration: "none", ...colorFunction("user")}}
                                                 primary={"Profile"} sx={{opacity: open ? 1 : 0}}/>
                                         </ListItemButton>
                                     </ListItem>
                                 </Link>
-                                <Link style={{textDecoration: "none"}} to={`/userPage/${username}/lessons`}>
+                                <Link style={{textDecoration: "none"}} to={`/userPage/lessons`}>
                                     <ListItem
-                                        style={{background: pathname === `userPage/${username}/user` ? "white" : ""}}
+                                        style={{background: pathname === `userPage/user` ? "white" : ""}}
                                         disablePadding sx={{display: 'block'}}>
                                         <ListItemButton
                                             sx={{
@@ -315,13 +373,13 @@ function Index(props) {
                                                     minWidth: 0,
                                                     mr: open ? 3 : 'auto',
                                                     justifyContent: 'center',
-                                                    color: "white"
                                                 }}
+                                                style={colorFunction("lesson")}
                                             >
                                                 <OndemandVideoSharpIcon sx={{transform: "scale(1.5)"}}/>
                                             </ListItemIcon>
                                             <ListItemText
-                                                style={{textDecoration: "none", color: "white"}}
+                                                style={{textDecoration: "none", ...colorFunction("lesson")}}
                                                 primary={"Lessons"} sx={{opacity: open ? 1 : 0}}
                                             />
                                         </ListItemButton>
@@ -329,13 +387,18 @@ function Index(props) {
                                 </Link>
                             </List>
                         </Drawer>
-                        <Box component="main" sx={{flexGrow: 1, p: 3, background: "#F5F2F5"}}>
+                        <Box component="main"
+                             sx={{
+                                 flexGrow: 1, p: 3, background: "#F5F2F5"
+                             }}>
                             <Outlet/>
                         </Box>
                     </Box>
                     :
                     <React.Fragment>
-                        <Button onClick={toggleDrawer("left", true)}>"left"</Button>
+                        <Button sx={{margin: width ? "20px" : "10px"}} onClick={toggleDrawer("left", true)}>
+                            <MenuIcon sx={{transform: `scale(${width ? 2 : 1.3})`}}/>
+                        </Button>
                         <SwipeableDrawer
                             anchor={"left"}
                             open={state["left"]}
@@ -344,56 +407,12 @@ function Index(props) {
                         >
                             {list("left")}
                         </SwipeableDrawer>
+                        <Box component="main"
+                             sx={{flexGrow: 1, p: 3, background: "#F5F2F5"}}>
+                            <Outlet/>
+                        </Box>
                     </React.Fragment>
             }
-
-
-            {/*<div className={`navbarAdmin ${bar ? "dis_bar" : ""}`}>*/}
-            {/*    <i*/}
-            {/*        onClick={() => setBar(p => !p)}*/}
-            {/*        className="fa-solid fa-xmark close_bar"*/}
-            {/*    />*/}
-            {/*    <a href="/">*/}
-            {/*        <img className={"mx-4"} src={logo} alt="logo"/>*/}
-            {/*    </a>*/}
-            {/*    <Nav vertical>*/}
-            {/*        <NavItem>*/}
-            {/*            <NavLink to={"/userPage/" + username + "/user"}*/}
-            {/*                     style={({isActive}) => isActive ? activeStyle : nowActive}><h4*/}
-            {/*                className={"mt-5"}>Profil</h4></NavLink>*/}
-            {/*        </NavItem>*/}
-            {/*        {*/}
-            {/*            isAdmin ? <NavItem>*/}
-            {/*                    <NavLink to={"/selectAdmin"}*/}
-            {/*                             style={({isActive}) => isActive ? activeStyle : nowActive}><h4*/}
-            {/*                        className={""}>Dashboard</h4></NavLink>*/}
-            {/*                </NavItem>*/}
-            {/*                : ""*/}
-            {/*        }*/}
-            {/*        {*/}
-            {/*            lessons.length !== 0 ?*/}
-
-            {/*                <NavItem>*/}
-            {/*                    <NavLink to={"/userPage/" + username + "/lessons"}*/}
-            {/*                             style={({isActive}) => isActive ? activeStyle : nowActive}>*/}
-            {/*                        <h4>Lessons</h4>*/}
-            {/*                    </NavLink>*/}
-            {/*                </NavItem>*/}
-            {/*                : ""*/}
-            {/*        }*/}
-
-
-            {/*    </Nav>*/}
-            {/*    <button className={"btn btn-primary"} onClick={logOut}>Log-out</button>*/}
-
-            {/*</div>*/}
-            {/*<div className="content">*/}
-            {/*    <i*/}
-            {/*        onClick={() => setBar(p => !p)}*/}
-            {/*        className="fa-solid fa-bars bar_menu"*/}
-            {/*    />*/}
-            {/*    <Outlet/>*/}
-            {/*</div>*/}
         </div>
     );
 }

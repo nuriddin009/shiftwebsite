@@ -139,7 +139,7 @@ function App() {
                     <Route path={"/selectAdmin/rooms"} element={<Room/>}/>
                     <Route path={"/selectAdmin/delete/users"} element={<DeleteUserAdmin/>}/>
                     <Route path={"/selectAdmin/income/:tab"} element={<IncomeAdmin/>} />
-                    <Route path={"/selectAdmin/expense/:tab"} element={<ExpenseAdmin    />} />
+                    <Route path={"/selectAdmin/expense"} element={<ExpenseAdmin/>} />
                 </Route>
                 <Route path={"/admin"} element={<Admin/>}>
                     <Route path={"/admin/title"} element={<AdminTitle title={shift?.title} getShift={getShift}/>}/>
@@ -156,11 +156,11 @@ function App() {
                                                   getShift={getShift}/>}/>
                 </Route>
 
-                <Route path={"/userPage/:username"} element={<UserPage/>}>
-                    <Route path={"/userPage/:username/user"} element={<User/>}/>
+                <Route path={"/userPage"} element={<UserPage/>}>
+                    <Route path={"/userPage/user"} element={<User/>}/>
                 </Route>
-                <Route path={"/userPage/:username/lessons"} element={<LessonPage/>}>
-                    <Route path={"/userPage/:username/lessons/:id"} element={<Lesson/>}/>
+                <Route path={"/userPage/lessons"} element={<LessonPage/>}>
+                    <Route path={"/userPage/lessons/:id"} element={<Lesson/>}/>
                 </Route>
                 <Route
                     path={"/checkCertificateQr/:id"}

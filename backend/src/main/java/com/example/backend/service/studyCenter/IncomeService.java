@@ -10,6 +10,8 @@ import com.example.backend.repository.PayTypeRepository;
 import com.example.backend.repository.UserRepository;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,5 +45,10 @@ public class IncomeService {
         incomeRepository.save(income);
         userRepository.save(user);
         return new ApiResponse(true, "Income is added");
+    }
+
+    public ApiResponse getIncomes(String incomeType, String payType, Boolean today, Integer page) {
+        Page<Income> all = incomeRepository.findAll(incomeType, payType,  PageRequest.of(page, 2));
+        return new ApiResponse(true, all);
     }
 }

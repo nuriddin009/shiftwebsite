@@ -3,7 +3,6 @@ import React, {useEffect, useState} from 'react';
 import "./index.scss"
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import {useLocation} from "react-router-dom";
-import request from "../../utils/request";
 import {toast} from "react-toastify";
 import AddWhyUsComponent from "../whyUs/addWhyUsComponent";
 import {selectLAngWhyUs} from "../../utils/selectLang";
@@ -16,7 +15,7 @@ import 'swiper/scss/navigation';
 import 'swiper/scss/pagination';
 import "swiper/css/bundle";
 import "swiper/css/zoom";
-import {A11y, Autoplay, Navigation, EffectFade, Zoom, EffectCube} from 'swiper';
+import {A11y, Autoplay, EffectCube, EffectFade, Navigation, Zoom} from 'swiper';
 import instance from "../../utils/instance";
 
 

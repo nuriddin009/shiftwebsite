@@ -21,11 +21,11 @@ public class IncomeTypeService {
 
     public ApiResponse postIncomeType(String type) {
         incomeTypeRepository.save(new IncomeType(type));
-        return new ApiResponse(true,"added");
+        return new ApiResponse(true, "added");
     }
 
     public ApiResponse getIncomeType() {
         List<IncomeType> list = incomeTypeRepository.findAll();
-        return new ApiResponse(true,list);
+        return new ApiResponse(true, list);
     }
 }

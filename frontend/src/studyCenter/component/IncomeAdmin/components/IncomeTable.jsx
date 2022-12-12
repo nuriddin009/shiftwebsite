@@ -16,8 +16,11 @@ import {DatePicker} from "@mui/x-date-pickers";
 import FormAsyncSelectInput from "./FormAsyncSelectInput";
 import Autocomplete, {createFilterOptions} from "@mui/material/Autocomplete";
 import instance from "../../../../shift/utils/instance";
+import Stack from "@mui/material/Stack";
 
 const filter = createFilterOptions();
+
+const options1 = ['Option 1', 'Option 2'];
 
 function IncomeTable() {
     const params = useParams()
@@ -25,30 +28,98 @@ function IncomeTable() {
     const [age, setAge] = React.useState('');
     const [startDate, setStartDate] = useState(1659312000000);
     const [value, setValue] = React.useState("");
-    const [positionTypes, setPositionTypes] = React.useState([]);
-    const [options, setOptions] = useState([    ])
+    const [currentUser, setCurrentUser] = React.useState(null);
+    const [incomes, setIncomes] = React.useState([]);
+    const [options, setOptions] = useState([])
+    const [users, setUsers] = useState([])
+    const [payType, setPayType] = useState("")
+    const [incomeType, setIncomeType] = useState("")
+
+    const [description, setDescription] = React.useState("");
+    const [amount, setAmount] = React.useState("");
+
+    const [inputValue, setInputValue] = React.useState('');
+    const [incomeOptions, setIncomeOptions] = React.useState([]);
+    const [incomeValue, setIncomeValue] = React.useState("");
+    const [isAll, setIsAll] = React.useState(false);
+    const [today, setToday] = React.useState(false);
+    const [totalPages, setTotalPages] = React.useState(0);
+    const [totalElements, setTotalElements] = React.useState(0);
+    const [currentPage, setCurrentPage] = React.useState(0);
+
 
     const handleChange = (event) => {
-        setAge(event.target.value);
+        setPayType(event.target.value);
+        getIncomes(event.target.value, incomeType, today)
     };
+
+
+    const handleIncomeTypeChange = (event) => {
+        setIncomeType(event.target.value)
+        getIncomes(payType, event.target.value, today)
+    }
+
     useEffect(() => {
         getPayTypes();
+        getIncomes(payType, incomeType, today);
+        getIncomeTypes();
     }, [])
+
+    function getAll() {
+        setIsAll(!isAll)
+        setIncomeType("")
+        setPayType("")
+        setToday(false)
+        getIncomes("", "", false)
+    }
+
+
+    function getIncomes(payType, incomeType, today) {
+        instance.get("/income", {
+            params:
+                {incomeType, payType, today}
+        }).then(res => {
+            setTotalPages(res.data.totalPages)
+            setIncomes(res.data.data.content)
+        })
+    }
 
     function getPayTypes() {
         instance.get("/pay_type").then(({data}) => {
-            console.log(data.data)
             let a = data.data.map(item => ({label: item?.type, value: item?.id,}));
             setOptions(a)
+        })
+    }
+
+
+    function getUsers(inputValue) {
+        instance.get("/user/search?input=" + inputValue).then(({data}) => {
+            let a = data.content.map(item => ({value: item.id, label: item.firstName + " " + item.lastName}))
+            setUsers(a)
         })
     }
 
     function postPayType(label) {
         instance.post("/pay_type?type=" + label,).then(({data}) => {
             getPayTypes()
-            setValue({label:data.data.type, value: data?.data?.id})
+            setValue({label: data.data.type, value: data?.data?.id})
         })
     }
+
+    function postIncomeType(label) {
+        instance.post("/income_type?type=" + label).then(({data}) => {
+            getIncomeTypes()
+            setValue({label: data.data.type, value: data?.data?.id})
+        })
+    }
+
+    function getIncomeTypes() {
+        instance.get("/income_type").then(({data}) => {
+            let a = data.data.map(item => ({label: item?.type, value: item?.id}));
+            setIncomeOptions(a)
+        })
+    }
+
 
     const cols = [
         {
@@ -87,11 +158,46 @@ function IncomeTable() {
     ]
 
 
+    function toggleModal() {
+        setOpen(!open)
+    }
+
+
+    function addNewIncome() {
+        if (currentUser && amount && incomeValue && value) {
+            let data = {
+                amount,
+                payTypeId: value.value,
+                incomeTypeId: incomeValue.value,
+                userId: currentUser.value,
+                description
+            }
+            toggleModal()
+            instance.post("/income", data).then(res => {
+                setCurrentUser(null)
+                setAmount("")
+                setValue("")
+                setIncomeValue("")
+                getIncomes(payType, incomeType, today)
+            })
+        } else {
+
+        }
+    }
+
+
     return (
         <div style={{marginTop: '30px'}}>
+
+
             <div className={myStyles.between_}>
-                <div>
-                    <Button sx={{mx: 1}} variant={"contained"}>Today</Button>
+                <div style={{display: "flex", alignItems: "center"}}>
+                    <Button onClick={() => {
+                        getIncomes(payType, incomeType, !today)
+                        setToday(!today)
+                    }} sx={{mx: 1}}
+                            color={today ? "secondary" : "primary"}
+                            variant={today ? "outlined" : "contained"}>Today</Button>
                     <DatePicker
                         sx={{height: 60}}
                         views={['year', 'month']}
@@ -104,14 +210,24 @@ function IncomeTable() {
                         }}
                         renderInput={(params) => <TextField {...params} helperText={null}/>}
                     />
-                    <Button sx={{mx: 1}} variant={"contained"}>All</Button>
+                    <Button onClick={getAll} sx={{mx: 1}}
+                            color={isAll ? "secondary" : "primary"}
+                            variant={isAll ? "outlined" : "contained"}>{isAll ? "Reset" : "All"}</Button>
                 </div>
 
-                <Button sx={{mr: 4}} variant={"contained"}>+ Add New</Button>
+                <Button
+                    onClick={toggleModal}
+                    sx={{mr: 4}}
+                    variant={"contained"}
+                >+ Add New</Button>
 
             </div>
+
+            {/*// filters*/}
             <div className={myStyles.align_right}>
+
                 <div className={myStyles.flex_}>
+                    {/*// payType filer*/}
                     <FormControl sx={{m: 1, minWidth: 250}}>
                         <Box sx={{minWidth: 250}}>
                             <InputLabel style={{background: "white"}} id="demo-simple-select-label">PayType</InputLabel>
@@ -119,19 +235,22 @@ function IncomeTable() {
                                 sx={{minWidth: 200, height: 45}}
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                value={age}
+                                value={payType}
                                 label="Age"
                                 onChange={handleChange}
                             >
                                 <MenuItem value="">
                                     <em>None</em>
                                 </MenuItem>
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                {
+                                    options?.map((item, index) => <MenuItem key={index}
+                                                                            value={item.label}>{item.label}</MenuItem>)
+                                }
                             </Select>
                         </Box>
                     </FormControl>
+
+                    {/*// income filter*/}
                     <FormControl sx={{m: 1, minWidth: 200}}>
                         <Box sx={{minWidth: 220}}>
                             <InputLabel style={{background: "white"}}
@@ -140,16 +259,17 @@ function IncomeTable() {
                                 sx={{minWidth: 200, height: 45}}
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                value={age}
-                                label="Age"
-                                onChange={handleChange}
+                                value={incomeType}
+                                label="IncomeType"
+                                onChange={handleIncomeTypeChange}
                             >
                                 <MenuItem value="">
                                     <em>None</em>
                                 </MenuItem>
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                {
+                                    incomeOptions?.map((item, index) => <MenuItem key={index}
+                                                                                  value={item.label}>{item.label}</MenuItem>)
+                                }
                             </Select>
                         </Box>
                     </FormControl>
@@ -168,65 +288,26 @@ function IncomeTable() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <StyledTableRow key={1}>
-                                <StyledTableCell component="th" scope="row">{"1"}</StyledTableCell>
-                                <StyledTableCell component="th"
-                                                 scope="row">{"Nematov Shohrux Yorqin o'g'li"}</StyledTableCell>
-                                <StyledTableCell>{"+998931424356"}</StyledTableCell>
-                                <StyledTableCell> 11-07-1996 09:00 </StyledTableCell>
-                                <StyledTableCell> 500000 </StyledTableCell>
-                                <StyledTableCell> 300000 </StyledTableCell>
-                                <StyledTableCell> 800000</StyledTableCell>
-                                {/*<StyledTableCell>*/}
-                                {/*    <div style={{display: "flex"}}><Button>del</Button><Button>del</Button></div>*/}
-                                {/*</StyledTableCell>*/}
-                            </StyledTableRow>
-                            <StyledTableRow key={2}>
-                                <StyledTableCell component="th" scope="row">{"1"}</StyledTableCell>
-                                <StyledTableCell component="th"
-                                                 scope="row">{"Nematov Shohrux Yorqin o'g'li"}</StyledTableCell>
-                                <StyledTableCell>{"+998931424356"}</StyledTableCell>
-                                <StyledTableCell> 11-07-1996 </StyledTableCell>
-                                <StyledTableCell> 500000 </StyledTableCell>
-                                <StyledTableCell> 300000 </StyledTableCell>
-                                <StyledTableCell> 800000</StyledTableCell>
-                                {/*<StyledTableCell>*/}
-                                {/*    <div style={{display: "flex"}}><Button>del</Button><Button>del</Button></div>*/}
-                                {/*</StyledTableCell>*/}
-                            </StyledTableRow>
-                            <StyledTableRow key={3}>
-                                <StyledTableCell component="th" scope="row">{"1"}</StyledTableCell>
-                                <StyledTableCell component="th"
-                                                 scope="row">{"Nematov Shohrux Yorqin o'g'li"}</StyledTableCell>
-                                <StyledTableCell>{"+998931424356"}</StyledTableCell>
-                                <StyledTableCell> 11-07-1996 </StyledTableCell>
-                                <StyledTableCell> 500000 </StyledTableCell>
-                                <StyledTableCell> 300000 </StyledTableCell>
-                                <StyledTableCell> 800000</StyledTableCell>
-                                {/*<StyledTableCell>*/}
-                                {/*    <div style={{display: "flex"}}><Button>del</Button><Button>del</Button></div>*/}
-                                {/*</StyledTableCell>*/}
-                            </StyledTableRow>
-                            <StyledTableRow key={4}>
-                                <StyledTableCell component="th" scope="row">{"1"}</StyledTableCell>
-                                <StyledTableCell component="th"
-                                                 scope="row">{"Nematov Shohrux Yorqin o'g'li"}</StyledTableCell>
-                                <StyledTableCell>{"+998931424356"}</StyledTableCell>
-                                <StyledTableCell> 11-07-1996 </StyledTableCell>
-                                <StyledTableCell> 500000 </StyledTableCell>
-                                <StyledTableCell> 300000 </StyledTableCell>
-                                <StyledTableCell> Student to'lovi</StyledTableCell>
-                                {/*<StyledTableCell>*/}
-                                {/*    <div style={{display: "flex"}}><Button>del</Button><Button>del</Button></div>*/}
-                                {/*</StyledTableCell>*/}
-                            </StyledTableRow>
+                            {
+                                incomes.map((income, index) => <StyledTableRow key={index}>
+                                    <StyledTableCell component="th" scope="row">{index + 1}</StyledTableCell>
+                                    <StyledTableCell component="th"
+                                                     scope="row">{income?.user?.firstName + " " + income?.user?.lastName}</StyledTableCell>
+                                    <StyledTableCell>{income?.user?.phoneNumber}</StyledTableCell>
+                                    <StyledTableCell>{new Date(income?.created).toLocaleString()}</StyledTableCell>
+                                    <StyledTableCell>{income?.payType?.type}</StyledTableCell>
+                                    <StyledTableCell>{income?.amount}</StyledTableCell>
+                                    <StyledTableCell>{income?.incomeType?.type}</StyledTableCell>
+                                </StyledTableRow>)
+                            }
+
                         </TableBody>
                     </Table>
                     <Box>
                         <DataTablePagination
-                            page={1}
-                            pageLimit={6}
-                            total={20}
+                            page={currentPage}
+                            pageLimit={totalPages}
+                            total={totalElements}
                             baseTotal={2}
                             onChangePage={() => {
                             }}
@@ -245,30 +326,31 @@ function IncomeTable() {
                 {/*)}*/}
 
             </Paper>
-            <Dialog open={true}>
+
+
+            <Dialog open={open} onClose={toggleModal}>
                 <div className={myStyles.modalSt} style={{padding: "1rem"}}>
                     <div className={myStyles.modalSt2}>
                         <div className={myStyles.flex_}>
                             <Grid sx={{width: "50%"}}>
+
                                 <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
                                     <Box sx={{minWidth: 220}}>
-                                        <InputLabel style={{background: "white"}}
-                                                    id="demo-simple-select-label">User</InputLabel>
-                                        <Select
-                                            sx={{minWidth: 200, width: "100%"}}
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={age}
-                                            label="Age"
-                                            onChange={handleChange}
-                                        >
-                                            <MenuItem value="">
-                                                <em>None</em>
-                                            </MenuItem>
-                                            <MenuItem value={10}>Ten</MenuItem>
-                                            <MenuItem value={20}>Twenty</MenuItem>
-                                            <MenuItem value={30}>Thirty</MenuItem>
-                                        </Select>
+                                        <Autocomplete
+                                            value={currentUser}
+                                            onChange={(event, newValue) => {
+                                                setCurrentUser(newValue);
+                                            }}
+                                            inputValue={inputValue}
+                                            onInputChange={(event, newInputValue) => {
+                                                setInputValue(newInputValue);
+                                                getUsers(newInputValue)
+                                            }}
+                                            id="controllable-states-demo"
+                                            options={users}
+                                            sx={{width: "100%"}}
+                                            renderInput={(params) => <TextField {...params} label="Users"/>}
+                                        />
                                     </Box>
                                 </FormControl>
 
@@ -277,45 +359,21 @@ function IncomeTable() {
                                 <TextField style={{height: 30}} sx={{m: 1, height: 30, width: "95%"}}
                                            id="outlined-basic"
                                            label="Amount"
+                                           value={amount}
+                                           onChange={(e) => setAmount(e.target.value)}
                                            variant="outlined" type={'number'}/>
                             </Grid>
 
                         </div>
                         <div className={myStyles.flex_}>
+
                             <Grid sx={{width: "50%"}}>
                                 <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
                                     <Box sx={{minWidth: 220}}>
-                                        <InputLabel style={{background: "white"}}
-                                                    id="demo-simple-select-label">PayType</InputLabel>
-                                        <Select
-                                            sx={{minWidth: 200, width: "100%"}}
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={age}
-                                            label="Age"
-                                            onChange={handleChange}
-                                        >
-                                            <MenuItem value="">
-                                                <em>None</em>
-                                            </MenuItem>
-                                            <MenuItem value={10}>Ten</MenuItem>
-                                            <MenuItem value={20}>Twenty</MenuItem>
-                                            <MenuItem value={30}>Thirty</MenuItem>
-                                        </Select>
-                                    </Box>
-                                </FormControl>
-                            </Grid>
-                            <Grid sx={{width: "50%"}}>
-                                <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
-                                    <Box sx={{minWidth: 220}}>
-                                        {/*<InputLabel style={{background: "white"}}*/}
-                                        {/*            id="demo-simple-select-label">IncomeType</InputLabel>*/}
                                         <Autocomplete
                                             sx={{minWidth: 200, width: "100%"}}
                                             value={value}
                                             onChange={(event, newValue) => {
-                                                console.log(newValue)
-                                                console.log(event)
                                                 if (typeof newValue === 'string') {
                                                     postPayType(newValue)
                                                 } else if (newValue?.label.startsWith('Add')) {
@@ -358,16 +416,65 @@ function IncomeTable() {
                                             renderOption={(props, option) => <li {...props}>{option.label}</li>}
                                             freeSolo
                                             renderInput={(params) => (
+                                                <TextField {...params} label="Pay Type"/>
+                                            )}
+                                        />
+                                    </Box>
+                                </FormControl>
+                            </Grid>
+
+                            <Grid sx={{width: "50%"}}>
+                                <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
+                                    <Box sx={{minWidth: 220}}>
+                                        <Autocomplete
+                                            sx={{minWidth: 200, width: "100%"}}
+                                            value={incomeValue}
+                                            onChange={(event, newValue) => {
+                                                if (typeof newValue === 'string') {
+                                                    postIncomeType(newValue)
+                                                } else if (newValue?.label.startsWith('Add')) {
+                                                    postIncomeType(newValue?.inputValue)
+                                                } else {
+                                                    setIncomeValue(newValue);
+                                                }
+                                            }}
+                                            filterOptions={(options, params) => {
+                                                const filtered = filter(options, params);
+
+                                                const {inputValue} = params;
+                                                // Suggest the creation of a new value
+                                                const isExisting = options.some((option) => inputValue === option.label);
+                                                if (inputValue !== '' && !isExisting) {
+                                                    filtered.push({
+                                                        inputValue,
+                                                        label: `Add "${inputValue}"`,
+                                                    });
+                                                }
+
+                                                return filtered;
+                                            }}
+                                            selectOnFocus
+                                            clearOnBlur
+                                            handleHomeEndKeys
+                                            options={incomeOptions}
+                                            getOptionLabel={(option) => {
+                                                // Value selected with enter, right from the input
+                                                if (typeof option === 'string') {
+                                                    return option;
+                                                }
+                                                // Add "xxx" option created dynamically
+                                                if (option.inputValue) {
+                                                    return option.inputValue;
+                                                }
+                                                // Regular option
+                                                return option.label;
+                                            }}
+                                            renderOption={(props, option) => <li {...props}>{option.label}</li>}
+                                            freeSolo
+                                            renderInput={(params) => (
                                                 <TextField {...params} label="Income Type"/>
                                             )}
                                         />
-                                        {/*    <MenuItem value="">*/}
-                                        {/*        <em>None</em>*/}
-                                        {/*    </MenuItem>*/}
-                                        {/*    <MenuItem value={10}>Ten</MenuItem>*/}
-                                        {/*    <MenuItem value={20}>Twenty</MenuItem>*/}
-                                        {/*    <MenuItem value={30}>Thirty</MenuItem>*/}
-                                        {/*</Autocomplete>*/}
                                     </Box>
                                 </FormControl>
                             </Grid>
@@ -377,13 +484,35 @@ function IncomeTable() {
                         <TextField
                             multiline
                             rows={4}
-                            sx={{height: 40, m: 1, width: "98%"}}
+                            sx={{height: 40, m: 1, width: "97.5%"}}
                             id="outlined-multiline-static"
                             label="Description"
                             variant="outlined"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
                         />
                     </div>
                 </div>
+                <Stack
+                    direction={"row"}
+                    spacing={2}
+                    sx={{
+                        position: "absolute",
+                        right: "20px",
+                        bottom: "20px"
+                    }}
+                >
+                    <Button
+                        onClick={addNewIncome}
+                        variant={"outlined"}
+                        color={"success"}
+                    >save</Button>
+                    <Button
+                        onClick={toggleModal}
+                        variant={"outlined"}
+                        color={"error"}
+                    >cancel</Button>
+                </Stack>
             </Dialog>
         </div>
     )

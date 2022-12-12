@@ -1,7 +1,5 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import "./index.scss"
-import request from "../../../shift/utils/request";
-import {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import instance from "../../../shift/utils/instance";
 
@@ -27,17 +25,17 @@ function Index(props) {
         let a = [];
         a.push(item)
         if (item.roleName === "ROLE_ADMIN") {
-            navigate("/selectAdmin")
+            navigate("/selectAdmin/studyCenter")
             localStorage.setItem("role", JSON.stringify(a))
         } else if (item.roleName === "ROLE_SUPERADMIN") {
-            navigate("/selectAdmin")
+            navigate("/selectAdmin/studyCenter")
             localStorage.setItem("role", JSON.stringify(a))
         } else if (item.roleName === "ROLE_MENTOR") {
             localStorage.setItem("role", JSON.stringify(a))
             navigate("/Mentor")
         } else if (item.roleName === "ROLE_STUDENT") {
             localStorage.setItem("role", JSON.stringify(a))
-            navigate(`/userPage/${user.username}/user`)
+            navigate(`/userPage/user`)
         }
     }
 

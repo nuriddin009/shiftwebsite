@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {useForm} from "react-hook-form";
 import {Link, useNavigate} from "react-router-dom"
-import request from "../utils/request";
 import logo from "../file/image/imageShift/logo2.svg"
 import "./index.scss"
 import {toast} from "react-toastify";
@@ -46,7 +45,6 @@ function Index(props) {
                     } else if (res.data.roles[0].roleName === "ROLE_ADMIN") {
                         localStorage.setItem("role", JSON.stringify(a))
                         navigate("/selectAdmin")
-                        //    /admin/title
                     } else if (res.data.roles[0].roleName === "ROLE_MENTOR") {
                         localStorage.setItem("role", JSON.stringify(a))
                         navigate("/Mentor")

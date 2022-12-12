@@ -11,7 +11,7 @@ import "./shift/font/stylesheet.css"
 import 'react-phone-input-2/lib/style.css'
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {LocalizationProvider} from "@mui/x-date-pickers";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -21,7 +21,10 @@ root.render(
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <App/>
             </LocalizationProvider>
-            <ToastContainer/>
+            <ToastContainer
+                hideProgressBar={true}
+                position={window.innerWidth > 600 ? "bottom-right" : "top-center"}
+            />
         </BrowserRouter>
     </React.StrictMode>
 );

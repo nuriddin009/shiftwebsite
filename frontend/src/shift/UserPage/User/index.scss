@@ -4,58 +4,114 @@
   }
 }
 
-.containerr {
-  width: 100%;
-  padding: 40px;
-  height: 100vh;
+//.containerr {
+//  width: 100%;
+//  padding: 40px;
+//  height: 100vh;
+//
+//  .div-img {
+//    width: 6rem;
+//    height: 6rem;
+//
+//    border: 3px solid;
+//    border-radius: 50%;
+//    padding: 4px;
+//
+//    img {
+//      width: 100%;
+//      height: 100%;
+//      border-radius: 50%;
+//    }
+//  }
+//
+//  .card {
+//    width: 30rem;
+//    border: none;
+//    height: auto;
+//
+//    @include media(500px) {
+//      width: 20rem;
+//    }
+//
+//    .card-body {
+//      input {
+//        height: 50px;
+//
+//
+//        @include media(500px) {
+//          height: 30px;
+//        }
+//
+//      }
+//
+//    }
+//
+//    .card-footer {
+//      border: none;
+//      background-color: white;
+//
+//
+//    }
+//  }
+//
+//  .btn {
+//    width: 100px;
+//    height: 50px;
+//  }
+//}
 
-  .div-img {
-    width: 6rem;
-    height: 6rem;
 
-    border: 3px solid;
-    border-radius: 50%;
-    padding: 4px;
+.phone_input_user {
+  border: 1px solid gray;
+  border-radius: 7px;
+  height: 60px;
+  box-shadow: none;
+}
 
-    img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-    }
-  }
+.phone_input_user:before {
+  content: 'Phone number';
+  position: absolute;
+  width: 90px;
+  top: -7px;
+  left: 20px;
+  z-index: 11;
+  background: white;
+  text-align: center;
+  font-size: 12px;
+  line-height: 12px;
+  color: #1976D2;
+}
 
-  .card {
-    width: 30rem;
-    border: none;
-    height: auto;
+.phone_input_parent{
+  border: 2px solid gray;
+  border-radius: 7px;
+  height: 60px;
+  box-shadow: none;
+}
 
-    @include media(500px) {
-      width: 20rem;
-    }
+.phone_input_parent:hover{
+  border: 2px solid gray;
+}
 
-    .card-body {
-      input {
-        height: 50px;
-
-
-        @include media(500px) {
-          height: 30px;
-        }
-
-      }
-
-    }
-
-    .card-footer {
-      border: none;
-      background-color: white;
+.phone_input_parent:before {
+  content: 'Father phone number';
+  position: absolute;
+  width: 120px;
+  top: -7px;
+  left: 20px;
+  z-index: 11;
+  background: white;
+  text-align: center;
+  font-size: 12px;
+  line-height: 12px;
+  color: gray;
+}
 
 
-    }
-  }
+.phone_input_user:focus {
+  border: 2px solid #1976D2;
+}
 
-  .btn {
-    width: 100px;
-    height: 50px;
-  }
+.phone_input_user:hover{
+  border: 1px solid;
 }

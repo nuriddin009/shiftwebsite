@@ -1,10 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import "./index.scss"
 import logo from "../../file/image/imageShift/logo2.svg";
-import {Nav, NavItem} from "reactstrap";
-import {Link, NavLink, Outlet, useLocation, useNavigate} from "react-router-dom";
+import {Link, Outlet, useLocation, useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
-import verify from "./verified.png";
 import instance from "../../utils/instance";
 import {styled, useTheme} from "@mui/material/styles";
 import MuiAppBar from "@mui/material/AppBar";
@@ -23,24 +21,21 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import PersonOutlineSharpIcon from "@mui/icons-material/PersonOutlineSharp";
 import ListItemText from "@mui/material/ListItemText";
 import OndemandVideoSharpIcon from "@mui/icons-material/OndemandVideoSharp";
 import Box from "@mui/material/Box";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import Fade from '@mui/material/Fade';
-import Button from "@mui/material/Button";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import NoAccountsIcon from '@mui/icons-material/NoAccounts';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import BackupTableIcon from '@mui/icons-material/BackupTable';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 
 const drawerWidth = 300;
 
@@ -227,7 +222,7 @@ function Index(props) {
                     >
                         <MenuItem onClick={handleClose}>
                             <Link style={{textDecoration: "none", display: "flex", alignItems: "center", color: "blue"}}
-                                  to={`/userPage/${username}/user`}>
+                                  to={`/userPage/user`}>
                                 <AccountCircleOutlinedIcon/>&nbsp;<h6 className={"mt-2"}>Profile</h6>
                             </Link>
                         </MenuItem>
@@ -441,6 +436,273 @@ function Index(props) {
                             </ListItemButton>
                         </ListItem>
                     </Link>
+                    <Link to={"/selectAdmin/expense"} style={{textDecoration: "none"}}>
+                        <ListItem
+                            style={backgroundFunction("expense")}
+                            disablePadding sx={{display: 'block'}}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        color: colorFunction("expense")
+                                    }}
+                                >
+
+                                    <LeaderboardIcon sx={{transform: "scale(1.5)"}}/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    style={{textDecoration: "none", color: colorFunction("expense")}}
+                                    primary={"Income & Expence"} sx={{opacity: open ? 1 : 0}}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
+
+                    <ListItem
+                        disablePadding sx={{display: 'block'}}>
+                        <ListItemButton
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: open ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                        >
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 0,
+                                    mr: open ? 3 : 'auto',
+                                    justifyContent: 'center',
+                                    color: "white"
+                                }}
+                            >
+                                <PersonRemoveIcon sx={{transform: "scale(1.5)"}}/>
+                                {/*<OndemandVideoSharpIcon/>*/}
+                            </ListItemIcon>
+                            <ListItemText
+                                style={{textDecoration: "none", color: "white"}}
+                                primary={"Unclock users"} sx={{opacity: open ? 1 : 0}}
+                            />
+                        </ListItemButton>
+                    </ListItem>
+
+                </List>
+                <Divider/>
+                <Divider/>
+                <Divider/>
+                <Divider/>
+                <List>
+
+                    <Link to={"/admin/title"} style={{textDecoration: "none"}}>
+                        <ListItem
+                            style={backgroundFunction("studyCenter")}
+                            disablePadding sx={{display: 'block'}}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        color: colorFunction("studyCenter")
+                                    }}
+
+                                >
+                                    <GroupsIcon sx={{transform: "scale(1.5)"}}/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    style={{
+                                        textDecoration: "none",
+                                        color: colorFunction("studyCenter"),
+                                        fontWeight: "bold"
+                                    }}
+                                    primary={"Groups"} sx={{opacity: open ? 1 : 0}}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
+                    <Link to={"/admin/about"} style={{textDecoration: "none"}}>
+                        <ListItem
+                            style={backgroundFunction("users")}
+                            disablePadding sx={{display: 'block'}}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        color: colorFunction("users")
+                                    }}
+                                >
+                                    <AccountCircleIcon sx={{transform: "scale(1.5)"}}/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    style={{textDecoration: "none", color: colorFunction("users")}}
+                                    primary={"Users"} sx={{opacity: open ? 1 : 0}}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
+                    <Link to={"/admin/whyUs"} style={{textDecoration: "none"}}>
+                        <ListItem
+                            style={backgroundFunction("delete/users")}
+                            disablePadding sx={{display: 'block'}}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        color: colorFunction("delete/users")
+                                    }}
+                                >
+                                    <NoAccountsIcon sx={{transform: "scale(1.5)"}}/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    style={{textDecoration: "none", color: colorFunction("delete/users")}}
+                                    primary={"Shiftdan haydalganlar"} sx={{opacity: open ? 1 : 0}}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
+                    <Link to={"/selectAdmin/certificate"} style={{textDecoration: "none"}}>
+                        <ListItem
+                            style={backgroundFunction("certificate")}
+                            disablePadding sx={{display: 'block'}}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        color: colorFunction("certificate")
+                                    }}
+                                >
+                                    <WorkspacePremiumIcon sx={{transform: "scale(1.5)"}}/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    style={{textDecoration: "none", color: colorFunction("certificate")}}
+                                    primary={"Certificate"} sx={{opacity: open ? 1 : 0}}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
+                    <Link to={"/selectAdmin/lesson"} style={{textDecoration: "none"}}>
+                        <ListItem
+                            style={backgroundFunction("lesson")}
+                            disablePadding sx={{display: 'block'}}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        color: colorFunction("lesson")
+                                    }}
+                                >
+                                    <OndemandVideoSharpIcon sx={{transform: "scale(1.5)"}}/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    style={{textDecoration: "none", color: colorFunction("lesson")}}
+                                    primary={"Lessons"} sx={{opacity: open ? 1 : 0}}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
+                    <Link to={"/selectAdmin/rooms"} style={{textDecoration: "none"}}>
+                        <ListItem
+                            style={backgroundFunction("rooms")}
+                            disablePadding sx={{display: 'block'}}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        color: colorFunction("rooms")
+                                    }}
+                                >
+                                    <BackupTableIcon sx={{transform: "scale(1.5)"}}/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    style={{textDecoration: "none", color: colorFunction("rooms")}}
+                                    primary={"Rooms"} sx={{opacity: open ? 1 : 0}}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
+                    <Link to={"/selectAdmin/expense"} style={{textDecoration: "none"}}>
+                        <ListItem
+                            style={backgroundFunction("expense")}
+                            disablePadding sx={{display: 'block'}}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        color: colorFunction("expense")
+                                    }}
+                                >
+
+                                    <LeaderboardIcon sx={{transform: "scale(1.5)"}}/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    style={{textDecoration: "none", color: colorFunction("expense")}}
+                                    primary={"Income & Expence"} sx={{opacity: open ? 1 : 0}}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
+
                     <ListItem
                         disablePadding sx={{display: 'block'}}>
                         <ListItemButton

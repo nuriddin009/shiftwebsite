@@ -6,20 +6,22 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class IncomeDto {
+public class ExpenseDto {
+
     @NotNull
     private Integer amount;
 
     private String description;
 
     @NotNull
-    private UUID payTypeId;
+    private String title;
 
     @NotNull
-    private UUID incomeTypeId;
+    private UUID payTypeId;
 
     @NotNull
     private UUID userId;

@@ -42,7 +42,7 @@ function Index(props) {
 
 
     return (
-        <div style={{width:"100%",padding:"0px 5px 0px 5px"}}>
+        <div style={{width:"100%",padding:"70px 5px 0px 5px"}}>
         <Card sx elevation={0}>
             <Grid container spacing={3}>
                 <Grid item xs={12}>

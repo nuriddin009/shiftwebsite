@@ -52,4 +52,10 @@ public class Expense {
     private LocalDateTime updated;
 
 
+    public Expense(int amount, String description, String title, PayType payType) {
+        this.amount = amount;
+        this.description = description;
+        this.title = title;
+        this.payType = payType;
+    }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,10 +23,22 @@ public class IncomeController {
 
     private final IncomeService incomeService;
 
+
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN')")
     @PostMapping
     public ResponseEntity<ApiResponse> postIncome(@Valid @RequestBody IncomeDto incomeDto) {
         return ResponseEntity.ok(incomeService.postIncome(incomeDto));
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN')")
+    @GetMapping
+    public ResponseEntity<ApiResponse> getIncomes(
+            @RequestParam(defaultValue = "") String incomeType,
+            @RequestParam(defaultValue = "") String payType,
+            @RequestParam Boolean today,
+            @RequestParam(defaultValue = "0") Integer page
+    ) {
+        return ResponseEntity.ok(incomeService.getIncomes(incomeType, payType, today, page));
     }
 
 
