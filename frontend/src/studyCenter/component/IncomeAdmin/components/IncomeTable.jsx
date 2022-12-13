@@ -56,12 +56,12 @@ function IncomeTable() {
     const [incomeOptions, setIncomeOptions] = React.useState([]);
     const [incomeValue, setIncomeValue] = React.useState("");
     const [isAll, setIsAll] = React.useState(false);
-    const [today, setToday] = React.useState(false);
+    const [today, setToday] = React.useState(true);
     const [totalPages, setTotalPages] = React.useState(0);
     // const [totalElements, setTotalElements] = React.useState(0);
     const [currentPage, setCurrentPage] = React.useState(1);
 
-    const [timeFilter, setTimeFilter] = React.useState("");
+    const [timeFilter, setTimeFilter] = React.useState(null);
 
 
     const handleChange = (event) => {
@@ -82,12 +82,12 @@ function IncomeTable() {
     }, [])
 
     function getAll() {
-        setIsAll(!isAll)
+        setIsAll(true)
         setIncomeType("")
         setPayType("")
         setToday(false)
-        setTimeFilter("")
-        getIncomes("", "", false, 1, timeFilter)
+        setTimeFilter(null)
+        getIncomes("", "", false, 1, "")
     }
 
 
@@ -211,8 +211,10 @@ function IncomeTable() {
             <div className={myStyles.between_}>
                 <div style={{display: "flex", alignItems: "center"}}>
                     <Button onClick={() => {
-                        getIncomes(payType, incomeType, !today, currentPage, timeFilter)
-                        setToday(!today)
+                        getIncomes(payType, incomeType, true, 1, timeFilter)
+                        setToday(true)
+                        setIsAll(false)
+                        setTimeFilter(null)
                     }} sx={{mx: 1}}
                             color={today ? "secondary" : "primary"}
                             variant={today ? "outlined" : "contained"}>Today</Button>
@@ -226,16 +228,16 @@ function IncomeTable() {
                         disableFuture
                         onChange={(newValue) => {
                             let date = new Date(newValue)
-                            console.log(date)
                             let month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1)
                             setTimeFilter(date.getFullYear() + "-" + month + "-01")
-                            getIncomes(payType, incomeType, today, currentPage, date.getFullYear() + "-" + month + "-01")
+                            setToday(false);
+                            getIncomes(payType, incomeType, false, currentPage, date.getFullYear() + "-" + month + "-01")
                         }}
                         renderInput={(params) => <TextField {...params} helperText={null}/>}
                     />
                     <Button onClick={getAll} sx={{mx: 1}}
                             color={isAll ? "secondary" : "primary"}
-                            variant={isAll ? "outlined" : "contained"}>{isAll ? "Reset" : "All"}</Button>
+                            variant={isAll ? "outlined" : "contained"}>{"All"}</Button>
                 </div>
 
                 <Button

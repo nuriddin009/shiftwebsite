@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,9 +38,11 @@ public class IncomeController {
             @RequestParam(defaultValue = "") String payType,
             @RequestParam Boolean today,
             @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "1900-01-01") String time
+            @RequestParam(required = false,defaultValue = "") String time
     ) {
-        return ResponseEntity.ok(incomeService.getIncomes(incomeType, payType, today, page, time));
+        System.out.println(time);
+        return ResponseEntity.ok(
+                incomeService.getIncomes(incomeType, payType, today, page, time));
     }
 
 

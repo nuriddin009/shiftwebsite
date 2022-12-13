@@ -16,11 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.Objects;
 
 @Service
 public class IncomeService {
@@ -55,20 +52,11 @@ public class IncomeService {
     }
 
     @SneakyThrows
-    public ApiResponse getIncomes(String incomeType, String payType, Boolean today, Integer page, String time) {
+    public ApiResponse getIncomes(String incomeType, String payType, Boolean today, Integer page, String date) {
+        LocalDate startDate = !Objects.equals(date, "") ? LocalDate.parse(date):null;
+        LocalDate endDate = startDate != null ? startDate.plusMonths(1):null;
 
-
-        LocalDate startDate = LocalDate.parse(time);
-        LocalDate endDate = startDate.plusMonths(1);
-
-
-        if (startDate.isBefore(LocalDate.parse("2012-04-01"))) {
-            Page<Income> list = incomeRepository.findAll(incomeType, payType, startDate, LocalDate.parse("2999-01-01"), PageRequest.of(page - 1, 2));
-            return new ApiResponse(true, list);
-        } else {
-            Page<Income> list = incomeRepository.findAll(incomeType, payType, startDate, endDate, PageRequest.of(page - 1, 2));
-            return new ApiResponse(true, list);
-        }
-
+        Page<Income> list = incomeRepository.findAll(incomeType, payType, startDate, endDate, today, PageRequest.of(page - 1, 10));
+        return new ApiResponse(true, list);
     }
 }
