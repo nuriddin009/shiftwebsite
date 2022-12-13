@@ -8,12 +8,19 @@ import com.example.backend.repository.IncomeRepository;
 import com.example.backend.repository.IncomeTypeRepository;
 import com.example.backend.repository.PayTypeRepository;
 import com.example.backend.repository.UserRepository;
+import lombok.SneakyThrows;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Service
 public class IncomeService {
@@ -47,8 +54,21 @@ public class IncomeService {
         return new ApiResponse(true, "Income is added");
     }
 
-    public ApiResponse getIncomes(String incomeType, String payType, Boolean today, Integer page) {
-        Page<Income> all = incomeRepository.findAll(incomeType, payType,  PageRequest.of(page, 2));
-        return new ApiResponse(true, all);
+    @SneakyThrows
+    public ApiResponse getIncomes(String incomeType, String payType, Boolean today, Integer page, String time) {
+
+
+        LocalDate startDate = LocalDate.parse(time);
+        LocalDate endDate = startDate.plusMonths(1);
+
+
+        if (startDate.isBefore(LocalDate.parse("2012-04-01"))) {
+            Page<Income> list = incomeRepository.findAll(incomeType, payType, startDate, LocalDate.parse("2999-01-01"), PageRequest.of(page - 1, 2));
+            return new ApiResponse(true, list);
+        } else {
+            Page<Income> list = incomeRepository.findAll(incomeType, payType, startDate, endDate, PageRequest.of(page - 1, 2));
+            return new ApiResponse(true, list);
+        }
+
     }
 }

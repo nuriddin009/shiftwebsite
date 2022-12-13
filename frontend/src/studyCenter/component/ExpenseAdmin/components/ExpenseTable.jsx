@@ -146,12 +146,10 @@ const filter = createFilterOptions();
 
 
 function ExpenseTable() {
-    const params = useParams()
     const [open, setOpen] = useState(false)
     const [age, setAge] = React.useState('');
     const [startDate, setStartDate] = useState(1659312000000);
     const [value, setValue] = React.useState("");
-    const [positionTypes, setPositionTypes] = React.useState([]);
     const [currentUser, setCurrentUser] = React.useState(null);
     const [inputValue, setInputValue] = React.useState('');
     const [users, setUsers] = useState([])
@@ -159,9 +157,8 @@ function ExpenseTable() {
     const [incomeValue, setIncomeValue] = React.useState("");
     const [description, setDescription] = React.useState("");
     const [amount, setAmount] = React.useState("");
-    const [payType, setPayType] = useState("")
-    const [incomeType, setIncomeType] = useState("")
-    const [today, setToday] = React.useState(false);
+    const [title, setTitle] = React.useState("");
+
 
     const handleChange = (event) => {
         setAge(event.target.value);
@@ -209,7 +206,6 @@ function ExpenseTable() {
     }
 
 
-
     function postPayType(label) {
         instance.post("/pay_type?type=" + label,).then(({data}) => {
             getPayTypes()
@@ -218,31 +214,25 @@ function ExpenseTable() {
     }
 
 
-
-
-
-    function addNewIncome() {
-        if (currentUser && amount && incomeValue && value) {
+    function addNewExpense() {
+        if (title && amount && value) {
             let data = {
+                title,
                 amount,
                 payTypeId: value.value,
-                incomeTypeId: incomeValue.value,
-                userId: currentUser.value,
                 description
             }
             toggleModal()
-            instance.post("/income", data).then(res => {
-                setCurrentUser(null)
+            instance.post("/expense", data).then(res => {
                 setAmount("")
                 setValue("")
-                setIncomeValue("")
-                // getIncomes(payType, incomeType, today)
+                setTitle("")
+                setDescription("")
             })
         } else {
 
         }
     }
-
 
 
     return (
@@ -270,30 +260,6 @@ function ExpenseTable() {
                     variant={"contained"}
                 >+ Add New</Button>
 
-            </div>
-            <div className={myStyles.align_right}>
-                <div className={myStyles.flex_}>
-                    {/*<FormControl sx={{m: 1, minWidth: 250}}>*/}
-                    {/*    <Box sx={{minWidth: 250}}>*/}
-                    {/*        <InputLabel style={{background: "white"}} id="demo-simple-select-label">PayType</InputLabel>*/}
-                    {/*        <Select*/}
-                    {/*            sx={{minWidth: 200, height: 45}}*/}
-                    {/*            labelId="demo-simple-select-label"*/}
-                    {/*            id="demo-simple-select"*/}
-                    {/*            value={age}*/}
-                    {/*            label="Age"*/}
-                    {/*            onChange={handleChange}*/}
-                    {/*        >*/}
-                    {/*            <MenuItem value="">*/}
-                    {/*                <em>None</em>*/}
-                    {/*            </MenuItem>*/}
-                    {/*            <MenuItem value={10}>Ten</MenuItem>*/}
-                    {/*            <MenuItem value={20}>Twenty</MenuItem>*/}
-                    {/*            <MenuItem value={30}>Thirty</MenuItem>*/}
-                    {/*        </Select>*/}
-                    {/*    </Box>*/}
-                    {/*</FormControl>*/}
-                </div>
             </div>
 
             <Paper sx={{width: '100%', overflow: 'hidden'}}>
@@ -344,29 +310,23 @@ function ExpenseTable() {
                         <div className={myStyles.flex_}>
                             <Grid sx={{width: "50%"}}>
 
-                                <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
+                                <FormControl xs={6} sx={{m: 1, minWidth: 200, marginLeft: "-1px", width: "100%"}}>
                                     <Box sx={{minWidth: 220}}>
-                                        <Autocomplete
-                                            value={currentUser}
-                                            onChange={(event, newValue) => {
-                                                setCurrentUser(newValue);
-                                            }}
-                                            inputValue={inputValue}
-                                            onInputChange={(event, newInputValue) => {
-                                                setInputValue(newInputValue);
-                                                getUsers(newInputValue)
-                                            }}
-                                            id="controllable-states-demo"
-                                            options={users}
-                                            sx={{width: "100%"}}
-                                            renderInput={(params) => <TextField {...params} label="Users"/>}
-                                        />
+                                        <TextField sx={{m: 1, width: "95%"}}
+                                                   id="outlined-basic"
+                                                   label="Title"
+                                                   value={title}
+                                                   onChange={(e) => {
+                                                       setTitle(e.target.value)
+                                                   }}
+                                                   variant="outlined"/>
                                     </Box>
                                 </FormControl>
 
                             </Grid>
                             <Grid xs={6} sx={{width: "40%"}}>
-                                <TextField style={{height: 30}} sx={{m: 1, height: 30, width: "95%"}}
+                                <TextField style={{height: 30}}
+                                           sx={{m: 1, height: 30, marginTop: "16.5px", width: "95%"}}
                                            id="outlined-basic"
                                            label="Amount"
                                            value={amount}
@@ -457,7 +417,7 @@ function ExpenseTable() {
                     }}
                 >
                     <Button
-                        onClick={addNewIncome}
+                        onClick={addNewExpense}
                         variant={"outlined"}
                         color={"success"}
                     >save</Button>

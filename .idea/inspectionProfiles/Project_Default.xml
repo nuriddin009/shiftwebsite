@@ -5,7 +5,7 @@
       <Languages>
         <language minSize="71" name="Java" />
         <language minSize="12" name="Style Sheets" />
-        <language minSize="339" name="JavaScript" />
+        <language minSize="1206" name="JavaScript" />
       </Languages>
     </inspection_tool>
     <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />

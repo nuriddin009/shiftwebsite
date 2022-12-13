@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public interface IncomeRepository extends JpaRepository<Income, UUID> {
@@ -19,7 +19,8 @@ public interface IncomeRepository extends JpaRepository<Income, UUID> {
             "         inner join income_type it on i.income_type_id = it.id\n" +
             "         inner join pay_type pt on i.pay_type_id = pt.id\n" +
             "where it.type ilike '%' || :incomeType || '%'\n" +
-            "  and pt.type ilike '%' || :payType || '%'", nativeQuery = true)
-    Page<Income> findAll(String incomeType, String payType, Pageable pageable);
+            "  and pt.type ilike '%' || :payType || '%'\n" +
+            "and i.created between :startDate and :endDate", nativeQuery = true)
+    Page<Income> findAll(String incomeType, String payType, LocalDate startDate, LocalDate endDate, Pageable pageable);
 
 }

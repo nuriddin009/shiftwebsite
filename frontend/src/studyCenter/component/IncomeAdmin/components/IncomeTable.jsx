@@ -9,7 +9,19 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import DataTablePagination from "./DataTablePagination";
-import {Box, Button, Card, Dialog, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from "@mui/material";
+import {
+    Box,
+    Button,
+    Card,
+    Dialog,
+    FormControl,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Typography
+} from "@mui/material";
 import myStyles from "./index.module.css"
 import dayjs from "dayjs";
 import {DatePicker} from "@mui/x-date-pickers";
@@ -17,6 +29,8 @@ import FormAsyncSelectInput from "./FormAsyncSelectInput";
 import Autocomplete, {createFilterOptions} from "@mui/material/Autocomplete";
 import instance from "../../../../shift/utils/instance";
 import Stack from "@mui/material/Stack";
+import InboxIcon from '@mui/icons-material/Inbox';
+import Pagination from "@mui/material/Pagination";
 
 const filter = createFilterOptions();
 
@@ -44,24 +58,26 @@ function IncomeTable() {
     const [isAll, setIsAll] = React.useState(false);
     const [today, setToday] = React.useState(false);
     const [totalPages, setTotalPages] = React.useState(0);
-    const [totalElements, setTotalElements] = React.useState(0);
-    const [currentPage, setCurrentPage] = React.useState(0);
+    // const [totalElements, setTotalElements] = React.useState(0);
+    const [currentPage, setCurrentPage] = React.useState(1);
+
+    const [timeFilter, setTimeFilter] = React.useState("");
 
 
     const handleChange = (event) => {
         setPayType(event.target.value);
-        getIncomes(event.target.value, incomeType, today)
+        getIncomes(event.target.value, incomeType, today, currentPage, timeFilter)
     };
 
 
     const handleIncomeTypeChange = (event) => {
         setIncomeType(event.target.value)
-        getIncomes(payType, event.target.value, today)
+        getIncomes(payType, event.target.value, today, currentPage, timeFilter)
     }
 
     useEffect(() => {
         getPayTypes();
-        getIncomes(payType, incomeType, today);
+        getIncomes(payType, incomeType, today, currentPage, timeFilter);
         getIncomeTypes();
     }, [])
 
@@ -70,16 +86,17 @@ function IncomeTable() {
         setIncomeType("")
         setPayType("")
         setToday(false)
-        getIncomes("", "", false)
+        setTimeFilter("")
+        getIncomes("", "", false, 1, timeFilter)
     }
 
 
-    function getIncomes(payType, incomeType, today) {
+    function getIncomes(payType, incomeType, today, page, time) {
         instance.get("/income", {
             params:
-                {incomeType, payType, today}
+                {incomeType, payType, today, page, time}
         }).then(res => {
-            setTotalPages(res.data.totalPages)
+            setTotalPages(res.data?.data?.totalPages)
             setIncomes(res.data.data.content)
         })
     }
@@ -150,11 +167,6 @@ function IncomeTable() {
             id: 'income_type',
             label: 'Income Type',
         },
-        // {
-        //     id: "",
-        //     label: 'Action',
-        //     align:"center"
-        // }
     ]
 
 
@@ -178,11 +190,17 @@ function IncomeTable() {
                 setAmount("")
                 setValue("")
                 setIncomeValue("")
-                getIncomes(payType, incomeType, today)
+                setDescription("")
+                getIncomes(payType, incomeType, today, currentPage, timeFilter)
             })
         } else {
 
         }
+    }
+
+    function goToPage(event, page) {
+        setCurrentPage(page)
+        getIncomes(payType, incomeType, today, page, timeFilter)
     }
 
 
@@ -193,7 +211,7 @@ function IncomeTable() {
             <div className={myStyles.between_}>
                 <div style={{display: "flex", alignItems: "center"}}>
                     <Button onClick={() => {
-                        getIncomes(payType, incomeType, !today)
+                        getIncomes(payType, incomeType, !today, currentPage, timeFilter)
                         setToday(!today)
                     }} sx={{mx: 1}}
                             color={today ? "secondary" : "primary"}
@@ -203,10 +221,15 @@ function IncomeTable() {
                         views={['year', 'month']}
                         label="Year and Month"
                         minDate={dayjs('2012-03-01')}
-                        maxDate={dayjs('2023-06-01')}
-                        value={value}
+                        // maxDate={dayjs('2030-06-01')}
+                        value={timeFilter}
+                        disableFuture
                         onChange={(newValue) => {
-                            setValue(newValue);
+                            let date = new Date(newValue)
+                            console.log(date)
+                            let month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1)
+                            setTimeFilter(date.getFullYear() + "-" + month + "-01")
+                            getIncomes(payType, incomeType, today, currentPage, date.getFullYear() + "-" + month + "-01")
                         }}
                         renderInput={(params) => <TextField {...params} helperText={null}/>}
                     />
@@ -282,36 +305,86 @@ function IncomeTable() {
                     <Table stickyHeader sx={{minWidth: 700}} aria-label="customized table">
                         <TableHead>
                             <TableRow>
+
                                 {cols?.map(col => <StyledTableCell align={col?.align ? col.align : "left"}
                                                                    col={col?.maxWidth}
                                                                    key={col.id}>{col.label}</StyledTableCell>)}
+                                {
+                                    incomes.length < 1 ? new Array(2).fill(0).map((item) =>
+                                        <StyledTableCell></StyledTableCell>) : ""
+                                }
                             </TableRow>
                         </TableHead>
-                        <TableBody>
-                            {
-                                incomes.map((income, index) => <StyledTableRow key={index}>
-                                    <StyledTableCell component="th" scope="row">{index + 1}</StyledTableCell>
-                                    <StyledTableCell component="th"
-                                                     scope="row">{income?.user?.firstName + " " + income?.user?.lastName}</StyledTableCell>
-                                    <StyledTableCell>{income?.user?.phoneNumber}</StyledTableCell>
-                                    <StyledTableCell>{new Date(income?.created).toLocaleString()}</StyledTableCell>
-                                    <StyledTableCell>{income?.payType?.type}</StyledTableCell>
-                                    <StyledTableCell>{income?.amount}</StyledTableCell>
-                                    <StyledTableCell>{income?.incomeType?.type}</StyledTableCell>
-                                </StyledTableRow>)
-                            }
+                        {
+                            incomes.length >= 1 ? <TableBody>
+                                    {
+                                        incomes?.map((income, index) => <StyledTableRow key={index}>
+                                            <StyledTableCell component="th" scope="row">{index + 1}</StyledTableCell>
+                                            <StyledTableCell component="th"
+                                                             scope="row">{income?.user?.firstName + " " + income?.user?.lastName}</StyledTableCell>
+                                            <StyledTableCell>{income?.user?.phoneNumber}</StyledTableCell>
+                                            <StyledTableCell>{new Date(income?.created).toLocaleString()}</StyledTableCell>
+                                            <StyledTableCell>{income?.payType?.type}</StyledTableCell>
+                                            <StyledTableCell>{income?.amount}</StyledTableCell>
+                                            <StyledTableCell>{income?.incomeType?.type}</StyledTableCell>
+                                        </StyledTableRow>)
+                                    }
 
-                        </TableBody>
+                                </TableBody> :
+                                <TableBody>
+                                    <TableRow>
+                                        <StyledTableCell></StyledTableCell>
+                                        <StyledTableCell></StyledTableCell>
+                                        <StyledTableCell></StyledTableCell>
+                                        <StyledTableCell></StyledTableCell>
+                                        <StyledTableCell>
+                                            <div style={{
+                                                width: "150px",
+                                                height: "150px",
+                                                padding: "1rem",
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                gap: "0.5rem",
+                                                justifyContent: "center",
+                                                alignItems: "center"
+                                            }}>
+                                                <InboxIcon sx={{transform: "scale(3)", color: "#023247"}}
+                                                           viewBox={"Empty"}/>
+                                                <h6 style={{marginTop: "10px"}}>Empty data</h6>
+                                            </div>
+                                        </StyledTableCell>
+                                        <StyledTableCell></StyledTableCell>
+                                        <StyledTableCell></StyledTableCell>
+                                        <StyledTableCell></StyledTableCell>
+                                    </TableRow>
+
+                                </TableBody>
+
+                        }
+
                     </Table>
                     <Box>
-                        <DataTablePagination
-                            page={currentPage}
-                            pageLimit={totalPages}
-                            total={totalElements}
-                            baseTotal={2}
-                            onChangePage={() => {
-                            }}
-                        />
+                        {
+                            // totalPages > 1 ?
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    height: "80px",
+                                    display: "flex", alignItems: "center"
+                                }}
+                            >
+                                <Stack>
+                                    <Pagination
+                                        count={totalPages}
+                                        color="primary"
+                                        size="large"
+                                        page={currentPage}
+                                        onChange={goToPage}
+                                    />
+                                </Stack>
+                            </Box>
+                            // : ""
+                        }
                     </Box>
                 </TableContainer>
                 {/*{paging?.totalPages>1 && (*/}
@@ -341,14 +414,45 @@ function IncomeTable() {
                                             onChange={(event, newValue) => {
                                                 setCurrentUser(newValue);
                                             }}
+                                            getOptionLabel={(option) => {
+                                                // Value selected with enter, right from the input
+                                                if (typeof option === 'string') {
+                                                    return option;
+                                                }
+                                                // Add "xxx" option created dynamically
+                                                if (option.inputValue) {
+                                                    return option.inputValue;
+                                                }
+                                                // Regular option
+                                                return option.label;
+                                            }}
+                                            defaultValue={users[0]}
                                             inputValue={inputValue}
+                                            selectOnFocus
+                                            handleHomeEndKeys
+
                                             onInputChange={(event, newInputValue) => {
                                                 setInputValue(newInputValue);
                                                 getUsers(newInputValue)
                                             }}
-                                            id="controllable-states-demo"
+                                            filterOptions={(options, params) => {
+                                                const filtered = filter(options, params);
+
+                                                const {inputValue} = params;
+                                                // Suggest the creation of a new value
+                                                const isExisting = options.some((option) => inputValue === option.label);
+                                                if (inputValue !== '' && !isExisting) {
+                                                    filtered.push({
+                                                        inputValue,
+                                                    });
+                                                }
+
+                                                return filtered;
+                                            }}
+                                            // id="controllable-states-demo"
                                             options={users}
                                             sx={{width: "100%"}}
+                                            renderOption={(props, option) => <li {...props}>{option.label}</li>}
                                             renderInput={(params) => <TextField {...params} label="Users"/>}
                                         />
                                     </Box>

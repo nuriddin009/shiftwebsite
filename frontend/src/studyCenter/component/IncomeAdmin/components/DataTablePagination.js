@@ -5,7 +5,8 @@ import {
     PaginationItem,
     Typography,
 } from '@mui/material';
-
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const DataTablePagination = (props) => {
     const {page, pageLimit, total, baseTotal, onChangePage} = props;
@@ -58,8 +59,8 @@ const DataTablePagination = (props) => {
                         <PaginationItem
                             {...item}
                             components={{
-                                previous: () => <Typography>Previous</Typography>,
-                                next: () => <Typography>Next</Typography>,
+                                previous: () => <ArrowBackIosNewIcon/>,
+                                next: () => <ArrowForwardIosIcon/>,
                             }}
                         />
                     )}

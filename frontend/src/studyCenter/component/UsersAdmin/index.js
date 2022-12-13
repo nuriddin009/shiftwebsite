@@ -29,6 +29,7 @@ import Pagination from '@mui/material/Pagination';
 import Box from '@mui/material/Box';
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import {InputLabel} from "@mui/material";
 
 function Index(props) {
 
@@ -88,8 +89,8 @@ function Index(props) {
     }
 
     function goToPage(event, page) {
-        setPage(page)
-        getUsers("", "", page, filterRole);
+        setPage(page-1)
+        getUsers("", "", page-1, filterRole);
     }
 
     function mySubmit(data) {
@@ -332,10 +333,13 @@ function Index(props) {
                             :
                             ""
                     }
-                    <FormControl sx={{minWidth: 120, borderTop: "2px solid", borderRadius: "7px"}}>
+                    <FormControl sx={{minWidth: 120}}>
+                        <InputLabel style={{background: "white"}}
+                                    id="demo-simple-select-label">ROLE FILTER</InputLabel>
                         <SelectMui
                             value={filterRole}
                             onChange={filterByRole}
+                            label={"ROLE FILTER"}
                         >
                             <MenuItem value="">
                                 <em>ROLE FILTER</em>
@@ -427,7 +431,8 @@ function Index(props) {
 
 
                 {
-                    totalPages > 1 ? <Box
+                    totalPages > 1 ?
+                        <Box
                         sx={{
                             width: "100%",
                             height: "80px",
@@ -442,7 +447,8 @@ function Index(props) {
                                 onChange={goToPage}
                             />
                         </Stack>
-                    </Box> : ""
+                    </Box>
+                    : ""
                 }
 
 

@@ -23,7 +23,4 @@ public class ExpenseDto {
     @NotNull
     private UUID payTypeId;
 
-    @NotNull
-    private UUID userId;
-
 }

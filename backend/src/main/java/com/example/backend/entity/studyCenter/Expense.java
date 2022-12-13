@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 @Table(name = "expense")
+@EntityListeners(AuditingEntityListener.class)
 public class Expense {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -41,7 +43,7 @@ public class Expense {
     private PayType payType;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", updatable = false, nullable = false)
     @CreatedBy
     private User user;
 
