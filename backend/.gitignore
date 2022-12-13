@@ -1,5 +1,9 @@
 HELP.md
 target/
+images/users/
+images/certificate/image/
+images/certificate/qrCode/
+logs/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

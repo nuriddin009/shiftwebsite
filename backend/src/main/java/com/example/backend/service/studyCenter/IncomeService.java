@@ -53,8 +53,8 @@ public class IncomeService {
 
     @SneakyThrows
     public ApiResponse getIncomes(String incomeType, String payType, Boolean today, Integer page, String date) {
-        LocalDate startDate = !Objects.equals(date, "") ? LocalDate.parse(date):null;
-        LocalDate endDate = startDate != null ? startDate.plusMonths(1):null;
+        LocalDate startDate = !Objects.equals(date, "") ? LocalDate.parse(date) : null;
+        LocalDate endDate = startDate != null ? startDate.plusMonths(1) : null;
 
         Page<Income> list = incomeRepository.findAll(incomeType, payType, startDate, endDate, today, PageRequest.of(page - 1, 10));
         return new ApiResponse(true, list);

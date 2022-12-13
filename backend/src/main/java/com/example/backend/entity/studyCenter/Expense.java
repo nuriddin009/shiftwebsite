@@ -47,6 +47,11 @@ public class Expense {
     @CreatedBy
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "expense_month", updatable = false)
+    private ExpenseMonth expenseMonth;
+
+
     @CreationTimestamp
     private LocalDateTime created;
 
@@ -54,10 +59,12 @@ public class Expense {
     private LocalDateTime updated;
 
 
-    public Expense(int amount, String description, String title, PayType payType) {
+
+    public Expense(int amount, String description, String title, PayType payType, ExpenseMonth expenseMonth) {
         this.amount = amount;
         this.description = description;
         this.title = title;
         this.payType = payType;
+        this.expenseMonth = expenseMonth;
     }
 }

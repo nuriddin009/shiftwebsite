@@ -31,10 +31,10 @@ import instance from "../../../../shift/utils/instance";
 import Stack from "@mui/material/Stack";
 import InboxIcon from '@mui/icons-material/Inbox';
 import Pagination from "@mui/material/Pagination";
+import {FormHelperText} from "@mui/material";
 
 const filter = createFilterOptions();
 
-const options1 = ['Option 1', 'Option 2'];
 
 function IncomeTable() {
     const params = useParams()
@@ -58,11 +58,17 @@ function IncomeTable() {
     const [isAll, setIsAll] = React.useState(false);
     const [today, setToday] = React.useState(true);
     const [totalPages, setTotalPages] = React.useState(0);
-    // const [totalElements, setTotalElements] = React.useState(0);
+
     const [currentPage, setCurrentPage] = React.useState(1);
 
     const [timeFilter, setTimeFilter] = React.useState(null);
 
+    const [errorText, setErrorText] = useState({
+        currentUser: false,
+        amount: false,
+        value: false,
+        incomeValue: false,
+    })
 
     const handleChange = (event) => {
         setPayType(event.target.value);
@@ -192,11 +198,25 @@ function IncomeTable() {
                 setIncomeValue("")
                 setDescription("")
                 getIncomes(payType, incomeType, today, currentPage, timeFilter)
+                setErrorText({
+                    ...errorText,
+                    currentUser: false,
+                    amount: false,
+                    value: false,
+                    incomeValue: false
+                })
             })
         } else {
-
+            setErrorText({
+                ...errorText,
+                currentUser: currentUser === null,
+                amount: amount === "",
+                value: value === "",
+                incomeValue: incomeValue === ""
+            })
         }
     }
+
 
     function goToPage(event, page) {
         setCurrentPage(page)
@@ -413,6 +433,7 @@ function IncomeTable() {
                                     <Box sx={{minWidth: 220}}>
                                         <Autocomplete
                                             value={currentUser}
+                                            id="outlined-error-helper-text"
                                             onChange={(event, newValue) => {
                                                 setCurrentUser(newValue);
                                             }}
@@ -455,19 +476,32 @@ function IncomeTable() {
                                             options={users}
                                             sx={{width: "100%"}}
                                             renderOption={(props, option) => <li {...props}>{option.label}</li>}
-                                            renderInput={(params) => <TextField {...params} label="Users"/>}
+                                            renderInput={(params) => <TextField
+                                                error={errorText.currentUser} {...params} label="Users"/>}
                                         />
+                                        <FormHelperText error id="my-helper-text">
+                                            {errorText.currentUser ? "User required" : ""}
+                                        </FormHelperText>
+
                                     </Box>
                                 </FormControl>
 
                             </Grid>
                             <Grid xs={6} sx={{width: "40%"}}>
-                                <TextField style={{height: 30}} sx={{m: 1, height: 30, width: "95%"}}
-                                           id="outlined-basic"
-                                           label="Amount"
-                                           value={amount}
-                                           onChange={(e) => setAmount(e.target.value)}
-                                           variant="outlined" type={'number'}/>
+                                <FormControl sx={{m: 1, height: 30, width: "95%"}}>
+                                    <TextField style={{height: 30}}
+                                               id="outlined-basic"
+                                               fullWidth
+                                               label="Amount"
+                                               value={amount}
+                                               error={errorText.amount}
+                                               onChange={(e) => setAmount(e.target.value)}
+                                               variant="outlined" type={'number'}/>
+                                </FormControl>
+
+                                <FormHelperText sx={{marginTop: "20px", marginLeft: "10px"}} error id="my-helper-text">
+                                    {errorText.amount ? "Amount required" : ""}
+                                </FormHelperText>
                             </Grid>
 
                         </div>
@@ -522,11 +556,14 @@ function IncomeTable() {
                                             renderOption={(props, option) => <li {...props}>{option.label}</li>}
                                             freeSolo
                                             renderInput={(params) => (
-                                                <TextField {...params} label="Pay Type"/>
+                                                <TextField error={errorText.value} {...params} label="Pay Type"/>
                                             )}
                                         />
                                     </Box>
                                 </FormControl>
+                                <FormHelperText  sx={{marginLeft: "10px"}} error id="my-helper-text">
+                                    {errorText.value ? "Pay type required" : ""}
+                                </FormHelperText>
                             </Grid>
 
                             <Grid sx={{width: "50%"}}>
@@ -578,11 +615,15 @@ function IncomeTable() {
                                             renderOption={(props, option) => <li {...props}>{option.label}</li>}
                                             freeSolo
                                             renderInput={(params) => (
-                                                <TextField {...params} label="Income Type"/>
+                                                <TextField error={errorText.incomeValue} {...params}
+                                                           label="Income Type"/>
                                             )}
                                         />
                                     </Box>
                                 </FormControl>
+                                <FormHelperText  sx={{ marginLeft: "10px"}} error id="my-helper-text">
+                                    {errorText.incomeValue ? "Income type required" : ""}
+                                </FormHelperText>
                             </Grid>
 
 

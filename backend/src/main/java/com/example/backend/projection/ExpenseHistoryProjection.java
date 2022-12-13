@@ -1,14 +1,12 @@
 package com.example.backend.projection;
 
-import java.math.BigDecimal;
-
 public interface ExpenseHistoryProjection {
 
     String getTitle();
 
-    String getDate();
+    String getCreated();
 
-    BigDecimal getAmount();
+    Integer getAmount();
 
     String getPayType();
 

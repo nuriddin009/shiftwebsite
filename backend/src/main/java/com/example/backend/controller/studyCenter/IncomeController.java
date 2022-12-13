@@ -37,10 +37,9 @@ public class IncomeController {
             @RequestParam(defaultValue = "") String incomeType,
             @RequestParam(defaultValue = "") String payType,
             @RequestParam Boolean today,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(required = false,defaultValue = "") String time
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "") String time
     ) {
-        System.out.println(time);
         return ResponseEntity.ok(
                 incomeService.getIncomes(incomeType, payType, today, page, time));
     }

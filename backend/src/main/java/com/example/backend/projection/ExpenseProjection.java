@@ -4,15 +4,18 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public interface ExpenseProjection {
 
+    UUID getId();
+
     String getYear();
 
-    String getMonth();
+    String getMonthName();
 
     BigDecimal getAmount();
 
-//    @Value("#{@expenseRepository.getHistory(target.year,target.month)}")
-//    List<ExpenseHistoryProjection> getHistory();
+    @Value("#{@expenseRepository.getHistory(target.id)}")
+    List<ExpenseHistoryProjection> getHistory();
 }

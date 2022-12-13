@@ -9,7 +9,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import DataTablePagination from "./DataTablePagination";
+import {FormHelperText} from "@mui/material";
 import {
+
     Box,
     Button, Collapse,
     Dialog,
@@ -17,7 +19,7 @@ import {
     Grid,
     IconButton,
     InputLabel,
-    MenuItem,
+    MenuItem, Pagination,
     Select,
     TextField, Typography
 } from "@mui/material";
@@ -31,30 +33,11 @@ import PropTypes from "prop-types";
 import Autocomplete, {createFilterOptions} from "@mui/material/Autocomplete";
 import Stack from "@mui/material/Stack";
 import instance from "../../../../shift/utils/instance";
+import InboxIcon from "@mui/icons-material/Inbox";
 
-
-function createData(num, date_year, amount) {
-    return {
-        num,
-        date_year,
-        amount,
-        history: [
-            {
-                customerId: 'tok',
-                date: '2020-01-05',
-                amount: 300000,
-            },
-            {
-                date: '2020-01-02',
-                customerId: 'arenda',
-                amount: 19000,
-            },
-        ],
-    };
-}
 
 function Row(props) {
-    const {row} = props;
+    const {row, index} = props;
     const [open, setOpen] = React.useState(false);
 
     return (
@@ -62,10 +45,10 @@ function Row(props) {
             <TableRow sx={{'& > *': {borderBottom: 'unset'}}}>
 
                 <TableCell component="th" scope="row">
-                    {row.num}
+                    {index + 1}
                 </TableCell>
-                <TableCell>{row.date_year}</TableCell>
-                <TableCell>{row.amount}</TableCell>
+                <TableCell>{row?.monthName + " " + row?.year}</TableCell>
+                <TableCell>{row.amount + " so'm"}</TableCell>
 
                 <TableCell align={'right'}>
                     <IconButton
@@ -85,32 +68,57 @@ function Row(props) {
                                 History
                             </Typography>
                             <Table size="small" aria-label="purchases">
-                                <TableHead>
+                                <TableHead sx={{background: "black", color: "white"}}>
                                     <TableRow>
-                                        <TableCell>Title</TableCell>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Amount</TableCell>
-                                        <TableCell>Pay Type</TableCell>
-                                        <TableCell>Made by</TableCell>
+                                        <TableCell sx={{color: "white"}}>Title</TableCell>
+                                        <TableCell sx={{color: "white"}}>Date</TableCell>
+                                        <TableCell sx={{color: "white"}}>Amount</TableCell>
+                                        <TableCell sx={{color: "white"}}>Pay Type</TableCell>
+                                        <TableCell sx={{color: "white"}}>Made by</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                <TableBody>
-                                    {row.history.map((historyRow) => (
-                                        <TableRow key={historyRow.date}>
-                                            <TableCell>{historyRow.customerId}</TableCell>
-                                            <TableCell component="th" scope="row">
-                                                {historyRow.date}
-                                            </TableCell>
-                                            <TableCell>{historyRow.amount}</TableCell>
-                                            <TableCell>
-                                                Cash
-                                            </TableCell>
-                                            <TableCell>
-                                                Bahodirov B
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
+                                {
+                                    row?.history?.length >= 1 ? <TableBody>
+                                            {row?.history?.map((historyRow) => (
+                                                <TableRow key={historyRow?.created}>
+                                                    <TableCell>{historyRow?.title}</TableCell>
+                                                    <TableCell component="th" scope="row">
+                                                        {new Date(historyRow?.created).toLocaleString()}
+                                                    </TableCell>
+                                                    <TableCell>{historyRow.amount}</TableCell>
+                                                    <TableCell>{historyRow?.payType}</TableCell>
+                                                    <TableCell>{historyRow?.madeBy}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                        : <TableBody>
+                                            <StyledTableRow>
+                                                <StyledTableCell></StyledTableCell>
+                                                <StyledTableCell></StyledTableCell>
+                                                <StyledTableCell></StyledTableCell>
+                                                <StyledTableCell>
+                                                    <div style={{
+                                                        width: "150px",
+                                                        height: "150px",
+                                                        padding: "1rem",
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        gap: "0.5rem",
+                                                        justifyContent: "center",
+                                                        alignItems: "center"
+                                                    }}>
+                                                        <InboxIcon sx={{transform: "scale(3)", color: "#023247"}}
+                                                                   viewBox={"Empty"}/>
+                                                        <h6 style={{marginTop: "10px"}}>Empty data</h6>
+                                                    </div>
+                                                </StyledTableCell>
+                                                <StyledTableCell></StyledTableCell>
+                                                <StyledTableCell></StyledTableCell>
+                                                <StyledTableCell></StyledTableCell>
+                                            </StyledTableRow>
+                                        </TableBody>
+                                }
+
                             </Table>
                         </Box>
                     </Collapse>
@@ -135,36 +143,32 @@ Row.propTypes = {
     }).isRequired,
 };
 
-const rows = [
-    createData(1, "Dekabr 2022", 400000),
-    createData(2, "Oktyabr 2022", 500000),
-    createData(3, "Noyabr 2022", 200000),
-
-];
 
 const filter = createFilterOptions();
 
 
 function ExpenseTable() {
     const [open, setOpen] = useState(false)
-    const [age, setAge] = React.useState('');
-    const [startDate, setStartDate] = useState(1659312000000);
     const [value, setValue] = React.useState("");
-    const [currentUser, setCurrentUser] = React.useState(null);
-    const [inputValue, setInputValue] = React.useState('');
-    const [users, setUsers] = useState([])
     const [options, setOptions] = useState([])
-    const [incomeValue, setIncomeValue] = React.useState("");
+    const [expenses, setExpenses] = useState([])
     const [description, setDescription] = React.useState("");
     const [amount, setAmount] = React.useState("");
     const [title, setTitle] = React.useState("");
+    const [totalPages, setTotalPages] = React.useState(0);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [timeFilter, setTimeFilter] = React.useState(null);
+    const [isAll, setIsAll] = React.useState(false);
+    const [errorText, setErrorText] = useState({
+        title: false,
+        amount: false,
+        value: false,
+    })
 
 
-    const handleChange = (event) => {
-        setAge(event.target.value);
-    };
     useEffect(() => {
         getPayTypes();
+        getExpenses(currentPage, timeFilter)
     }, [])
 
 
@@ -191,12 +195,13 @@ function ExpenseTable() {
         setOpen(!open)
     }
 
-    function getUsers(inputValue) {
-        instance.get("/user/search?input=" + inputValue).then(({data}) => {
-            let a = data.content.map(item => ({value: item.id, label: item.firstName + " " + item.lastName}))
-            setUsers(a)
+    function getExpenses(page, startDate) {
+        instance.get("/expense", {params: {page, startDate}}).then(res => {
+            setExpenses(res.data.data.content)
+            setTotalPages(res.data?.data?.totalPages)
         })
     }
+
 
     function getPayTypes() {
         instance.get("/pay_type").then(({data}) => {
@@ -228,10 +233,33 @@ function ExpenseTable() {
                 setValue("")
                 setTitle("")
                 setDescription("")
+                setErrorText({
+                    ...errorText,
+                    title: false,
+                    value: false,
+                    amount: false
+                })
+                getExpenses(currentPage, timeFilter)
             })
         } else {
-
+            setErrorText({
+                ...errorText,
+                title: title === "",
+                value: value === "",
+                amount: amount === ""
+            })
         }
+    }
+
+    function goToPage(event, page) {
+        setCurrentPage(page)
+        getExpenses(page, timeFilter)
+    }
+
+    function getAll() {
+        setIsAll(true)
+        setTimeFilter(null)
+        getExpenses(1, null)
     }
 
 
@@ -239,16 +267,22 @@ function ExpenseTable() {
         <div style={{marginTop: '30px'}}>
             <div className={myStyles.between_}>
                 <div>
-                    <Button sx={{mx: 1}} variant={"contained"}>All</Button>
+                    <Button onClick={getAll} sx={{mx: 1}}
+                            color={isAll ? "secondary" : "primary"}
+                            variant={isAll ? "outlined" : "contained"}>{"All"}</Button>
                     <DatePicker
                         sx={{height: 60}}
                         views={['year', 'month']}
                         label="Year and Month"
                         minDate={dayjs('2012-03-01')}
-                        maxDate={dayjs('2023-06-01')}
-                        value={value}
+                        // maxDate={dayjs('2030-06-01')}
+                        value={timeFilter}
+                        disableFuture
                         onChange={(newValue) => {
-                            setValue(newValue);
+                            let date = new Date(newValue)
+                            let month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1)
+                            setTimeFilter(date.getFullYear() + "-" + month + "-01")
+                            getExpenses(currentPage, date.getFullYear() + "-" + month + "-01")
                         }}
                         renderInput={(params) => <TextField {...params} helperText={null}/>}
                     />
@@ -270,35 +304,52 @@ function ExpenseTable() {
                                 {cols?.map(col => <StyledTableCell align={col?.align ? col.align : "left"}
                                                                    col={col?.maxWidth}
                                                                    key={col.id}>{col.label}</StyledTableCell>)}
+                                {expenses.length < 1 && (new Array(3).fill(0).map((item, index) =>
+                                    <StyledTableCell key={index}></StyledTableCell>))}
                             </TableRow>
                         </TableHead>
-                        <TableBody>
-                            {rows.map((row) => (
-                                <Row key={row.num} row={row}/>
-                            ))}
-                        </TableBody>
+                        {
+                            expenses.length >= 1 ? <TableBody>
+                                {expenses?.map((row, index) => (
+                                    <Row key={row.id} row={row} index={index}/>
+                                ))}
+                            </TableBody> : <TableBody>
+                                <StyledTableCell></StyledTableCell>
+                                <StyledTableCell></StyledTableCell>
+                                <StyledTableCell></StyledTableCell>
+                                <StyledTableCell>
+                                    <div style={{
+                                        width: "150px",
+                                        height: "150px",
+                                        padding: "1rem",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: "0.5rem",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        <InboxIcon sx={{transform: "scale(3)", color: "#023247"}}
+                                                   viewBox={"Empty"}/>
+                                        <h6 style={{marginTop: "10px"}}>Empty data</h6>
+                                    </div>
+                                </StyledTableCell>
+                                <StyledTableCell></StyledTableCell>
+                            </TableBody>
+                        }
+
                     </Table>
-                    <Box sx={{minWidth: 600, px: 3}}>
-                        <DataTablePagination
-                            page={1}
-                            pageLimit={6}
-                            total={20}
-                            baseTotal={2}
-                            onChangePage={() => {
-                            }}
-                        />
-                    </Box>
                 </TableContainer>
-                {/*{paging?.totalPages>1 && (*/}
-                {/*    <div style={{display: 'flex', justifyContent: 'center', marginTop: '10px'}}>*/}
-                {/*        <Pagination*/}
-                {/*            page={paging?.pageable?.pageNumber+1 ?? 1}*/}
-                {/*            onChange={handleChange}*/}
-                {/*            count={paging?.totalPages}*/}
-                {/*            color="primary"*/}
-                {/*        />*/}
-                {/*    </div>*/}
-                {/*)}*/}
+                {totalPages > 1 && (
+                    <div style={{display: 'flex', justifyContent: 'center', marginTop: '10px'}}>
+                        <Pagination
+                            page={currentPage}
+                            onChange={goToPage}
+                            count={totalPages}
+                            color="primary"
+                            size="large"
+                        />
+                    </div>
+                )}
 
             </Paper>
 
@@ -315,6 +366,8 @@ function ExpenseTable() {
                                         <TextField sx={{m: 1, width: "95%"}}
                                                    id="outlined-basic"
                                                    label="Title"
+                                                   error={errorText.title}
+                                                   helperText={errorText.title ? "Title required" : ""}
                                                    value={title}
                                                    onChange={(e) => {
                                                        setTitle(e.target.value)
@@ -329,6 +382,8 @@ function ExpenseTable() {
                                            sx={{m: 1, height: 30, marginTop: "16.5px", width: "95%"}}
                                            id="outlined-basic"
                                            label="Amount"
+                                           error={errorText.amount}
+                                           helperText={errorText.amount ? "Amount required" : ""}
                                            value={amount}
                                            onChange={(e) => setAmount(e.target.value)}
                                            variant="outlined" type={'number'}/>
@@ -386,25 +441,31 @@ function ExpenseTable() {
                                             renderOption={(props, option) => <li {...props}>{option.label}</li>}
                                             freeSolo
                                             renderInput={(params) => (
-                                                <TextField {...params} label="Pay Type"/>
+                                                <TextField error={errorText.value} {...params} label="Pay Type"/>
                                             )}
                                         />
                                     </Box>
                                 </FormControl>
+                                <FormHelperText sx={{marginLeft: "20px"}} error id="my-helper-text">
+                                    {errorText.value ? "Pay type required" : ""}
+                                </FormHelperText>
                             </Grid>
 
 
                         </div>
-                        <TextField
-                            multiline
-                            rows={4}
-                            sx={{height: 40, m: 1, width: "97.5%"}}
-                            id="outlined-multiline-static"
-                            label="Description"
-                            variant="outlined"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                        />
+                        <FormControl sx={{m: 1, minWidth: 200, width: "97.5%"}}>
+                            <TextField
+                                multiline
+                                rows={3}
+                                sx={{height: 40, m: 1, width: "100%"}}
+                                id="outlined-multiline-static"
+                                label="Description"
+                                variant="outlined"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                            />
+                        </FormControl>
+
                     </div>
                 </div>
                 <Stack
@@ -413,7 +474,8 @@ function ExpenseTable() {
                     sx={{
                         position: "absolute",
                         right: "20px",
-                        bottom: "20px"
+                        bottom: "10px",
+
                     }}
                 >
                     <Button

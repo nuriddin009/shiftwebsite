@@ -18,16 +18,18 @@ public class ExpenseController {
     private final ExpenseService expenseService;
 
 
-
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN')")
     @GetMapping
-    public ResponseEntity<ApiResponse> getExpenses(){
-        return ResponseEntity.ok(expenseService.getExpenses());
+    public ResponseEntity<ApiResponse> getExpenses(
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "") String startDate
+    ) {
+        return ResponseEntity.ok(expenseService.getExpenses(page, startDate));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN')")
     @PostMapping
-    public ResponseEntity<ApiResponse> postExpense(@Valid @RequestBody ExpenseDto expenseDto){
+    public ResponseEntity<ApiResponse> postExpense(@Valid @RequestBody ExpenseDto expenseDto) {
         return ResponseEntity.ok(expenseService.postExpense(expenseDto));
     }
 
