@@ -1,21 +1,15 @@
 package com.example.backend.projection;
 
-import org.springframework.beans.factory.annotation.Value;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDate;
 
 public interface ExpenseProjection {
+    String getTitle();
 
-    UUID getId();
+    String getCreated();
 
-    String getYear();
+    Integer getAmount();
 
-    String getMonthName();
+    String getPayType();
 
-    BigDecimal getAmount();
-
-    @Value("#{@expenseRepository.getHistory(target.id)}")
-    List<ExpenseHistoryProjection> getHistory();
+    String getMadeBy();
 }

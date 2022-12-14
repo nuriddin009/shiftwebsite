@@ -4,7 +4,7 @@ import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.ExpenseDto;
 import com.example.backend.entity.studyCenter.Expense;
 import com.example.backend.entity.studyCenter.ExpenseMonth;
-import com.example.backend.projection.ExpenseProjection;
+import com.example.backend.projection.ExpenseMonthProjection;
 import com.example.backend.repository.PayTypeRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.repository.studyCenter.ExpenseMonthRepository;
@@ -35,7 +35,7 @@ public class ExpenseService {
         LocalDate endDate = startDate != null ? startDate.plusMonths(1) : null;
 
 
-        Page<ExpenseProjection> list = expenseRepository.getExpenses(startDate, endDate, PageRequest.of(page - 1, 10));
+        Page<ExpenseMonthProjection> list = expenseRepository.getExpenses(startDate, endDate, PageRequest.of(page - 1, 10));
         return new ApiResponse(true, list);
     }
 
