@@ -25,6 +25,7 @@ public interface UserSearchProjection {
     Boolean getActiv();
 
     String getFatherPhoneNumber();
+    Integer getBalance();
 
     List<Role> getRoles();
 }

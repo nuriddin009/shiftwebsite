@@ -4,21 +4,19 @@ import com.example.backend.entity.Role;
 import com.example.backend.entity.User;
 import com.example.backend.entity.shift.*;
 import com.example.backend.entity.studyCenter.ApiKey;
+import com.example.backend.entity.studyCenter.IncomeType;
 import com.example.backend.entity.studyCenter.Lesson;
 import com.example.backend.repository.*;
 import com.example.backend.repository.shiftRepo.*;
 import com.example.backend.repository.studyCenter.CertificateRepository;
-//import com.example.backend.repository.studyCenter.WeekDayRepository;
+import com.example.backend.repository.studyCenter.TimeTableUsersRepository;
 import com.example.backend.service.studyCenter.GenerateCertificate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Component
@@ -37,8 +35,8 @@ public class AutoRun implements CommandLineRunner {
     private final FollowUsRepo followUsRepo;
     private final ApiKeyRepository apiKeyRepository;
     private final CertificateRepository certificateRepository;
-    private final GenerateCertificate generateCertificate;
-    private final AttachmentRepository attachmentRepository;
+    private final IncomeTypeRepository incomeTypeRepository;
+    private final TimeTableUsersRepository timeTableUsersRepository;
 //    private final WeekDayRepository weekDayRepository;
 
     @Override
@@ -105,6 +103,9 @@ public class AutoRun implements CommandLineRunner {
             user.setRoles(Arrays.asList(role, role1, role2));
             userRepository.save(user);
         }
+        if(incomeTypeRepository.findAll().size()==0){
+            new IncomeType(UUID.fromString("c447ff07-97e8-4a4b-98a9-88a94120bdfd"),"Student");
+        }
 
 
         if (followUsRepo.findAll().size() == 0) {
@@ -154,5 +155,7 @@ public class AutoRun implements CommandLineRunner {
 
         }
         userRepository.changeBalance();
+        timeTableUsersRepository.changePaid();
+
     }
 }

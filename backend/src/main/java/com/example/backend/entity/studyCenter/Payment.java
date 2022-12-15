@@ -22,13 +22,12 @@ public class Payment {
     )
     private UUID id;
 
-    @Column(nullable = false)
-    private String type;
+    @ManyToOne
+    private TimeTableUser timeTableUser;
 
     @Column(nullable = false)
     private Integer amount;
 
-    public Payment(String type) {
-        this.type = type;
-    }
+    private String description;
+
 }

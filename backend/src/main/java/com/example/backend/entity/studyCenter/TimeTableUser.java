@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -23,7 +24,6 @@ public class TimeTableUser {
     private User user;
     private String price;
 
-    @Column(nullable = true)
     private int paid=0;
 
     private Integer gotogroup;

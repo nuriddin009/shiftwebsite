@@ -80,4 +80,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Modifying
     @Query("UPDATE User u SET u.balance=0 WHERE u.balance is null ")
     void changeBalance();
+
+
 }

@@ -12,6 +12,22 @@ import logo from "../shift/file/image/imageShift/logo2.svg";
 // import PhoneInput, {isValidPhoneNumber} from "react-phone-number-input";
 import PhoneInput from 'react-phone-input-2';
 import instance from "../shift/utils/instance";
+import Button from "@mui/material/Button";
+import {
+    Box,
+    ButtonGroup,
+    FormControl,
+    FormHelperText,
+    Grid,
+    InputLabel,
+    Select,
+    Switch,
+    TextField
+} from "@mui/material";
+import Autocomplete, {createFilterOptions} from "@mui/material/Autocomplete";
+import MenuItem from "@mui/material/MenuItem";
+
+const filter = createFilterOptions();
 
 function Index(props) {
     const [groups, setGroups] = useState([])
@@ -30,6 +46,14 @@ function Index(props) {
     const [lessOrMore, setLessOrMore] = useState(false)
     const [currentNew, setCurrentNew] = useState(false)
     const [blockSave, setBlockSave] = useState(false)
+    const [newPayment, setNewPayment] = useState(false)
+    const [payment, isPayment] = useState(true)
+    const [amount, setAmount] = useState('')
+    const [desc, setDesc] = useState('')
+    const [value, setValue] = React.useState(null);
+    const [options, setOptions] = useState([])
+    const [from, setFrom] = useState(0)
+
     const [groupIndex1, setGroupIndex1] = useState("")
 
     // create user
@@ -52,6 +76,7 @@ function Index(props) {
 
     useEffect(() => {
         getGroups(searchGroup)
+        getPayTypes()
         let groupId = localStorage.getItem("groupId");
         setGroup(groupId)
 
@@ -152,6 +177,14 @@ function Index(props) {
         setTimeTab(item)
         setInput(item?.price)
         getTimeTab(item?.id)
+    }
+
+
+    function getPayTypes() {
+        instance.get("/pay_type").then(({data}) => {
+            let a = data.data.map(item => ({label: item?.type, value: item?.id,}));
+            setOptions(a)
+        })
     }
 
 
@@ -296,6 +329,10 @@ function Index(props) {
             password_repid: "",
             activ: false
         })
+        setFrom("")
+        setValue("")
+        setAmount("")
+        setDesc("")
     }
 
 
@@ -320,7 +357,7 @@ function Index(props) {
 
 
         if (blockSave) {
-            instance.post("/user/edit",  data).then(res => {
+            instance.post("/user/edit", data).then(res => {
                 rodalVisisble()
             })
         } else {
@@ -386,11 +423,22 @@ function Index(props) {
         })
     }
 
+    function makePayment() {
+        if ((newPayment && (!value || !amount))||(!newPayment && !amount)) toast.error("pay type and amount should be filled!")
+        if (!newPayment && from?.balance < amount) toast.error("not enough money")
+        else instance.post("/payment/" + from.timeTableId, {payType: value, amount, desc,newPayment}).then(res => {
+           getTimeTab(from.timetable)
+            rodalVisisble()
+        })
+    }
 
     function seeUser(item) {
+        console.log(item)
         setBlockSave(true)
         instance.get("/user/getoneUser/" + item.userid).then(res => {
             rodalVisisble()
+            console.log(item.id)
+            setFrom({...res?.data?.data, timeTableId: item.id,paid:item.paid,timetable:item.timeTableId})
             reset(res.data.data)
         })
     }
@@ -743,8 +791,11 @@ function Index(props) {
                                                               className={"spanDeleteUser text-white"}>X</span>
 
                                                     }
+                                                    {console.log(item.price )}
+                                                    {console.log(item.paid )}
+
                                                     <p
-                                                        style={{color: item.parentsData.length === 0 ? "red" : ""}}
+                                                        style={{color: parseInt(item.price)>item.paid ? "red" : "green"}}
                                                         onClick={() => seeUser(item)}>
                                                         {item.firstname + " " + item.lastname}
                                                         {
@@ -903,6 +954,7 @@ function Index(props) {
             </div>
             {/*Add Student Rodal*/}
             <Rodal visible={rodal} onClose={rodalVisible}>
+
                 <div className={"card-body my-2"}>
                     <div>
                         {
@@ -913,6 +965,7 @@ function Index(props) {
                                 />
                             </h6> : ""
                         }
+
 
                         <div className={"d-flex"} style={{width: "100%"}}>
 
@@ -1001,7 +1054,74 @@ function Index(props) {
                 <div className="card register-card">
                     <div className="card-header bgCollor"><img width={150} src={logo} alt="logo"/></div>
                     <div className="card-body card_body">
-                        <form id={"my_form"} onSubmit={handleSubmit(mySubmit)}>
+                        <ButtonGroup variant="contained" sx={{width: '100%', mb: 3}}
+                                     aria-label="outlined primary button group">
+                            <Button variant={payment ? "text" : "contained"} sx={{width: '50%'}}
+                                    onClick={() => isPayment(true)}>Payment</Button>
+                            <Button variant={payment ? "contained" : "text"} sx={{width: '50%'}}
+                                    onClick={() => isPayment(false)}>User Data</Button>
+                        </ButtonGroup>
+                        {payment ? <div style={{display: "flex", flexDirection: "column", gap: 5}}>
+
+                            <div style={{display: "flex", width: "95%"}}>
+                                <Grid sx={{width: "50%"}}>
+                                    <FormControl sx={{m: 1, mb: 5, height: 30, width: "95%"}}>
+                                        <TextField style={{height: 30}}
+                                                   id="outlined-basic"
+                                                   fullWidth
+                                                   label="Amount"
+                                                   value={amount}
+                                            // error={errorText.amount}
+                                                   onChange={(e) => setAmount(e.target.value)}
+                                                   variant="outlined" type={'number'}/>
+                                    </FormControl>
+                                </Grid>
+
+                                {newPayment && <Grid sx={{width: "50%"}}>
+                                    <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
+                                        <InputLabel id="-label" sx={{backgroundColor: "white"}}> Pay Type</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-helper-label"
+                                            id="demo-simple-select-helper"
+                                            value={value}
+                                            label="pay_type"
+                                            onChange={(e) => setValue(e.target.value)}
+                                        >
+                                            {options.map((item, index) => <MenuItem
+                                                value={item.value}>{item?.label}</MenuItem>)}
+
+                                        </Select>
+                                    </FormControl>
+
+                                </Grid>
+                                }
+                            </div>
+                            {newPayment && <div>
+                                <TextField
+                                    multiline
+                                    rows={4}
+                                    sx={{m: 1, width: "95%"}}
+                                    id="outlined-multiline-static"
+                                    label="Description"
+                                    variant="outlined"
+                                    value={desc}
+                                    onChange={(e) => setDesc(e.target.value)}
+                                />
+                            </div>}
+                            <div>
+                                New Payment: <Switch onClick={() => {
+                                setNewPayment(!newPayment)
+                            }} checked={newPayment}/>
+                            </div>
+                            <div style={{display: "flex", justifyContent: "space-between", width: "95%"}}>
+                                <div>
+                                    <p>Balance: {from?.balance} so'm</p>
+                                    <p>Paid: {from?.paid} so'm</p>
+                                </div>
+                                <Button onClick={makePayment} variant={"contained"}>Add</Button>
+
+                            </div>
+                        </div> : <form id={"my_form"} onSubmit={handleSubmit(mySubmit)}>
 
                             <div className="d-flex gap-3">
                                 <div className={"w-50"}>
@@ -1096,19 +1216,20 @@ function Index(props) {
                                            placeholder={"Password Repid"} {...register("password_repid")}/>
                                 </div>
                                 <div className={"w-50"}>
-                                  <textarea className={"form-control my-1"} cols="30" rows="2"
-                                            placeholder={"Address"} {...register("address", {required: true})}/>
+                            <textarea className={"form-control my-1"} cols="30" rows="2"
+                                      placeholder={"Address"} {...register("address", {required: true})}/>
                                     {errors.address ? <p className={"text-danger"}>Manzil kiritish majburiy</p> : ""}
                                 </div>
                             </div>
 
 
                         </form>
-
+                        }
                     </div>
                     <div className="card-footer  text-end bgCollor">
                         <button onClick={rodalVisisble} className={"btn btn-danger"}>cancel</button>
-                        <button form={"my_form"} className={"btn btn-dark"}>{currentNew ? "save" : "edit"}</button>
+                        {!payment &&
+                            <button form={"my_form"} className={"btn btn-dark"}>{currentNew ? "save" : "edit"}</button>}
                     </div>
                 </div>
             </Rodal>

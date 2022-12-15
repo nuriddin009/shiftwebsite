@@ -27,8 +27,10 @@ public interface TimeTableUsersRepository extends JpaRepository<TimeTableUser, I
                     "       tt.is_more            as isMore,\n" +
                     "       ttu.gotogroup         as gotogroup,\n" +
                     "       ttu.whytogroup,\n" +
+                    "       ttu.paid,\n" +
                     "       ttu.price,\n" +
                     "       cast(u.id as varchar) as userid,\n" +
+                    "       cast(tt.id as varchar) as timeTableId,\n" +
                     "       u.first_name          as firstname,\n" +
                     "       u.last_name           as lastname,\n" +
                     "       u.phone_number        as phone,\n" +
@@ -145,5 +147,10 @@ public interface TimeTableUsersRepository extends JpaRepository<TimeTableUser, I
             "where ttu.user_id = :userId", nativeQuery = true)
     void deleteByUserId(UUID userId);
 
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE TimeTableUser u SET u.paid=0 WHERE u.paid is null ")
+    void changePaid();
 
 }

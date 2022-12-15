@@ -21,6 +21,7 @@ public interface TimeTableUserProjection {
     String getLastname();
 
     String getPhone();
+    Integer getPaid();
 
     Integer getGotogroup();
 
@@ -29,6 +30,8 @@ public interface TimeTableUserProjection {
     String getWhytogroup();
 
     String getDeletedate();
+
+    Integer getTimeTableId();
 
     Boolean getIs_free();
 
