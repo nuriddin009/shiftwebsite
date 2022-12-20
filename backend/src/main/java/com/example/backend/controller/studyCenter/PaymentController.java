@@ -23,5 +23,14 @@ public class PaymentController {
         return ResponseEntity.ok(payTypeService.postPayType(id,paymentDto));
     }
 
+
+    @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN')")
+    @GetMapping("/balance")
+    public ResponseEntity<ApiResponse> getBalance() {
+        return ResponseEntity.ok(payTypeService.getBalance());
+    }
+
+
+
 }
 

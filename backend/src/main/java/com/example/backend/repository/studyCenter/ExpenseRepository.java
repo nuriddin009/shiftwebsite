@@ -37,5 +37,6 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
             , nativeQuery = true)
     List<ExpenseProjection> findByMonth(LocalDateTime month);
 
-
+    @Query("select sum(t.amount) from Expense t")
+    Long getExpenseSum();
 }

@@ -1,13 +1,14 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Card, Grid, styled, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import ExpenseTable from "./components/ExpenseTable";
+import instance from "../../../shift/utils/instance";
 
 
 const MuiStyledButton = styled(Button, {
     shouldForwardProp: (prop) => prop !== 'isActive',
 })
-(({ theme, isActive, color }) => ({
+(({theme, isActive, color}) => ({
     background: color || '#f5f5f5',
     color: color ? '#fff' : '#606060',
     padding: '12px',
@@ -28,28 +29,44 @@ const MuiStyledButton = styled(Button, {
 }));
 
 const StyledButton = (props) => {
-    return <MuiStyledButton sx={props.style} disabled={props.disabled} color={props.color} onClick={props.onClick} fullWidth isActive={props.isActive}>
+    return <MuiStyledButton sx={props.style} disabled={props.disabled} color={props.color} onClick={props.onClick}
+                            fullWidth isActive={props.isActive}>
         <Typography noWrap>{props.children}</Typography>
     </MuiStyledButton>
 };
 
 
 function Index(props) {
-   // const {tab}= useParams()
-    const navigate= useNavigate()
+    // const {tab}= useParams()
+    const [balance,setBalance]=useState(null)
+    const navigate = useNavigate()
 
 
+    useEffect(() => {
+        getBalance()
+    }, [])
+
+
+    function getBalance() {
+        instance.get(`/payment/balance`).then(({data}) => {
+            setBalance(data.data)
+            console.log(data.data)
+        })
+    }
 
     return (
-        <div style={{width:"100%",padding:"60px 5px 0px 5px"}}>
-        <Card sx elevation={0}>
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <Typography>Expense</Typography>
-                    <ExpenseTable/>
+        <div style={{width: "100%", padding: "60px 5px 0px 5px"}}>
+            <Card sx elevation={0}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        <Typography sx={{textAlign:"center", fontSize:30}}>Expense</Typography>
+                        <Typography sx={{ fontSize:20}}>Balance: {balance?.income-balance?.expense}</Typography>
+                        <Typography sx={{ fontSize:20}}>Expence: {balance?.expense}</Typography>
+
+                        <ExpenseTable/>
+                    </Grid>
                 </Grid>
-            </Grid>
-        </Card>
+            </Card>
         </div>
     );
 }

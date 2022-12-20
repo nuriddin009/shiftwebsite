@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -31,6 +32,13 @@ public class ExpenseController {
     @PostMapping
     public ResponseEntity<ApiResponse> postExpense(@Valid @RequestBody ExpenseDto expenseDto) {
         return ResponseEntity.ok(expenseService.postExpense(expenseDto));
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN')")
+    @DeleteMapping("{expenseId}")
+    public ResponseEntity<ApiResponse> deleteExpense(@PathVariable UUID expenseId) {
+        return ResponseEntity.ok(expenseService.deleteExpense(expenseId));
     }
 
 }

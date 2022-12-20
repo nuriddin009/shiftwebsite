@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class IncomeService {
@@ -58,5 +59,15 @@ public class IncomeService {
 
         Page<Income> list = incomeRepository.findAll(incomeType, payType, startDate, endDate, today, PageRequest.of(page - 1, 10));
         return new ApiResponse(true, list);
+    }
+
+    @Transactional
+    public ApiResponse deleteIncome(UUID incomeId) {
+        Income income = incomeRepository.findById(incomeId).orElseThrow(() -> new ServiceException("income not found"));
+        User user = income.getUser();
+        user.setBalance(user.getBalance()-income.getAmount());
+        userRepository.save(user);
+        incomeRepository.save(income);
+        return new ApiResponse(true,"income is deleted");
     }
 }
