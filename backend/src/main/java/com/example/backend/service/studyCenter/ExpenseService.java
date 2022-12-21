@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -49,5 +50,10 @@ public class ExpenseService {
 
         expenseRepository.save(expense);
         return new ApiResponse(true, "Expense added");
+    }
+
+    public ApiResponse deleteExpense(UUID expenseId) {
+        expenseRepository.deleteById(expenseId);
+    return new ApiResponse(true,"expense is deleted");
     }
 }

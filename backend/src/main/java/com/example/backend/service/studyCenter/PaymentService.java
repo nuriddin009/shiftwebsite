@@ -11,8 +11,12 @@ import com.example.backend.repository.IncomeRepository;
 import com.example.backend.repository.IncomeTypeRepository;
 import com.example.backend.repository.PayTypeRepository;
 import com.example.backend.repository.UserRepository;
+import com.example.backend.repository.studyCenter.ExpenseRepository;
 import com.example.backend.repository.studyCenter.PaymentRepository;
 import com.example.backend.repository.studyCenter.TimeTableUsersRepository;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,7 @@ public class PaymentService {
     private final IncomeTypeRepository incomeTypeRepository;
     private final IncomeRepository incomeRepository;
     private final TimeTableUsersRepository timeTableUsersRepository;
+    private final ExpenseRepository expenseRepository;
 
     public ApiResponse postPayType(Integer id, PaymentDto paymentDto) {
         TimeTableUser timeTableUser = timeTableUsersRepository.getReferenceById(id);
@@ -50,4 +55,19 @@ public class PaymentService {
         timeTableUsersRepository.save(timeTableUser);
         return new ApiResponse(true, "saved");
     }
+
+    public ApiResponse getBalance() {
+        Long incomeSum = incomeRepository.getIncomeSum();
+        Long expenseSum = expenseRepository.getExpenseSum();
+        BalanceRes balanceRes = new BalanceRes(incomeSum, expenseSum);
+        return new ApiResponse(true,balanceRes);
+    }
+}
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+class BalanceRes{
+    private Long income;
+    private Long expense;
+
 }

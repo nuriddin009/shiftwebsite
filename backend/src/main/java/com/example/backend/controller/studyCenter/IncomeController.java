@@ -45,4 +45,11 @@ public class IncomeController {
     }
 
 
+    @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN')")
+    @DeleteMapping("{incomeId}")
+    public ResponseEntity<ApiResponse> deleteIncome(@PathVariable UUID incomeId) {
+        return ResponseEntity.ok(incomeService.deleteIncome(incomeId));
+    }
+
+
 }

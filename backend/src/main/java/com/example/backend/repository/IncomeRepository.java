@@ -22,4 +22,6 @@ public interface IncomeRepository extends JpaRepository<Income, UUID> {
             "and ((:today is true and cast(i.created as date) = cast(now() as date) or :today is false))", nativeQuery = true)
     Page<Income> findAll(String incomeType, String payType, LocalDate startDate, LocalDate endDate, Boolean today, Pageable pageable);
 
+    @Query("select sum(t.amount) from Income t")
+    Long getIncomeSum();
 }
