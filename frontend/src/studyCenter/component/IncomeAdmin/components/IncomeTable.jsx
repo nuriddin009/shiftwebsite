@@ -85,6 +85,7 @@ function IncomeTable() {
         getPayTypes();
         getIncomes(payType, incomeType, today, currentPage, timeFilter);
         getIncomeTypes();
+        getAll()
     }, [])
 
     function getAll() {
@@ -151,27 +152,27 @@ function IncomeTable() {
             maxWidth: 20
         }, {
             id: 'name',
-            label: 'FullName',
+            label: 'FIO',
         },
         {
             id: 'phone',
-            label: 'Phone',
+            label: 'Tel',
         },
         {
             id: 'date',
-            label: 'Date',
+            label: 'Sana',
         },
         {
             id: 'pay_type',
-            label: 'Pay Type',
+            label: "To'lov turi",
         },
         {
             id: 'amount',
-            label: 'Amount',
+            label: 'Miqdor',
         },
         {
             id: 'income_type',
-            label: 'Income Type',
+            label: "Kirim turi",
         },
     ]
 
@@ -237,11 +238,11 @@ function IncomeTable() {
                         setTimeFilter(null)
                     }} sx={{mx: 1}}
                             color={today ? "secondary" : "primary"}
-                            variant={today ? "outlined" : "contained"}>Today</Button>
+                            variant={today ? "outlined" : "contained"}>Bugun</Button>
                     <DatePicker
                         sx={{height: 60}}
                         views={['year', 'month']}
-                        label="Year and Month"
+                        label="Yil va oy"
                         minDate={dayjs('2012-03-01')}
                         // maxDate={dayjs('2030-06-01')}
                         value={timeFilter}
@@ -257,14 +258,14 @@ function IncomeTable() {
                     />
                     <Button onClick={getAll} sx={{mx: 1}}
                             color={isAll ? "secondary" : "primary"}
-                            variant={isAll ? "outlined" : "contained"}>{"All"}</Button>
+                            variant={isAll ? "outlined" : "contained"}>{"Hammasi"}</Button>
                 </div>
 
                 <Button
                     onClick={toggleModal}
                     sx={{mr: 4}}
                     variant={"contained"}
-                >+ Add New</Button>
+                >+ Kirim qo'shish</Button>
 
             </div>
 
@@ -275,7 +276,7 @@ function IncomeTable() {
                     {/*// payType filer*/}
                     <FormControl sx={{m: 1, minWidth: 250}}>
                         <Box sx={{minWidth: 250}}>
-                            <InputLabel style={{background: "white"}} id="demo-simple-select-label">PayType</InputLabel>
+                            <InputLabel style={{background: "white"}} id="demo-simple-select-label">To'lov turi</InputLabel>
                             <Select
                                 sx={{minWidth: 200, height: 45}}
                                 labelId="demo-simple-select-label"
@@ -299,7 +300,7 @@ function IncomeTable() {
                     <FormControl sx={{m: 1, minWidth: 200}}>
                         <Box sx={{minWidth: 220}}>
                             <InputLabel style={{background: "white"}}
-                                        id="demo-simple-select-label">IncomeType</InputLabel>
+                                        id="demo-simple-select-label">Kirim turi</InputLabel>
                             <Select
                                 sx={{minWidth: 200, height: 45}}
                                 labelId="demo-simple-select-label"
@@ -372,7 +373,7 @@ function IncomeTable() {
                                             }}>
                                                 <InboxIcon sx={{transform: "scale(3)", color: "#023247"}}
                                                            viewBox={"Empty"}/>
-                                                <h6 style={{marginTop: "10px"}}>Empty data</h6>
+                                                <h6 style={{marginTop: "10px"}}>Bo'sh&nbsp;malumot</h6>
                                             </div>
                                         </StyledTableCell>
                                         <StyledTableCell></StyledTableCell>
@@ -436,6 +437,7 @@ function IncomeTable() {
                                             id="outlined-error-helper-text"
                                             onChange={(event, newValue) => {
                                                 setCurrentUser(newValue);
+                                                console.log(newValue)
                                             }}
                                             getOptionLabel={(option) => {
                                                 // Value selected with enter, right from the input
@@ -492,7 +494,7 @@ function IncomeTable() {
                                     <TextField style={{height: 30}}
                                                id="outlined-basic"
                                                fullWidth
-                                               label="Amount"
+                                               label="Miqdor"
                                                value={amount}
                                                error={errorText.amount}
                                                onChange={(e) => setAmount(e.target.value)}
@@ -500,7 +502,7 @@ function IncomeTable() {
                                 </FormControl>
 
                                 <FormHelperText sx={{marginTop: "20px", marginLeft: "10px"}} error id="my-helper-text">
-                                    {errorText.amount ? "Amount required" : ""}
+                                    {errorText.amount ? "Miqdor talab qilinadi" : ""}
                                 </FormHelperText>
                             </Grid>
 
@@ -556,13 +558,13 @@ function IncomeTable() {
                                             renderOption={(props, option) => <li {...props}>{option.label}</li>}
                                             freeSolo
                                             renderInput={(params) => (
-                                                <TextField error={errorText.value} {...params} label="Pay Type"/>
+                                                <TextField error={errorText.value} {...params} label="To'lov turi"/>
                                             )}
                                         />
                                     </Box>
                                 </FormControl>
-                                <FormHelperText  sx={{marginLeft: "10px"}} error id="my-helper-text">
-                                    {errorText.value ? "Pay type required" : ""}
+                                <FormHelperText sx={{marginLeft: "10px"}} error id="my-helper-text">
+                                    {errorText.value ? "To'lov turi majburiy" : ""}
                                 </FormHelperText>
                             </Grid>
 
@@ -616,13 +618,13 @@ function IncomeTable() {
                                             freeSolo
                                             renderInput={(params) => (
                                                 <TextField error={errorText.incomeValue} {...params}
-                                                           label="Income Type"/>
+                                                           label="Kirim turi"/>
                                             )}
                                         />
                                     </Box>
                                 </FormControl>
-                                <FormHelperText  sx={{ marginLeft: "10px"}} error id="my-helper-text">
-                                    {errorText.incomeValue ? "Income type required" : ""}
+                                <FormHelperText sx={{marginLeft: "10px"}} error id="my-helper-text">
+                                    {errorText.incomeValue ? "Kirim turi majburiy" : ""}
                                 </FormHelperText>
                             </Grid>
 
@@ -633,7 +635,7 @@ function IncomeTable() {
                             rows={4}
                             sx={{height: 40, m: 1, width: "97.5%"}}
                             id="outlined-multiline-static"
-                            label="Description"
+                            label="Qayd"
                             variant="outlined"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -653,12 +655,12 @@ function IncomeTable() {
                         onClick={addNewIncome}
                         variant={"outlined"}
                         color={"success"}
-                    >save</Button>
+                    >qo'shish</Button>
                     <Button
                         onClick={toggleModal}
                         variant={"outlined"}
                         color={"error"}
-                    >cancel</Button>
+                    >bekor qilish</Button>
                 </Stack>
             </Dialog>
         </div>

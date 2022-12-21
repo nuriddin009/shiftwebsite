@@ -9,6 +9,11 @@ $bg-color: #ffffff;
 }
 .registerUser{
 
+
+
+
+
+
   .text-danger{
     font-size: 14px;
   }
@@ -57,4 +62,60 @@ $bg-color: #ffffff;
     }
   }
   }
+}
+
+
+.phone_input_user {
+  border: 2px solid;
+  border-radius: 7px;
+  height: 60px;
+  box-shadow: none;
+}
+
+.phone_input_user:before {
+  content: 'Phone number';
+  position: absolute;
+  width: 90px;
+  top: -7px;
+  left: 20px;
+  z-index: 11;
+  background: white;
+  text-align: center;
+  font-size: 12px;
+  line-height: 12px;
+  color: #1976D2;
+}
+
+.phone_input_parent{
+  border: 2px solid gray;
+  border-radius: 7px;
+  height: 60px;
+  box-shadow: none;
+}
+
+.phone_input_parent:hover{
+  border: 2px solid gray;
+}
+
+.phone_input_parent:before {
+  content: 'Father phone number';
+  position: absolute;
+  width: 120px;
+  top: -7px;
+  left: 20px;
+  z-index: 11;
+  background: white;
+  text-align: center;
+  font-size: 12px;
+  line-height: 12px;
+  color: gray;
+}
+
+
+.phone_input_user:focus {
+  border: 2px solid #1976D2;
+}
+
+.phone_input_user:hover{
+  border: 1px solid;
 }

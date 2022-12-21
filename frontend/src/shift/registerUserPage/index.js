@@ -2,91 +2,98 @@ import React, {useState} from 'react';
 import "./index.scss"
 import logo from "../file/image/imageShift/logo2.svg";
 import {Controller, useForm} from "react-hook-form";
-import PhoneInput, {isValidPhoneNumber} from "react-phone-number-input";
+import PhoneInput from "react-phone-input-2";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
 import instance from "../utils/instance";
+import {FormHelperText, TextField} from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 
 function Index(props) {
     const {register, reset, handleSubmit, formState: {errors}, control} = useForm()
     const navigate = useNavigate();
-    let {pathname} = useLocation();
-    const [p1, setP1] = useState("")
-    const [p2, setP2] = useState("")
-    const [age, setAge] = useState("")
-    const [un, setUN] = useState("")
+
+    const [errorText, setErrorText] = useState({
+        firstName: false,
+        lastName: false,
+        address: false,
+        phoneNumber: false,
+        age: false,
+        username: false,
+        password: false,
+        confirmPassword: false
+    })
 
 
     function mySubmit(item) {
 
-        if (item.firstName === "" || item.lastName === "") {
-            toast.error("Iltimos ism familiyasini to'liq kiriting")
-            return;
-        }
-        if (item.username === "" && item.password === "" && item.password_repid === "") {
-            item = {
-                ...item,
-                username: item.firstName + item.lastName + item.age,
-                password: item.firstName + item.lastName + item.age,
-                password_repid: item.firstName + item.lastName + item.age
-            }
-        }
-        let data = {...item, activ: false}
-        if (data.password === data.password_repid) {
-            instance.post("/user", data).then(res => {
-                if (res.data.success) {
-                    reset({
-                        firstName: "",
-                        lastName: "",
-                        phoneNumber: "",
-                        userName: "",
-                        address: "",
-                        username: "",
-                        age: "",
-                        password: "",
-                        password_repid: "",
-                    })
-                    navigate("/succesUser")
-                } else {
-                    toast.error(res.data.message)
+        if (item.firstName !== "" && item.lastName && item.address !== ""
+            && item.age > 0 && item.age !== "") {
+            let phone = item.phoneNumber.substring(item.phoneNumber.length - 4);
+            if (item.username === "" && item.password === "" && item.password_repid === "") {
+                item = {
+                    ...item,
+                    username: item.firstName + item.lastName + phone,
+                    password: item.firstName + item.lastName + phone,
+                    password_repid: item.firstName + item.lastName + phone
                 }
+            }
+
+            let data = {...item, activ: false, phoneNumber: "+" + item.phoneNumber}
+            if (data.password === data.password_repid) {
+                instance.post("/user", data).then(res => {
+                    if (res.data.success) {
+                        reset({
+                            firstName: "",
+                            lastName: "",
+                            phoneNumber: "",
+                            userName: "",
+                            address: "",
+                            username: "",
+                            age: "",
+                            password: "",
+                            password_repid: "",
+                        })
+                        navigate("/successUser")
+                        setErrorText({
+                            ...errorText,
+                            firstName: false,
+                            lastName: false,
+                            phoneNumber: false,
+                            username: false,
+                            password: false,
+                            confirmPassword: false,
+                        })
+                    } else {
+                        toast.error(res.data.message)
+                    }
+                })
+            } else {
+                toast.error("Parol bir xil emas")
+            }
+
+        } else {
+            setErrorText({
+                ...errorText,
+                firstName: item.firstName === "",
+                lastName: item.lastName === "",
+                phoneNumber: item.phoneNumber === "",
+                address: item.address === "",
+                age: item.age < 0 || item.age === "",
+                username: item.username === "",
+                password: item.password === "",
+                confirmPassword: item.confirmPassword === "",
             })
-        } else {
-            toast.error("Parol bir xil emas")
         }
-
 
     }
 
-    function checkPassword(e, type) {
-        if (type === "p1") {
-            setP1(e.target.value)
-        } else {
-            setP2(e.target.value)
-        }
-    }
-
-
-    // function logout() {
-    //     localStorage.clear()
-    //     window.location.reload()
-    // }
 
     return (
         <div className={"registerUser"}>
             {
-                localStorage.getItem("token") ? <center className={"w-100 p-5 text-center"}>
-                        <h1>Siz ro'yxatdan o'tgansiz.</h1>
-                        <div className="d-flex w-100 justify-content-around">
-                            <Link to={"/"}>
-                                <button className={"btn btn-dark"}>
-                                    <i className="fa-solid fa-house"/>&nbsp;Bosh sahifaga qaytish
-                                </button>
-                            </Link>
-
-                        </div>
-
-                    </center>
+                localStorage.getItem("token") ? navigate("/userPage/user")
                     : <div className={"registerCard "}>
                         <div className={"card my-5 "}>
                             <div className="card-header bgCollor">
@@ -94,96 +101,122 @@ function Index(props) {
                             </div>
                             <div className="card-body p-4">
                                 <form id={"my_formR"} onSubmit={handleSubmit(mySubmit)}>
-                                    <input
-                                        className={"form-control my-1"}
-                                        type="text"
-                                        placeholder={"FirstName..."}
-                                        {...register("firstName", {required: true})}
-                                    />
-                                    {errors.firstName ? <p className={"text-danger"}>Ismni kiritish majburiy</p> : ""}
-                                    <input
-                                        className={"form-control my-1"}
-                                        type="text"
-                                        placeholder={"LastName..."}
-                                        {...register("lastName", {required: true})}
-                                    />
-                                    {errors.lastName ? <p className={"text-danger"}>Familyani kiritish majburiy</p> : ""}
-                                    <textarea className={"form-control my-1"} cols="30" rows="2"
-                                              placeholder={"Address"} {...register("address", {required: true})}/>
-                                    {errors.address ? <p className={"text-danger"}>Manzil kiritish majburiy</p> : ""}
-                                    <label htmlFor="phoneNumber">Phone Number</label>
 
-                                    <div className={"phoneAge d-flex  justify-content-around"}>
+                                    <Stack spacing={2} direction={"row"}>
+                                        <TextField
+                                            id="outlined-basic"
+                                            label="FirstName"
+                                            fullWidth
+                                            error={errorText.firstName}
+                                            helperText={errorText.firstName && "FirstName required"}
+                                            variant="outlined"
+                                            {...register("firstName")}
+                                        />
+
+
+                                        <TextField
+                                            id="outlined-basic"
+                                            label="LastName"
+                                            fullWidth
+                                            error={errorText.lastName}
+                                            variant="outlined"
+                                            helperText={errorText.lastName && "LastName required"}
+                                            {...register("lastName")}
+                                        />
+                                    </Stack>
+
+                                    <Stack sx={{marginTop: "15px"}}>
+
+                                        <TextField
+                                            id="outlined-basic"
+                                            label="Address"
+                                            fullWidth
+                                            rows={4}
+                                            helperText={errorText.address && "Address required"}
+                                            error={errorText.address}
+                                            variant="outlined"
+                                            {...register("address")}
+                                        />
+                                    </Stack>
+
+
+                                    <div className="mt-3">
                                         <Controller
                                             name="phoneNumber"
                                             control={control}
-                                            rules={{
-                                                validate: (value) => isValidPhoneNumber(value)
-                                            }}
                                             render={({field: {onChange, value}}) => (
                                                 <PhoneInput
+                                                    country={"uz"}
+                                                    containerClass={"phone_input"}
+                                                    inputClass={"userPage_phone"}
                                                     value={value}
+                                                    placeholder={"+998 99 123 45 67"}
                                                     onChange={onChange}
-                                                    defaultCountry="UZ"
-                                                    id="phoneNumber"
+                                                    prefix={"+"}
                                                 />
                                             )}
                                         />
-                                        <div className={"d-flex align-items-center "}>
-                                            <input
-                                                style={{width: "100px"}}
-                                                min={7} max={70}
-                                                className={"form-control my-1"}
-                                                type="number"
-                                                placeholder={"Age"}
-                                                {...register("age", {required: true})}
-                                                maxLength={2}
-                                                onChange={(e) => setAge(e.target.value)}
-                                            />
-                                        </div>
 
+                                        <FormHelperText error
+                                                        id="my-helper-text">{errorText.phoneNumber ? "Phone Number required" : ""}</FormHelperText>
                                     </div>
 
-                                    {errors["phoneNumber"] && (
-                                        <p className="error-message text-danger">Invalid Phone</p>
-                                    )}
-                                    {errors.age ? <p className={"text-danger float-end"}>Yosh chegarasi 7 va 70</p> : ""}
+                                    <Stack sx={{marginTop: "15px"}} direction={"row"} spacing={2}>
+                                        <TextField
+                                            id="outlined-basic"
+                                            label="Age"
+                                            error={errorText.age}
+                                            fullWidth
+                                            type={"number"}
+                                            helperText={errorText.age && "Age required"}
+                                            variant="outlined"
+                                            {...register("age")}
+                                        />
 
-                                    <input
-                                        className={"form-control my-1"}
-                                        type="text"
-                                        placeholder={"Login"}
-                                        {...register("username", {required: true, minLength: 5})}
-                                        onChange={(e) => setUN(e.target.value)}
-                                    />
-                                    {errors.username || (un.length < 6 && un !== "") ?
-                                        <p className={"text-danger"}>username kamida 6 ta harfdan iborat bo'lishi
-                                            kerak</p> : ""}
-                                    <input
-                                        className={"form-control my-1"}
-                                        type="password"
-                                        placeholder={"Password"}
-                                        {...register("password", {required: true})}
-                                        onChange={(e) => checkPassword(e, "p1")}
-                                    />
-                                    {errors.password ? <p className={"text-danger"}>Parol kiritish majburiy</p> : ""}
-                                    <input
-                                        className={"form-control my-1"}
-                                        type="password"
-                                        placeholder={"Password Repid"}
-                                        {...register("password_repid", {required: true})}
-                                        onChange={(e) => checkPassword(e, "p2")}
-                                    />
-                                    {
-                                        errors.password_repid ? <p className={"text-danger"}>Parol kiritish majburiy</p> :
-                                            p1 && p2 && p1 !== p2 ?
-                                                <p className={"text-danger"}>Parollar bir xil emas</p> : ""
-                                    }
+                                        <TextField
+                                            id="outlined-basic"
+                                            label="Username"
+                                            fullWidth
+                                            error={errorText.username}
+                                            helperText={errorText.username && "Username required"}
+                                            variant="outlined"
+                                            {...register("username")}
+                                        />
+
+                                    </Stack>
+
+
+                                    <Stack sx={{marginTop: "15px"}} direction={"row"} spacing={2}>
+
+                                        <TextField
+                                            id="outlined-basic"
+                                            label="Password"
+                                            fullWidth
+                                            error={errorText.password}
+                                            type="password"
+                                            helperText={errorText.password && "Password required"}
+                                            variant="outlined"
+                                            {...register("password")}
+                                        />
+                                        <TextField
+                                            id="outlined-basic"
+                                            label="Confirm password"
+                                            fullWidth
+                                            error={errorText.confirmPassword}
+                                            type="password"
+                                            helperText={errorText.confirmPassword && "Confirm password required"}
+                                            variant="outlined"
+                                            {...register("password_repid")}
+                                        />
+                                    </Stack>
+
                                 </form>
                             </div>
                             <div className="card-footer bgCollor  d-flex justify-content-end">
-                                <button form={"my_formR"} className={"btn-login"}>Save</button>
-                                <button className={" btn-login"} onClick={() => navigate(-1)}>Cancel</button>
+                                <Button variant={"contained"} color={"primary"} type={"submit"}
+                                        form={"my_formR"}>Register</Button>
+                                <Button sx={{marginLeft: "10px"}} variant={"contained"} color={"error"}
+                                        onClick={() => navigate(-1)}>Cancel</Button>
                             </div>
                         </div>
                     </div>

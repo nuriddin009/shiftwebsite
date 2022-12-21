@@ -47,7 +47,7 @@ function Row(props) {
                 <TableCell component="th" scope="row">
                     {index + 1}
                 </TableCell>
-                <TableCell>{row?.monthName + " " + row?.year}</TableCell>
+                <TableCell>{new Date(row?.month).toLocaleString('en-us', {month: 'long', year: 'numeric'})}</TableCell>
                 <TableCell>{row.amount + " so'm"}</TableCell>
 
                 <TableCell align={'right'}>
@@ -70,16 +70,16 @@ function Row(props) {
                             <Table size="small" aria-label="purchases">
                                 <TableHead sx={{background: "black", color: "white"}}>
                                     <TableRow>
-                                        <TableCell sx={{color: "white"}}>Title</TableCell>
-                                        <TableCell sx={{color: "white"}}>Date</TableCell>
-                                        <TableCell sx={{color: "white"}}>Amount</TableCell>
-                                        <TableCell sx={{color: "white"}}>Pay Type</TableCell>
-                                        <TableCell sx={{color: "white"}}>Made by</TableCell>
+                                        <TableCell sx={{color: "white"}}>Sarlavha</TableCell>
+                                        <TableCell sx={{color: "white"}}>Sana</TableCell>
+                                        <TableCell sx={{color: "white"}}>Qiymati</TableCell>
+                                        <TableCell sx={{color: "white"}}>To'lov turi</TableCell>
+                                        <TableCell sx={{color: "white"}}>Kim qo'shdi?</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 {
-                                    row?.history?.length >= 1 ? <TableBody>
-                                            {row?.history?.map((historyRow) => (
+                                    row?.expenses?.length >= 1 ? <TableBody>
+                                            {row?.expenses?.map((historyRow) => (
                                                 <TableRow key={historyRow?.created}>
                                                     <TableCell>{historyRow?.title}</TableCell>
                                                     <TableCell component="th" scope="row">
@@ -109,7 +109,7 @@ function Row(props) {
                                                     }}>
                                                         <InboxIcon sx={{transform: "scale(3)", color: "#023247"}}
                                                                    viewBox={"Empty"}/>
-                                                        <h6 style={{marginTop: "10px"}}>Empty data</h6>
+                                                        <h6 style={{marginTop: "10px"}}>Bo'sh&nbsp;malumot</h6>
                                                     </div>
                                                 </StyledTableCell>
                                                 <StyledTableCell></StyledTableCell>
@@ -180,10 +180,10 @@ function ExpenseTable() {
         },
         {
             id: 'date',
-            label: 'Date',
+            label: 'Sana',
         }, {
             id: 'amount',
-            label: 'Amount',
+            label: 'Miqdor',
         }, {
             id: "",
             label: 'Action',
@@ -265,15 +265,15 @@ function ExpenseTable() {
 
     return (
         <div style={{marginTop: '30px'}}>
-            <div className={myStyles.between_}>
+            <div style={{marginBottom: "20px"}} className={myStyles.between_}>
                 <div>
                     <Button onClick={getAll} sx={{mx: 1}}
                             color={isAll ? "secondary" : "primary"}
-                            variant={isAll ? "outlined" : "contained"}>{"All"}</Button>
+                            variant={isAll ? "outlined" : "contained"}>{"Hammasi"}</Button>
                     <DatePicker
                         sx={{height: 60}}
                         views={['year', 'month']}
-                        label="Year and Month"
+                        label="Yil va oy"
                         minDate={dayjs('2012-03-01')}
                         // maxDate={dayjs('2030-06-01')}
                         value={timeFilter}
@@ -292,7 +292,7 @@ function ExpenseTable() {
                     onClick={toggleModal}
                     sx={{mr: 4}}
                     variant={"contained"}
-                >+ Add New</Button>
+                >+ Yangi chiqim qo'shish</Button>
 
             </div>
 
@@ -330,7 +330,7 @@ function ExpenseTable() {
                                     }}>
                                         <InboxIcon sx={{transform: "scale(3)", color: "#023247"}}
                                                    viewBox={"Empty"}/>
-                                        <h6 style={{marginTop: "10px"}}>Empty data</h6>
+                                        <h6 style={{marginTop: "10px"}}>Bo'sh&nbsp;malumot</h6>
                                     </div>
                                 </StyledTableCell>
                                 <StyledTableCell></StyledTableCell>
@@ -365,9 +365,9 @@ function ExpenseTable() {
                                     <Box sx={{minWidth: 220}}>
                                         <TextField sx={{m: 1, width: "95%"}}
                                                    id="outlined-basic"
-                                                   label="Title"
+                                                   label="Kirim sarlavhasi"
                                                    error={errorText.title}
-                                                   helperText={errorText.title ? "Title required" : ""}
+                                                   helperText={errorText.title ? "Sarlavha majburiy" : ""}
                                                    value={title}
                                                    onChange={(e) => {
                                                        setTitle(e.target.value)
@@ -381,9 +381,9 @@ function ExpenseTable() {
                                 <TextField style={{height: 30}}
                                            sx={{m: 1, height: 30, marginTop: "16.5px", width: "95%"}}
                                            id="outlined-basic"
-                                           label="Amount"
+                                           label="Miqdor"
                                            error={errorText.amount}
-                                           helperText={errorText.amount ? "Amount required" : ""}
+                                           helperText={errorText.amount ? "Miqdor majburiy" : ""}
                                            value={amount}
                                            onChange={(e) => setAmount(e.target.value)}
                                            variant="outlined" type={'number'}/>
@@ -441,13 +441,13 @@ function ExpenseTable() {
                                             renderOption={(props, option) => <li {...props}>{option.label}</li>}
                                             freeSolo
                                             renderInput={(params) => (
-                                                <TextField error={errorText.value} {...params} label="Pay Type"/>
+                                                <TextField error={errorText.value} {...params} label="To'lov turi"/>
                                             )}
                                         />
                                     </Box>
                                 </FormControl>
                                 <FormHelperText sx={{marginLeft: "20px"}} error id="my-helper-text">
-                                    {errorText.value ? "Pay type required" : ""}
+                                    {errorText.value ? "To'lov turi majburiy" : ""}
                                 </FormHelperText>
                             </Grid>
 
@@ -457,9 +457,9 @@ function ExpenseTable() {
                             <TextField
                                 multiline
                                 rows={3}
-                                sx={{height: 40, m: 1, width: "100%"}}
+                                sx={{height: 40,  width: "100%"}}
                                 id="outlined-multiline-static"
-                                label="Description"
+                                label="Qayd"
                                 variant="outlined"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
@@ -482,12 +482,12 @@ function ExpenseTable() {
                         onClick={addNewExpense}
                         variant={"outlined"}
                         color={"success"}
-                    >save</Button>
+                    >Qo'shish</Button>
                     <Button
                         onClick={toggleModal}
                         variant={"outlined"}
                         color={"error"}
-                    >cancel</Button>
+                    >Bekor qilish</Button>
                 </Stack>
             </Dialog>
         </div>

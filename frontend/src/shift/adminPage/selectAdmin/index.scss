@@ -1,10 +1,12 @@
 $primary-color: #023247;
 
-.selectadmin_{
+.selectadmin_ {
   display: flex;
   min-width: 100vw;
-  .navbarAdmin{
-z-index: 99999;
+  overflow-x: auto;
+
+  .navbarAdmin {
+    z-index: 99999;
     background-color: $primary-color;
     position: sticky;
     top: 0;
@@ -12,9 +14,10 @@ z-index: 99999;
     width: 300px;
     padding: 30px;
     height: 100vh;
-    .nav{
-      .nav-item{
-        a{
+
+    .nav {
+      .nav-item {
+        a {
           text-decoration: none;
         }
       }

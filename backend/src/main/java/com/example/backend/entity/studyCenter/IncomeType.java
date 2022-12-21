@@ -22,7 +22,7 @@ public class IncomeType {
     )
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String type;
 
     public IncomeType(String type) {

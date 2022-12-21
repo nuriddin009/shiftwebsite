@@ -1,7 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import request from "../../../shift/utils/request";
+import React, {useEffect, useState} from 'react';
 import Rodal from "rodal";
-import {useForm} from "react-hook-form";
 import {toast} from "react-toastify";
 import "./index.scss"
 import instance from "../../../shift/utils/instance";

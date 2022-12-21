@@ -104,7 +104,7 @@ function Index(props) {
                             <div className={"text-center"}>
                                 <img
                                     width={(size[0] < 350 ? 250 : size[0] < 650 ? 350 : 450)}
-                                    src={"//api/img/" + imgId?.attachment?.id} alt={"rasmni tanlang"}
+                                    src={"http://localhost:81/api/img/" + imgId?.attachment?.id} alt={"rasmni tanlang"}
                                     style={{height: "100%"}}/>
                             </div>
                     }

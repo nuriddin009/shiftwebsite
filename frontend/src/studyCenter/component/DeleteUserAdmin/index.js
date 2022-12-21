@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import "./index.scss"
-import request from "../../../shift/utils/request";
 import instance from "../../../shift/utils/instance";
 
 function Index(props) {

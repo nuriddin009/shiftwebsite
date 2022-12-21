@@ -19,10 +19,25 @@ import {styled, useTheme} from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import MenuIcon from "@mui/icons-material/Menu";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import Stack from "@mui/material/Stack";
+import InboxIcon from '@mui/icons-material/Inbox';
 
 function Index(props) {
 
     let width = window.innerWidth > 600
+
+    const [lessons, setLesson] = useState([])
+    let navigate = useNavigate();
+    let {pathname} = useLocation();
+
+    useEffect(() => {
+        instance.get("/UserLesson").then(res => {
+            console.log(res.data)
+            setLesson(res.data);
+        })
+    }, [pathname])
+
+    console.log(lessons)
 
     const [state, setState] = React.useState({
         top: false,
@@ -33,7 +48,7 @@ function Index(props) {
 
 
     const theme = useTheme();
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
 
 
     const DrawerHeader = styled('div')(({theme}) => ({
@@ -94,55 +109,56 @@ function Index(props) {
 
             <Divider/>
 
-            <List>
-                {
-                    lessons.map((item, index) => <Link key={index} style={{textDecoration: "none"}}
-                                                       to={`/userPage/user`}>
-                        <ListItem
-                            onClick={toggleDrawer(anchor, false)}
-                            disablePadding sx={{display: 'block'}}>
-                            <ListItemButton
-                                sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? 'initial' : 'center',
-                                    alignItems: 'center',
-                                    gap: '1rem',
-                                    px: 2.5,
-                                }}
-                            >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: open ? 3 : 'auto',
-                                        justifyContent: 'center'
-                                    }}
-                                >
-                                    {!item.isvideoallowed ? <i className="fa-solid fa-lock-open text-white"/>
-                                        : <i className="fa-solid fa-lock text-danger"/>}
-                                </ListItemIcon>
-                                <ListItemText
-                                    style={{textDecoration: "none",}}
-                                    primary={"Lesson - " + (index + 1)}/>
-                            </ListItemButton>
-                        </ListItem>
-                    </Link>)
-                }
+            {
+                lessons.length === 0 ? <Stack
+                        sx={{padding: "3rem"}}
+                    >
+                        <InboxIcon
+                            sx={{transform: "scale(4)",margin:"0 auto"}}
+                        />
+                    <h3 style={{marginTop:"30px"}}>You are not allowed to view video lessons yet</h3>
+                    </Stack>
+                    : <List>
+                        {
+                            lessons.map((item, index) => <Link key={index} style={{textDecoration: "none"}}
+                                                               to={`/userPage/lessons/${item.id}`}>
+                                <ListItem
+                                    onClick={toggleDrawer(anchor, false)}
+                                    disablePadding sx={{display: 'block'}}>
+                                    <ListItemButton
+                                        sx={{
+                                            minHeight: 48,
+                                            justifyContent: open ? 'initial' : 'center',
+                                            alignItems: 'center',
+                                            gap: '1rem',
+                                            px: 2.5,
+                                        }}
+                                    >
+                                        <ListItemIcon
+                                            sx={{
+                                                minWidth: 0,
+                                                mr: open ? 3 : 'auto',
+                                                justifyContent: 'center'
+                                            }}
+                                        >
+                                            {item.isvideoallowed ? <i className="fa-solid fa-lock-open text-white"/>
+                                                : <i className="fa-solid fa-lock text-danger"/>}
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            type={"h1"}
+                                            style={{textDecoration: "none", color: "white"}}
+                                            primary={"Lesson - " + (index + 1)}/>
+                                    </ListItemButton>
+                                </ListItem>
+                            </Link>)
+                        }
 
-            </List>
+                    </List>
+            }
+
+
         </Box>
     );
-
-
-    let navigate = useNavigate();
-    let {pathname} = useLocation();
-
-    const [lessons, setLesson] = useState([])
-
-    useEffect(() => {
-        instance.get("/UserLesson").then(res => {
-            setLesson(res.data);
-        })
-    }, [pathname])
 
 
     function navigateClick(item) {

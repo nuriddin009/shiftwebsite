@@ -11,6 +11,8 @@ import {BsBoxArrowLeft} from "react-icons/bs"
 import startsWith from 'lodash.startswith';
 import instance from "../utils/instance";
 import {AUTH_TOKEN, REFRESH_TOKEN} from "../utils/Config";
+import Button from "@mui/material/Button";
+import {TextField} from "@mui/material";
 
 function Index(props) {
     const {register, reset, handleSubmit, formState: {errors}} = useForm()
@@ -31,7 +33,10 @@ function Index(props) {
     const auth = getAuth(app);
 
     function mySubmit(data) {
-        instance.post("/login",data).then(res => {
+
+        console.log(data)
+
+        instance.post("/login", data).then(res => {
             console.log(res)
             if (res.data.success) {
                 localStorage.setItem(AUTH_TOKEN, res.data.token)
@@ -57,31 +62,6 @@ function Index(props) {
             }
 
         })
-        // request("/login", "post", data).then(res => {
-        //     if (res.data.success) {
-        //         localStorage.setItem("token", res.data.token)
-        //         if (res.data.roles.length <= 1) {
-        //             let a = [];
-        //             a.push(res.data.roles[0].roleName)
-        //             if (res.data.roles[0].roleName === "ROLE_STUDENT") {
-        //                 localStorage.setItem("role", JSON.stringify(a))
-        //                 navigate("/")
-        //             } else if (res.data.roles[0].roleName === "ROLE_ADMIN") {
-        //                 localStorage.setItem("role", JSON.stringify(a))
-        //                 navigate("/selectAdmin")
-        //                 //    /admin/title
-        //             } else if (res.data.roles[0].roleName === "ROLE_MENTOR") {
-        //                 localStorage.setItem("role", JSON.stringify(a))
-        //                 navigate("/Mentor")
-        //             }
-        //         } else {
-        //             navigate("/selectRole")
-        //         }
-        //     } else {
-        //         toast.error(res.data.username)
-        //     }
-        //
-        // })
     }
 
     function setupRecaptcha() {
@@ -107,7 +87,7 @@ function Index(props) {
     }
 
     function submitNewForm(data) {
-        instance.put("/user/reset-password/" + username,  data).then(res => {
+        instance.put("/user/reset-password/" + username, data).then(res => {
             if (res.data.success) {
                 toast.success(res.data.message + "\nQaytadan login qiling")
                 navigate("/")
@@ -175,158 +155,49 @@ function Index(props) {
     return (
         <div className={"login-page"}>
             {
-                localStorage.getItem("token") ? <div className={"w-75 p-5"}>
-                        <h1>Siz login qilgansiz. Agar qaytadan login qilmoqchi <br/>
-                            bo'lsangiz iltimos avval logout qiling</h1>
-                        <div className="d-flex w-100 justify-content-around">
+                localStorage.getItem("token") ? navigate("/userPage/user")
+                    : <div className={"col-md-4 offset-4 card-father"}>
+                        <div className={"card  my-5"}>
                             <Link to={"/"}>
-                                <button className={"btn btn-dark"}>
-                                    <i className="fa-solid fa-house"/>&nbsp;Bosh sahifaga qaytish
-                                </button>
+                                <div className="card-header bgCollor">
+                                    <div><img width={180} src={logo} alt="logo"/></div>
+                                </div>
                             </Link>
+                            <div className={"card-body p-4"}>
+                                <form id={"my_form"} onSubmit={handleSubmit(mySubmit)}>
+                                    <TextField
+                                        id="outlined-basic"
+                                        label="Username"
+                                        fullWidth
+                                        variant="outlined"
+                                        {...register("username")}
+                                    />
 
-                            <button
-                                onClick={() => logout()}
-                                className="btn btn-danger">Logout qilish <i
-                                className="fa-sharp fa-solid fa-person-from-portal"/></button>
+                                    {errors.username ? <p className={"text-danger"}>username kiritish majburiy</p> : ""}
+                                    <TextField
+                                        id="outlined-basic"
+                                        label="Password"
+                                        fullWidth
+                                        sx={{margin: "10px 0"}}
+                                        variant="outlined"
+                                        type={"password"}
+                                        {...register("password")}
+                                    />
+
+                                    <p>Heven't yet account? <Link to={"/registerUser"}>Create your Account</Link></p>
+
+                                    {errors.password ? <p className={"text-danger"}>parol kiritish majburiy</p> : ""}
+                                </form>
+
+                            </div>
+
+                            <div className={"card-footer bgCollor  d-flex justify-content-end"}>
+                                <Button type={"submit"} form={"my_form"} variant={"contained"}>log in</Button>
+                            </div>
+
                         </div>
-
                     </div>
-                    : !forgot ? <div className={"col-md-4 offset-4 card-father"}>
-                            <div className={"card  my-5"}>
-                                <Link to={"/"}>
-                                    <div className="card-header bgCollor">
-                                        <div><img width={180} src={logo} alt="logo"/></div>
-                                    </div>
-                                </Link>
-                                <div className={"card-body p-4"}>
-                                    <form id={"my_form"} onSubmit={handleSubmit(mySubmit)}>
-                                        <input className={"form-control my-3"} placeholder={"Login"} minLength={6}
-                                               {...register("username", {required: true})}
-                                               type="text"/>
-                                        {errors.username ? <p className={"text-danger"}>username kiritish majburiy</p> : ""}
-                                        <input className={"form-control my-3"}
-                                               placeholder={"Password"} minLength={6}
-                                               {...register("password", {required: true})}
-                                               type="password"/>
-                                        {errors.password ? <p className={"text-danger"}>parol kiritish majburiy</p> : ""}
-                                    </form>
 
-                                    <p
-                                        onClick={() => setForgot(true)}
-                                        style={{color: "#023247"}}
-                                    >Parolni unitdingizmi?
-                                    </p>
-                                </div>
-
-                                <div className={"card-footer bgCollor  d-flex justify-content-end"}>
-                                    <button form={"my_form"} className={" btn-login"}>log in</button>
-                                </div>
-
-                            </div>
-                        </div>
-                        : !code1 ? <div className={"col-md-4 offset-4 card-father"}>
-                                <div className="card my-5">
-                                    <Link to={"/"}>
-                                        <div className="card-header bgCollor">
-                                            <div><img width={180} src={logo} alt="logo"/></div>
-                                        </div>
-                                    </Link>
-                                    <div id="recaptcha-container">
-
-                                    </div>
-                                    <div className="card-body p-4 g-1">
-
-
-                                        <form id={"phone_form"} onSubmit={handleSubmit1(submitForm)}>
-
-                                            <PhoneInput
-                                                country={"uz"}
-                                                containerClass={"phone_input"}
-                                                value={phone}
-                                                placeholder={"+998 99 123 45 67"}
-                                                onChange={(phone1) => setPhone(phone1)}
-                                                inputProps={{
-                                                    name: 'phone',
-                                                    required: true
-                                                }}
-                                                isValid={(inputNumber, country, countries) => {
-                                                    return countries.some((country) => {
-                                                        if (startsWith(inputNumber, country.dialCode) || startsWith(country.dialCode, inputNumber)) {
-                                                            setIsValid(true)
-                                                            return true;
-                                                        }
-                                                        return false;
-                                                    });
-                                                }}
-                                            />
-                                            <input
-                                                className={"form-control my-3"}
-                                                placeholder={"Parol"}
-                                                type="password"
-                                                {...register1("password", {required: true})}
-                                            />
-                                            {
-                                                errors1.password ? <p className={"text-danger"}>Password required</p> : ""
-                                            }
-                                            <input
-                                                className={"form-control my-3"}
-                                                placeholder={"Parol tasdig'ini kiriting"}
-                                                type="password"
-                                                {...register1("password1", {required: true})}
-                                            />
-                                            {
-                                                errors1.password1 ? <p className={"text-danger"}>Password required</p> : ""
-                                            }
-                                        </form>
-                                        <p
-                                            onClick={() => setForgot(false)}
-                                        ><i className="fa-solid fa-arrow-left"/>&nbsp;Orqaga</p>
-                                    </div>
-                                    <div className={"card-footer bgCollor  d-flex justify-content-end"}>
-                                        <button form={"phone_form"} className={" btn-login"}>Kirish</button>
-                                    </div>
-                                </div>
-                            </div>
-                            : <div className={"col-md-4 offset-4 card-father"}>
-                                <div className="card my-5">
-                                    <Link to={"/"}>
-                                        <div className="card-header bgCollor">
-                                            <div><img width={180} src={logo} alt="logo"/></div>
-                                        </div>
-                                    </Link>
-                                    <div id="recaptcha-container">
-
-                                    </div>
-                                    <div className="card-body p-4 g-1">
-                                        <h6 className={"text-primary"}>Biz +{phone} reqamiga sms kod
-                                            yubordik {count >= 0 ? count : 0}
-                                        </h6>
-                                        <input
-                                            type="number"
-                                            placeholder={"sms kodni kiriting..."}
-                                            className={"form-control"}
-                                            value={code}
-                                            maxLength={6}
-                                            onChange={(e) => setCode(e.target.value)}
-                                        />
-                                        {
-                                            count <= 0 ? <p
-                                                className={"text-primary text-center mt-1"}
-                                                onClick={replyCode}
-                                            >Sms qayta yuborish</p> : ""
-                                        }
-
-                                        <button
-                                            onClick={() => validateOtp()}
-                                            className={"btn btn-primary form-control my-3"}
-                                        ><BsBoxArrowLeft/> Tasdiqlash
-                                        </button>
-
-                                    </div>
-
-                                </div>
-                            </div>
 
             }
 

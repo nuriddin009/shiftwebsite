@@ -1,82 +1,6 @@
-// import React, {useEffect, useState} from 'react';
-// import {Nav, NavItem} from 'reactstrap';
-// import "./index.scss"
-// import {Outlet, NavLink} from "react-router-dom";
-// import logo from "../file/image/imageShift/logo2.svg";
-//
-// function Index(props) {
-//
-//     let activeStyle = {
-//         backgroundColor: "black",
-//         color: "#00C3FF"
-//     };
-//     let nowActive = {
-//         color: "#ffffff",
-//     };
-//
-//     useEffect(() => {
-//         document.title = "SHIFT ACADEMY | ADMIN"
-//     }, [])
-//
-//     return (
-//         <div className={"admin_"}>
-//             <div className={"navbarAdmin"}>
-//                 <a href="/">
-//                     <img className={"mx-4"} src={logo} alt="logo"/>
-//                 </a>
-//                 <Nav vertical>
-//                     <NavItem>
-//                         <NavLink to={"/admin/title"} style={({isActive}) => isActive ? activeStyle : nowActive}><h4
-//                             className={"mt-5"}>Title</h4></NavLink>
-//                     </NavItem>
-//                     <NavItem>
-//                         <NavLink to={"/admin/about"} style={({isActive}) => isActive ? activeStyle : nowActive}>
-//                             <h4>About</h4>
-//                         </NavLink>
-//                     </NavItem>
-//                     <NavItem>
-//                         <NavLink to={"/admin/whyUs"} style={({isActive}) => isActive ? activeStyle : nowActive}>
-//                             <h4>Why Us</h4>
-//                         </NavLink>
-//                     </NavItem>
-//                     <NavItem>
-//                         <NavLink to={"/admin/courses"} style={({isActive}) => isActive ? activeStyle : nowActive}>
-//                             <h4>Courses</h4>
-//                         </NavLink>
-//                     </NavItem>
-//                     <NavItem>
-//                         <NavLink to={"/admin/gallery"} style={({isActive}) => isActive ? activeStyle : nowActive}>
-//                             <h4>Gallery</h4>
-//                         </NavLink>
-//                     </NavItem>
-//                     <NavItem>
-//                         <NavLink to={"/admin/ourTeam"} style={({isActive}) => isActive ? activeStyle : nowActive}>
-//                             <h4>Our Team</h4>
-//                         </NavLink>
-//                     </NavItem>
-//                     <NavItem>
-//                         <NavLink to={"/admin/address"} style={({isActive}) => isActive ? activeStyle : nowActive}>
-//                             <h4>Address</h4>
-//                         </NavLink>
-//                     </NavItem>
-//                     <NavItem>
-//                         <NavLink to={"/selectadmin/studyCenter"}
-//                                  style={({isActive}) => isActive ? activeStyle : nowActive}>
-//                             <h4>O'quv Markazi</h4>
-//                         </NavLink>
-//                     </NavItem>
-//                 </Nav>
-//             </div>
-//             <Outlet/>
-//         </div>
-//     );
-// }
-//
-// export default Index;
-
 
 import React, {useEffect, useState} from 'react';
-import "./index.scss"
+// import "./index.scss"
 import logo from "../file/image/imageShift/logo2.svg";
 import {Link, Outlet, useLocation, useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
@@ -122,6 +46,8 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 import LocalLibraryIcon from '@mui/icons-material/LocalLibrary';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 
 
 const drawerWidth = 300;
@@ -234,7 +160,7 @@ function Index(props) {
     };
 
     const theme = useTheme();
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -351,7 +277,7 @@ function Index(props) {
 
                 <List>
                     <ListItem
-                        style={{background: "black"}}
+                        style={{background: pathname.startsWith("/admin") ? "black" : "gray"}}
                         disablePadding sx={{display: 'block'}}>
                         <ListItemButton
                             sx={{
@@ -592,7 +518,7 @@ function Index(props) {
                 <Divider/>
                 <List>
                     <ListItem
-                        style={{background: "black"}}
+                        style={{background: pathname.startsWith("/selectAdmin") ? "black" : "gray"}}
                         disablePadding sx={{display: 'block'}}>
                         <ListItemButton
                             sx={{
@@ -795,6 +721,35 @@ function Index(props) {
                             </ListItemButton>
                         </ListItem>
                     </Link>
+                    <Link to={"/selectAdmin/income"} style={{textDecoration: "none"}}>
+                        <ListItem
+                            style={backgroundFunction("income")}
+                            disablePadding sx={{display: 'block'}}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        color: colorFunction("income")
+                                    }}
+                                >
+
+                                    <TrendingUpIcon sx={{transform: "scale(1.5)"}}/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    style={{textDecoration: "none", color: colorFunction("income")}}
+                                    primary={"Kirim"} sx={{opacity: open ? 1 : 0}}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
                     <Link to={"/selectAdmin/expense"} style={{textDecoration: "none"}}>
                         <ListItem
                             style={backgroundFunction("expense")}
@@ -815,16 +770,15 @@ function Index(props) {
                                     }}
                                 >
 
-                                    <LeaderboardIcon sx={{transform: "scale(1.5)"}}/>
+                                    <TrendingDownIcon sx={{transform: "scale(1.5)"}}/>
                                 </ListItemIcon>
                                 <ListItemText
                                     style={{textDecoration: "none", color: colorFunction("expense")}}
-                                    primary={"Income & Expence"} sx={{opacity: open ? 1 : 0}}
+                                    primary={"Chiqim"} sx={{opacity: open ? 1 : 0}}
                                 />
                             </ListItemButton>
                         </ListItem>
                     </Link>
-
                     <ListItem
                         disablePadding sx={{display: 'block'}}>
                         <ListItemButton
@@ -847,20 +801,19 @@ function Index(props) {
                             </ListItemIcon>
                             <ListItemText
                                 style={{textDecoration: "none", color: "white"}}
-                                primary={"Unclock users"} sx={{opacity: open ? 1 : 0}}
+                                primary={"Unlock users"} sx={{opacity: open ? 1 : 0}}
                             />
                         </ListItemButton>
                     </ListItem>
 
                 </List>
             </Drawer>
-            <Box component="main" sx={{flexGrow: 1, p: 3}}>
+            <Box component="main" sx={{flexGrow: 1, padding: "5rem 0 0 0"}}>
                 <Outlet/>
             </Box>
         </Box>
 
-    )
-        ;
+    );
 }
 
 export default Index;

@@ -3,11 +3,9 @@ package com.example.backend.service.studyCenter;
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.ExpenseDto;
 import com.example.backend.entity.studyCenter.Expense;
-import com.example.backend.entity.studyCenter.ExpenseMonth;
 import com.example.backend.projection.ExpenseMonthProjection;
 import com.example.backend.repository.PayTypeRepository;
 import com.example.backend.repository.UserRepository;
-import com.example.backend.repository.studyCenter.ExpenseMonthRepository;
 import com.example.backend.repository.studyCenter.ExpenseRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.service.spi.ServiceException;
@@ -27,7 +25,7 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final UserRepository userRepository;
     private final PayTypeRepository payTypeRepository;
-    private final ExpenseMonthRepository expenseMonthRepository;
+
 
 
     public ApiResponse getExpenses(Integer page, String date) {
@@ -40,19 +38,13 @@ public class ExpenseService {
     }
 
     public ApiResponse postExpense(@Valid ExpenseDto expenseDto) {
-        LocalDateTime date = LocalDateTime.now();
-        int monthValue = date.getMonthValue();
-        int year = date.getYear();
 
-        ExpenseMonth expenseMonth = expenseMonthRepository.findByMonthAndYear(monthValue, year)
-                .orElseGet(() -> expenseMonthRepository.save(new ExpenseMonth(monthValue, date.getMonth().toString(), year)));
 
         Expense expense = new Expense(
                 expenseDto.getAmount(),
                 expenseDto.getDescription(),
                 expenseDto.getTitle(),
-                payTypeRepository.findById(expenseDto.getPayTypeId()).orElseThrow(() -> new ServiceException("pay type not found")),
-                expenseMonth
+                payTypeRepository.findById(expenseDto.getPayTypeId()).orElseThrow(() -> new ServiceException("pay type not found"))
         );
 
         expenseRepository.save(expense);

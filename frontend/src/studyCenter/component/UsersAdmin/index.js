@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
-// import "./index.scss"
+import "./index.scss"
 import {useLocation} from "react-router-dom";
 import {Controller, useForm} from "react-hook-form";
-import Rodal from "rodal";
 import 'react-phone-number-input/style.css'
 import {toast} from "react-toastify";
 import PhoneInput from 'react-phone-input-2';
@@ -29,9 +28,11 @@ import Pagination from '@mui/material/Pagination';
 import Box from '@mui/material/Box';
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import {InputLabel} from "@mui/material";
+import {Dialog, InputLabel} from "@mui/material";
 
 function Index(props) {
+
+    let {isSuper} = props
 
     const [rodal, setRodal] = useState(false);
     const [input, setInput] = useState("");
@@ -89,8 +90,8 @@ function Index(props) {
     }
 
     function goToPage(event, page) {
-        setPage(page-1)
-        getUsers("", "", page-1, filterRole);
+        setPage(page - 1)
+        getUsers("", "", page - 1, filterRole);
     }
 
     function mySubmit(data) {
@@ -299,41 +300,49 @@ function Index(props) {
         <div className={"UsersAdmin m-3 "}>
             <h1>Users</h1>
             <div>
-                <div className={"d-flex gap-3 my-2"}>
-                    <Button
-                        onClick={rodalVisisble}
-                        variant="contained"
-                        color="primary"
-                    >Add&nbsp;user</Button>
+                <div className={"filters"}>
 
-                    <TextField
-                        value={input}
-                        onChange={handleInput}
-                        id="outlined-search"
-                        label="Search users"
-                        type="search"
-                    />
+                    <div className="filter-child">
+                        <Button
+                            onClick={rodalVisisble}
+                            variant="contained"
+                            color="primary"
+                        >Add&nbsp;user</Button>
 
-                    <FormControlLabel
-                        label="Active"
-                        control={<IOSSwitch
-                            sx={{m: 1}}
-                            checked={active}
-                            onChange={handleCheck}
-                        />}
-                    />
+                        <TextField
+                            value={input}
+                            onChange={handleInput}
+                            id="outlined-search"
+                            label="Search users"
+                            type="search"
+                        />
+                    </div>
 
-                    {
-                        input !== "" || active !== false ?
-                            <Button
-                                onClick={resetI}
-                                variant="contained"
-                                color="error"
-                            >Reset</Button>
-                            :
-                            ""
-                    }
-                    <FormControl sx={{minWidth: 120}}>
+
+                    <div className="filter-child">
+
+                        <FormControlLabel
+                            label="Active"
+                            control={<IOSSwitch
+                                sx={{m: 1}}
+                                checked={active}
+                                onChange={handleCheck}
+                            />}
+                        />
+
+                        {
+                            input !== "" || active !== false ?
+                                <Button
+                                    onClick={resetI}
+                                    variant="contained"
+                                    color="error"
+                                >Reset</Button>
+                                :
+                                ""
+                        }
+                    </div>
+
+                    <FormControl sx={{minWidth: 160}}>
                         <InputLabel style={{background: "white"}}
                                     id="demo-simple-select-label">ROLE FILTER</InputLabel>
                         <SelectMui
@@ -365,7 +374,7 @@ function Index(props) {
                                 <StyledTableCell align="left">Age</StyledTableCell>
                                 <StyledTableCell align="left">Address</StyledTableCell>
                                 <StyledTableCell align="left">Active</StyledTableCell>
-                                <StyledTableCell align="left">Roles</StyledTableCell>
+                                {isSuper && (<StyledTableCell align="left">Roles</StyledTableCell>)}
                                 <StyledTableCell align="left">Action</StyledTableCell>
                             </TableRow>
                         </TableHead>
@@ -388,30 +397,21 @@ function Index(props) {
                                             />}
                                         />
                                     </StyledTableCell>
-                                    <StyledTableCell align="left">
+                                    {isSuper && (<StyledTableCell align="left">
                                         <Select
                                             styles={styleSelect}
                                             isMulti
                                             name="colors"
                                             onChange={(e) => selectRoles(e, user, index)}
                                             options={roles}
-                                            //(item.roles.map(item => ({value: item.id, label: item.roleName})))
                                             value={user.roles.map(item => ({value: item.id, label: item.roleName}))}
                                             className="basic-multi-select"
                                             classNamePrefix="select"
                                             placeholder={"Roles..."}
                                         />
-                                    </StyledTableCell>
+                                    </StyledTableCell>)}
                                     <StyledTableCell align="left">
                                         <Stack direction="row" spacing={2}>
-                                            <Button
-                                                variant="contained"
-                                                color="error"
-                                                startIcon={<DeleteIcon/>}
-                                                onClick={() => deleteUser(user, index)}
-                                            >
-                                                delete
-                                            </Button>
                                             <Button
                                                 variant="contained"
                                                 color="primary"
@@ -420,11 +420,22 @@ function Index(props) {
                                             >
                                                 edit
                                             </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="error"
+                                                startIcon={<DeleteIcon/>}
+                                                onClick={() => deleteUser(user, index)}
+                                            >
+                                                delete
+                                            </Button>
                                         </Stack>
                                     </StyledTableCell>
 
                                 </StyledTableRow>
                             ))}
+                            <StyledTableRow></StyledTableRow>
+                            <StyledTableRow></StyledTableRow>
+                            <StyledTableRow></StyledTableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -433,29 +444,30 @@ function Index(props) {
                 {
                     totalPages > 1 ?
                         <Box
-                        sx={{
-                            width: "100%",
-                            height: "80px",
-                            display: "flex", alignItems: "center"
-                        }}
-                    >
-                        <Stack>
-                            <Pagination
-                                count={totalPages}
-                                color="primary"
-                                size="large"
-                                onChange={goToPage}
-                            />
-                        </Stack>
-                    </Box>
-                    : ""
+                            sx={{
+                                width: "100%",
+                                height: "80px",
+                                display: "flex", alignItems: "center"
+                            }}
+                        >
+                            <Stack>
+                                <Pagination
+                                    count={totalPages}
+                                    color="primary"
+                                    size="large"
+                                    onChange={goToPage}
+                                />
+                            </Stack>
+                        </Box>
+                        : ""
                 }
 
 
             </div>
-            <Rodal height={530} width={800} visible={rodal} onClose={rodalVisisble}>
+            <Dialog height={530} width={800} open={rodal} onClose={rodalVisisble}>
                 <div style={{overflowY: "auto"}} className="card register-card">
-                    <div className="card-header bgCollor"><img width={150} src={logo} alt="logo"/></div>
+                    <div style={{background: "#023247"}} className="card-header bgCollor"><img width={150} src={logo}
+                                                                                               alt="logo"/></div>
                     <div className="card-body card_body">
                         <form id={"my_form"} onSubmit={handleSubmit(mySubmit)}>
 
@@ -562,12 +574,12 @@ function Index(props) {
                         </form>
 
                     </div>
-                    <div className="card-footer  text-end bgCollor">
+                    <div style={{background: "#023247"}} className="card-footer  text-end bgCollor">
                         <button onClick={rodalVisisble} className={"btn btn-danger"}>cancel</button>
                         <button onClick={mySubmit} form={"my_form"} className={"btn btn-dark"}>Save</button>
                     </div>
                 </div>
-            </Rodal>
+            </Dialog>
 
         </div>
     );

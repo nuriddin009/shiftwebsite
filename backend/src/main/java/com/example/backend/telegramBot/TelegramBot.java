@@ -28,7 +28,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final ParentRepo parentRepo;
 
 
-
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
@@ -116,6 +115,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                             (timeTableDatum.getLessonMark() == 0 ? "" : timeTableDatum.getLessonMark() == 1 ? "\n Darga qatnashmadi ‼️" : "\n \uD83D\uDCD4 Darsga qatnashgan bahosi= " + timeTableDatum.getLessonMark()) + "\n" +
                             (timeTableDatum.getHomeworkMark() == 0 ? "" : timeTableDatum.getHomeworkMark() == 1 ? "\uD83D\uDCD3 Uyga vazifa qilinmagan. Iltimos nazoratni qattiq oling ‼️" : "\uD83D\uDCD3 Uyga vazifadagi bahosi= " + timeTableDatum.getHomeworkMark())
                     ;
+                    SendMessage sendMessage1 = botUtils.sendMessageToStudents(timeTableDatum);
+                    execute(sendMessage1);
+
                 }
                 text = fullName + " \n " + todayInfo;
             } else {
@@ -129,15 +131,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendMessage.setChatId(parent.get().getChatId());
             Message execute = execute(sendMessage);
 
-            SendMessage sendMessage2 = new SendMessage();
-            sendMessage2.setText(text);
-            sendMessage2.setChatId("420040267");
-            execute(sendMessage2);
-
-            SendMessage sendMessage3 = new SendMessage();
-            sendMessage3.setText(text);
-            sendMessage3.setChatId("1718896026");
-            execute(sendMessage3);
         }
 
 
@@ -151,9 +144,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "5053122492:AAGlm33_FkDAe2wJ2S-zg4Xf3VXms0pNqvE";
+        return "1329449681:AAHVkLvh3VwcHXdpfnyE9XDsieWoy0h952o";
     }
-
 
 
     //  test_qilish_uchun_robot
@@ -162,7 +154,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "test_qilish_uchun_robot";
+        return "Kanal_admin_robot";
     }
 
 

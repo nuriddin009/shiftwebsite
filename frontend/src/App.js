@@ -33,10 +33,14 @@ import Room from "./studyCenter/component/Room";
 import instance from "./shift/utils/instance";
 import ExpenseAdmin from "./studyCenter/component/ExpenseAdmin";
 
+
 function App() {
     const [shift, setShift] = useState(null);
     const {pathname} = useLocation();
     let navigate = useNavigate();
+
+    const [isSuper, setIsSuper] = useState(false)
+    const [isAdmin, setIsAdmin] = useState(false)
 
     const blockedPages = [
         {url: "/admin", roles: ["ROLE_ADMIN", "ROLE_SUPERADMIN"]},
@@ -53,7 +57,9 @@ function App() {
         {url: "/selectadmin/certificate", roles: ["ROLE_ADMIN", "ROLE_SUPERADMIN"]},
         {url: "/selectadmin/delete/users", roles: ["ROLE_ADMIN", "ROLE_SUPERADMIN"]},
         {url: "/mentor", roles: ["ROLE_MENTOR", "ROLE_ADMIN", "ROLE_SUPERADMIN"]},
-        {url: "/lesson", roles: ["ROLE_MENTOR", "ROLE_ADMIN", "ROLE_SUPERADMIN"]}
+        {url: "/lesson", roles: ["ROLE_MENTOR", "ROLE_ADMIN", "ROLE_SUPERADMIN"]},
+        {url: "/selectadmin/income", roles: ["ROLE_SUPERADMIN"]},
+        {url: "/selectadmin/expense", roles: ["ROLE_SUPERADMIN"]},
     ]
 
     useEffect(() => {
@@ -91,12 +97,17 @@ function App() {
         })
     }
 
-    function getMe() {
+    async function getMe() {
         let token = localStorage.getItem("token");
 
         if (token !== null) {
             const items = JSON.parse(localStorage.getItem('role'));
-            instance.get("/user/me").then(res => {
+            await instance.get("/user/me").then(res => {
+                // res.data.roles
+
+                items.filter(role => role.roleName === "ROLE_SUPERADMIN").length > 0 ?
+                    setIsSuper(true) : setIsSuper(false)
+
                 if (isBlockedPage()) {
                     items?.map(item => {
                         if (hasRole(item)) {
@@ -110,8 +121,12 @@ function App() {
     }
 
     function pathAdmin() {
-        if (pathname.toLocaleLowerCase().startsWith("/admin") || pathname.toLocaleLowerCase().startsWith("/selectadmin") || pathname.toLocaleLowerCase().startsWith("/mentor") || pathname.toLocaleLowerCase().startsWith("/selectrole")) {
-            if (!localStorage.getItem("token") || localStorage.getItem("token").length < 100) {
+        if (pathname.toLocaleLowerCase().startsWith("/admin") ||
+            pathname.toLocaleLowerCase().startsWith("/selectadmin")
+            || pathname.toLocaleLowerCase().startsWith("/mentor")
+            || pathname.toLocaleLowerCase().startsWith("/selectrole")) {
+            if (!localStorage.getItem("token")
+                || localStorage.getItem("token").length < 100) {
                 navigate("/404")
             }
         }
@@ -131,15 +146,15 @@ function App() {
                 <Route path={"/Mentor"} element={<StudyCenter/>}/>
                 <Route path={"/selectRole"} element={<SelectAdminPage/>}/>
                 <Route path={"/gallery"} element={<SeeGallery gallery={shift?.galleries} getShift={getShift}/>}/>
-                <Route path={"/selectAdmin"} element={<SelectAdmin/>}>
-                    <Route path={"/selectAdmin/studyCenter"} element={<StudyCenter/>}/>
-                    <Route path={"/selectAdmin/users"} element={<UsersAdmin/>}/>
+                <Route path={"/selectAdmin"} element={<SelectAdmin isSuper={isSuper}/>}>
+                    <Route path={"/selectAdmin/studyCenter"} element={<StudyCenter isSuper={isSuper}/>}/>
+                    <Route path={"/selectAdmin/users"} element={<UsersAdmin isSuper={isSuper}/>}/>
                     <Route path={"/selectAdmin/lesson"} element={<LessonPageAdmin/>}/>
                     <Route path={"/selectAdmin/certificate"} element={<Certificate/>}/>
                     <Route path={"/selectAdmin/rooms"} element={<Room/>}/>
                     <Route path={"/selectAdmin/delete/users"} element={<DeleteUserAdmin/>}/>
-                    <Route path={"/selectAdmin/income/:tab"} element={<IncomeAdmin/>} />
-                    <Route path={"/selectAdmin/expense"} element={<ExpenseAdmin/>} />
+                    <Route path={"/selectAdmin/income"} element={<IncomeAdmin/>}/>
+                    <Route path={"/selectAdmin/expense"} element={<ExpenseAdmin/>}/>
                 </Route>
                 <Route path={"/admin"} element={<Admin/>}>
                     <Route path={"/admin/title"} element={<AdminTitle title={shift?.title} getShift={getShift}/>}/>

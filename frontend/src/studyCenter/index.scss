@@ -5,7 +5,7 @@ $bg-color: #ffffff;
 .archiveGroup{
   position: fixed;
   right: 35px;
-  top: 20px;
+  top: 120px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -22,8 +22,8 @@ $bg-color: #ffffff;
 
 .archiveGroup1 {
   position: fixed;
-  right: 5px;
-  top: 65px;
+  right: 10px;
+  top: 100px;
 }
 
 
@@ -35,8 +35,9 @@ $bg-color: #ffffff;
 }
 .studyCenter {
 
-  overflow-x: scroll;
+  overflow-x: auto;
   height: 100vh;
+  padding-top: 3rem;
 
 
 

@@ -39,7 +39,7 @@ public class PaymentService {
             userRepository.save(user);
         } else {
             PayType payType = payTypeRepository.getReferenceById(paymentDto.getPayType());
-            Income income = new Income(paymentDto.getAmount(), paymentDto.getDesc(), payType, incomeTypeRepository.getReferenceById(UUID.fromString("c447ff07-97e8-4a4b-98a9-88a94120bdfd")), user);
+            Income income = new Income(paymentDto.getAmount(), paymentDto.getDesc(), payType, incomeTypeRepository.findByType("Student"), user);
             incomeRepository.save(income);
         }
         Payment payment = new Payment();

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import "./index.scss"
+// import "./index.scss"
 import logo from "../../file/image/imageShift/logo2.svg";
 import {Link, Outlet, useLocation, useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
@@ -44,105 +44,96 @@ import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 
 const drawerWidth = 300;
 
-const openedMixin = (theme) => ({
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-    }),
-    overflowX: 'hidden',
-    background: "#023247", color: "white",
-});
-
-const closedMixin = (theme) => ({
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: `calc(${theme.spacing(7)} + 1px)`,
-    [theme.breakpoints.up('sm')]: {
-        width: `calc(${theme.spacing(8)} + 1px)`,
-    },
-    background: "#023247", color: "white",
-});
-
-const DrawerHeader = styled('div')(({theme}) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    backgroundColor: "#023247",
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-}));
-
-const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== 'open',
-})(({theme, open}) => ({
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    padding: "0.6rem",
-    ...(open && {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(['width', 'margin'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    }),
-}));
-
-const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})(
-    ({theme, open}) => ({
-        width: drawerWidth,
-        flexShrink: 0,
-        whiteSpace: 'nowrap',
-        boxSizing: 'border-box',
-        ...(open && {
-            ...openedMixin(theme),
-            background: "#023247",
-            color: "white",
-            '& .MuiDrawer-paper': openedMixin(theme),
-        }),
-        ...(!open && {
-            ...closedMixin(theme),
-            '& .MuiDrawer-paper': closedMixin(theme),
-        }),
-    }),
-);
-
 
 function Index(props) {
-    let activeStyle = {
-        backgroundColor: "black",
-        color: "#00C3FF"
-    };
-    let nowActive = {
-        color: "#ffffff",
-    };
 
-    useEffect(() => {
-        getMe()
-    }, [])
+
+    let {isSuper} = props
+
 
     const {pathname} = useLocation()
 
-    const [username, setUsername] = useState("")
+
+    const openedMixin = (theme) => ({
+        width: drawerWidth,
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+        overflowX: 'hidden',
+        background: "#023247", color: "white",
+    });
+
+    const closedMixin = (theme) => ({
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+        overflowX: 'hidden',
+        width: `calc(${theme.spacing(7)} + 1px)`,
+        [theme.breakpoints.up('sm')]: {
+            width: `calc(${theme.spacing(8)} + 1px)`,
+        },
+        background: "#023247", color: "white",
+    });
+
+    const DrawerHeader = styled('div')(({theme}) => ({
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        backgroundColor: "#023247",
+        padding: theme.spacing(0, 1),
+        // necessary for content to be below app bar
+        ...theme.mixins.toolbar,
+    }));
+
+    const AppBar = styled(MuiAppBar, {
+        shouldForwardProp: (prop) => prop !== 'open',
+    })(({theme, open}) => ({
+        zIndex: theme.zIndex.drawer + 1,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+        padding: "0.6rem",
+        width: pathname === "/selectAdmin/rooms" && 0,
+        ...(open && {
+            marginLeft: drawerWidth,
+            width: pathname === "/selectAdmin/rooms" ? 0 : `calc(100% - ${drawerWidth}px)`,
+            transition: theme.transitions.create(['width', 'margin'], {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+            }),
+        }),
+    }));
+
+    const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})(
+        ({theme, open}) => ({
+            width: drawerWidth,
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
+            boxSizing: 'border-box',
+            ...(open && {
+                ...openedMixin(theme),
+                background: "#023247",
+                color: "white",
+                '& .MuiDrawer-paper': openedMixin(theme),
+            }),
+            ...(!open && {
+                ...closedMixin(theme),
+                '& .MuiDrawer-paper': closedMixin(theme),
+            }),
+        }),
+    );
+
 
     const navigate = useNavigate()
-
-    function getMe() {
-        instance.get("/user/me").then(({data}) => {
-            setUsername(data.username)
-        })
-    }
 
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -155,7 +146,7 @@ function Index(props) {
     };
 
     const theme = useTheme();
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -172,7 +163,7 @@ function Index(props) {
 
     function unlockUsers() {
         if (window.confirm("Rostdan ham userlarni unlock qilmoqchimisiz?")) {
-            instance.post("/user/unlockUsers").then(res => {
+            instance.delete("/user/unlockUsers").then(res => {
                 toast.success("Userlar unlock qilindi !")
             })
         }
@@ -190,6 +181,8 @@ function Index(props) {
         return pathname === "/selectAdmin/" + path ? "#023247"
             : "white"
     }
+
+    let width = window.innerWidth > 600;
 
 
     return (
@@ -210,16 +203,23 @@ function Index(props) {
                     >
                         <MenuIcon/>
                     </IconButton>
-                    <Avatar
-                        alt="Trevor Henderson"
-                        src={userImg}
-                        sx={{position: "fixed", right: "20px"}}
-                        onClick={handleClick}
-                    />
+
+                    {
+                        pathname !== "/selectAdmin/rooms" && <Avatar
+                            alt="Trevor Henderson"
+                            src={userImg}
+                            sx={{position: "fixed", right: "20px"}}
+                            onClick={handleClick}
+                        />
+                    }
+
 
                     <Menu
-                        id="fade-menu"
-                        sx={{marginTop: "10px"}}
+                        style={{
+                            position: "fixed",
+                            left: width ? "86vw" : "50vw",
+                            top: "30px",
+                        }}
                         MenuListProps={{
                             'aria-labelledby': 'fade-button',
                         }}
@@ -229,14 +229,35 @@ function Index(props) {
                         // TransitionComponent={Fade}
                     >
                         <MenuItem onClick={handleClose}>
-                            <Link style={{textDecoration: "none", display: "flex", alignItems: "center", color: "blue"}}
+                            <Link style={{
+                                textDecoration: "none",
+                                display: "flex",
+                                alignItems: "center",
+                                color: "blue"
+                            }}
                                   to={`/userPage/user`}>
                                 <AccountCircleOutlinedIcon/>&nbsp;<h6 className={"mt-2"}>Profile</h6>
                             </Link>
                         </MenuItem>
                         <MenuItem onClick={handleClose}>
-                            <Link style={{textDecoration: "none", display: "flex", alignItems: "center", color: "blue"}}
+                            <Link style={{
+                                textDecoration: "none",
+                                display: "flex",
+                                alignItems: "center",
+                                color: "blue"
+                            }}
                                   to={"/"}><HomeOutlinedIcon/>&nbsp;<h6 className={"mt-2"}>Home</h6></Link>
+                        </MenuItem>
+                        <MenuItem onClick={handleClose}>
+                            <Link style={{
+                                textDecoration: "none",
+                                display: "flex",
+                                alignItems: "center",
+                                color: "blue"
+                            }}
+                                  to={"/selectRole"}><PermContactCalendarIcon/>&nbsp;<h6
+                                className={"mt-2"}>Roles</h6>
+                            </Link>
                         </MenuItem>
                         <MenuItem sx={{display: "flex", alignItems: "center", color: "red"}}
                                   onClick={() => {
@@ -244,6 +265,8 @@ function Index(props) {
                                       navigate("/")
                                   }}><LogoutIcon/>&nbsp;<h6 className={"mt-2"}>Logout</h6></MenuItem>
                     </Menu>
+
+
                 </Toolbar>
             </AppBar>
             <Drawer variant="permanent" open={open}>
@@ -271,7 +294,7 @@ function Index(props) {
                 <Divider/>
                 <List>
                     <ListItem
-                        style={{background: "black"}}
+                        style={{background: pathname.startsWith("/selectAdmin") ? "black" : "gray"}}
                         disablePadding sx={{display: 'block'}}>
                         <ListItemButton
                             sx={{
@@ -474,7 +497,37 @@ function Index(props) {
                             </ListItemButton>
                         </ListItem>
                     </Link>
-                    <Link to={"/selectAdmin/expense"} style={{textDecoration: "none"}}>
+
+                    {isSuper && (<Link to={"/selectAdmin/income"} style={{textDecoration: "none"}}>
+                        <ListItem
+                            style={backgroundFunction("income")}
+                            disablePadding sx={{display: 'block'}}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        color: colorFunction("income")
+                                    }}
+                                >
+
+                                    <TrendingUpIcon sx={{transform: "scale(1.5)"}}/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    style={{textDecoration: "none", color: colorFunction("income")}}
+                                    primary={"Kirim"} sx={{opacity: open ? 1 : 0}}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>)}
+                    {isSuper && (<Link to={"/selectAdmin/expense"} style={{textDecoration: "none"}}>
                         <ListItem
                             style={backgroundFunction("expense")}
                             disablePadding sx={{display: 'block'}}>
@@ -494,17 +547,18 @@ function Index(props) {
                                     }}
                                 >
 
-                                    <LeaderboardIcon sx={{transform: "scale(1.5)"}}/>
+                                    <TrendingDownIcon sx={{transform: "scale(1.5)"}}/>
                                 </ListItemIcon>
                                 <ListItemText
                                     style={{textDecoration: "none", color: colorFunction("expense")}}
-                                    primary={"Income & Expence"} sx={{opacity: open ? 1 : 0}}
+                                    primary={"Chiqim"} sx={{opacity: open ? 1 : 0}}
                                 />
                             </ListItemButton>
                         </ListItem>
-                    </Link>
+                    </Link>)}
 
                     <ListItem
+                        onClick={unlockUsers}
                         disablePadding sx={{display: 'block'}}>
                         <ListItemButton
                             sx={{
@@ -526,7 +580,7 @@ function Index(props) {
                             </ListItemIcon>
                             <ListItemText
                                 style={{textDecoration: "none", color: "white"}}
-                                primary={"Unclock users"} sx={{opacity: open ? 1 : 0}}
+                                primary={"Unlock users"} sx={{opacity: open ? 1 : 0}}
                             />
                         </ListItemButton>
                     </ListItem>
@@ -538,7 +592,7 @@ function Index(props) {
                 <Divider/>
                 <List>
                     <ListItem
-                        style={{background: "black"}}
+                        style={{background: pathname.startsWith("/admin") ? "black" : "gray"}}
                         disablePadding sx={{display: 'block'}}>
                         <ListItemButton
                             sx={{
@@ -774,7 +828,7 @@ function Index(props) {
 
                 </List>
             </Drawer>
-            <Box component="main" sx={{flexGrow: 1, p: 3}}>
+            <Box style={{width: open ? "40vw" : "70vw"}} component="main" sx={{flexGrow: 1, pt: 3}}>
                 <Outlet/>
             </Box>
         </Box>

@@ -1,32 +1,41 @@
 
 .room {
 
-  //width: 100vw;
-  //height: 100vh;
-  //overflow: auto;
+  width: 100%;
+  height: 110vh;
+  overflow: auto;
   position: relative;
+  margin-top: -100px;
+  padding-right: 5rem;
+
 
   table {
     position: absolute;
     top: 100px;
     transform: scale(0.6);
+    left: -15%;
+    margin-right: 200px;
+
+    @media (max-width: 1200px) {
+      left: -30%;
+    }
   }
 
 
   td {
-    min-width: 90px;
-    width: 90px;
-    height: 60px;
+    min-width: 30px;
+    width: 30px;
+    min-height: 200px;
     border: 5px solid;
     text-align: center;
   }
 
 
- .weekDay{
-   position: -ms-device-fixed;
-   left: -2px;
-   z-index: 2;
- }
+  .weekDay {
+    position: -ms-device-fixed;
+    left: -2px;
+    z-index: 2;
+  }
 
 
 }

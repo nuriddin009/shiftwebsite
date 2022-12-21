@@ -1,11 +1,13 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.ArchiveGroupDto;
 import com.example.backend.entity.studyCenter.Group;
 import com.example.backend.projection.GroupUserData;
 import com.example.backend.repository.studyCenter.GroupRepository;
 import com.example.backend.repository.studyCenter.TimeTableRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,5 +52,28 @@ public class GroupService {
         Group group = groupRepository.findById(groupId).get();
         group.setName(name);
         return groupRepository.save(group);
+    }
+
+    public List<Group> getArchived() {
+        return groupRepository.getArchived();
+    }
+
+    public List<Group> archiveGroup(List<ArchiveGroupDto> archiveDatas) {
+        List<Group> groupList = groupRepository.findAll();
+        List<Group> archiveGroups = new ArrayList<>();
+        for (ArchiveGroupDto archiveData : archiveDatas) {
+            Group group = groupRepository.findById(archiveData.getValue()).get();
+            archiveGroups.add(group);
+        }
+        for (Group archiveGroup : archiveGroups) {
+            archiveGroup.setIsArchive(true);
+            groupRepository.save(archiveGroup);
+        }
+        groupList.removeAll(archiveGroups);
+        for (Group group : groupList) {
+            group.setIsArchive(false);
+            groupRepository.save(group);
+        }
+        return null;
     }
 }

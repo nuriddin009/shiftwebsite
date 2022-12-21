@@ -9,8 +9,8 @@ import com.example.backend.entity.studyCenter.Lesson;
 import com.example.backend.repository.*;
 import com.example.backend.repository.shiftRepo.*;
 import com.example.backend.repository.studyCenter.CertificateRepository;
+import com.example.backend.repository.studyCenter.GroupRepository;
 import com.example.backend.repository.studyCenter.TimeTableUsersRepository;
-import com.example.backend.service.studyCenter.GenerateCertificate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,12 +37,20 @@ public class AutoRun implements CommandLineRunner {
     private final CertificateRepository certificateRepository;
     private final IncomeTypeRepository incomeTypeRepository;
     private final TimeTableUsersRepository timeTableUsersRepository;
-//    private final WeekDayRepository weekDayRepository;
+    private final GroupRepository groupRepository;
+
+
 
     @Override
     public void run(String... args) throws Exception {
+
+
         if (apiKeyRepository.findAll().size() == 0) {
             apiKeyRepository.save(new ApiKey(null, "e513e4115ca510bdadca112d5153afe8", "T2IpKOxq"));
+        }
+
+        if (incomeTypeRepository.findAll().size() == 0) {
+            incomeTypeRepository.save(new IncomeType(UUID.fromString("c447ff07-97e8-4a4b-98a9-88a94120bdfd"), "Student"));
         }
 
         if (lessonRepository.findAll().size() == 0) {
@@ -52,16 +60,9 @@ public class AutoRun implements CommandLineRunner {
         }
 
 
-//        if (weekDayRepository.findAll().size() == 0) {
-//            weekDayRepository.saveAll(Arrays.asList(
-//                    new WeekDay(null, "Dushanba", 1),
-//                    new WeekDay(null, "Seshanba", 2),
-//                    new WeekDay(null, "Chorshanba", 3),
-//                    new WeekDay(null, "Payshanba", 4),
-//                    new WeekDay(null, "Juma", 5),
-//                    new WeekDay(null, "Shanba", 6)
-//            ));
-//        }
+
+
+
 
 
 //        User user1 = userRepository.findById(UUID.fromString("315f3bf7-2a36-47f8-9a4b-f1958f66271e")).get();
@@ -102,9 +103,6 @@ public class AutoRun implements CommandLineRunner {
             Role role2 = roleRepository.findById(3).get();
             user.setRoles(Arrays.asList(role, role1, role2));
             userRepository.save(user);
-        }
-        if(incomeTypeRepository.findAll().size()==0){
-            new IncomeType(UUID.fromString("c447ff07-97e8-4a4b-98a9-88a94120bdfd"),"Student");
         }
 
 
@@ -156,6 +154,8 @@ public class AutoRun implements CommandLineRunner {
         }
         userRepository.changeBalance();
         timeTableUsersRepository.changePaid();
+
+        groupRepository.changeArchive();
 
     }
 }

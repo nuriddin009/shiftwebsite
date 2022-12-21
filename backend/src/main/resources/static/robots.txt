@@ -1,3 +1,9 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /userPage/
+Disallow: /admin/
+Disallow: /Mentor/
+Disallow: /login/
+Disallow: /selectRole/
+

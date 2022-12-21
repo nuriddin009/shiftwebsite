@@ -196,7 +196,7 @@ function Index(props) {
                 <Stack direction="row" alignItems={"center"} spacing={2}>
                     <Avatar
                         alt="Remy Sharp"
-                        src={user?.attachment === null ? userImg : "http://localhost:81/api/img/" + user?.attachment?.id}
+                        src={user?.attachment === null ? userImg : "/api/img/" + user?.attachment?.id}
                         sx={{width: width ? 100 : 65, height: width ? 100 : 65, border: "3px solid"}}
                     />
 

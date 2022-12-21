@@ -4,7 +4,7 @@ import {toast} from "react-toastify";
 
 export default function request(url, method, data) {
     return axios({
-        baseURL: "http://localhost:81/api",
+        baseURL: "/api",
         url,
         method,
         data,

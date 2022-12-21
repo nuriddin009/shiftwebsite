@@ -123,13 +123,13 @@ public class CertificateService {
 
     @SneakyThrows
     public void getQr(UUID id, HttpServletResponse response) {
-        Certificate certificate = certificateRepository.getReferenceById(id);
+        Certificate certificate = certificateRepository.findById(id).get();
         FileCopyUtils.copy(certificate.getQrCode(), response.getOutputStream());
     }
 
     @SneakyThrows
     public void getC(UUID id, HttpServletResponse response) {
-        Certificate certificate = certificateRepository.getReferenceById(id);
+        Certificate certificate = certificateRepository.findById(id).get();
         FileCopyUtils.copy(certificate.getCertificatePhoto(), response.getOutputStream());
     }
 

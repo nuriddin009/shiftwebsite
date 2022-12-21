@@ -59,7 +59,7 @@ public class StudyCenterService {
                     if (timeTableUserProjection.getGotogroup() == 0) {
                         User user = userRepository.findById(timeTableUserProjection.getUserid()).get();
                         TimeTableUser save = timeTableUsersRepository.save(new TimeTableUser(time_table, user, timeTableUserProjection.getPrice(), 0));
-                        for (int i = 0; i < (isFree ? 16 : 12); i++) {
+                        for (int i = 0; i < 12; i++) {
                             TimeTableUserData timeTableUserData = new TimeTableUserData(save, i + 1, false, 0, 0, false, false, false);
                             timeTableUsersDataRepository.save(timeTableUserData);
                         }

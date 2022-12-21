@@ -3,7 +3,9 @@ package com.example.backend.repository.studyCenter;
 import com.example.backend.entity.studyCenter.Group;
 import com.example.backend.projection.GroupUserData;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +24,20 @@ public interface GroupRepository extends JpaRepository<Group, UUID> {
     @Query(value = "select *\n" +
             "from groups g\n" +
             "where g.name ilike '%' || :search || '%'\n" +
+            "  and g.is_archive is false\n" +
             "order by g.created_at desc", nativeQuery = true)
     List<Group> findAllByOrderByCreatedAtDesc(String search);
 
+    @Query(value = "select *\n" +
+            "from groups g\n" +
+            "where " +
+//            "g.name ilike '%' || :search || '%'\n" + "  and" +
+            " g.is_archive is true\n" +
+            "order by g.created_at desc", nativeQuery = true)
+    List<Group> getArchived();
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Group g SET g.isArchive = false WHERE g.isArchive is null")
+    void changeArchive();
 }

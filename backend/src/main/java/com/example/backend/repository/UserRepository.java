@@ -25,6 +25,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<UserProjection> getUserName(String username);
 
 
+    Optional<User> findByChartId(String chartId);
+
+
     @Query(value = "select cast(u.id as varchar) as id,\n" +
             "       u.username            as username,\n" +
             "       u.address             as address,\n" +

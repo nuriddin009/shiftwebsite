@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import AsyncSelect from "react-select/async";
-import request from "../../../shift/utils/request";
 import "./index.scss"
 import CreatableSelect from "react-select/creatable";
 import verify from "./verified.png";
 import upload from "./upload.png";
 import {useForm} from "react-hook-form";
 import {toast} from "react-toastify";
-import Rodal from "rodal";
 import Cropper from "react-easy-crop";
 import getCroppedImg from "./cropImage";
 import instance from "../../../shift/utils/instance";

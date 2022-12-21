@@ -18,8 +18,8 @@ import java.util.UUID;
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
 
-    @Query(value = "select date_trunc('month',e.created) as month  from expense e \n" +
-//            "where \n" +
+    @Query(value = "select sum(e.amount) as amount ,date_trunc('month',e.created) as month  from expense e \n" +
+            "where  case when cast(:startDate  as date) is null  then true else e.created between :startDate and :endDate end \n" +
             "group by date_trunc('month',e.created)\n" +
             "order by date_trunc('month',e.created)",
             nativeQuery = true)

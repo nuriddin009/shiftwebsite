@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import "./index.scss"
-import request from "../shift/utils/request";
 import {toast} from "react-toastify";
 import {Modal} from "react-bootstrap";
 import AsyncSelect from "react-select/async";
@@ -9,27 +8,28 @@ import InputMask from 'react-input-mask';
 import {Controller, useForm} from "react-hook-form";
 import {useLocation} from "react-router-dom";
 import logo from "../shift/file/image/imageShift/logo2.svg";
-// import PhoneInput, {isValidPhoneNumber} from "react-phone-number-input";
 import PhoneInput from 'react-phone-input-2';
 import instance from "../shift/utils/instance";
 import Button from "@mui/material/Button";
 import {
-    Box,
     ButtonGroup,
+    Dialog,
     FormControl,
-    FormHelperText,
     Grid,
+    Select as SelectMui,
     InputLabel,
-    Select,
     Switch,
     TextField
 } from "@mui/material";
-import Autocomplete, {createFilterOptions} from "@mui/material/Autocomplete";
 import MenuItem from "@mui/material/MenuItem";
+import Select from 'react-select'
 
-const filter = createFilterOptions();
 
 function Index(props) {
+
+
+    let {isSuper} = props
+
     const [groups, setGroups] = useState([])
     const [group, setGroup] = useState(null)
     const [timeTables, setTimeTables] = useState(null)
@@ -47,12 +47,16 @@ function Index(props) {
     const [currentNew, setCurrentNew] = useState(false)
     const [blockSave, setBlockSave] = useState(false)
     const [newPayment, setNewPayment] = useState(false)
-    const [payment, isPayment] = useState(true)
+    const [payment, isPayment] = useState(false)
     const [amount, setAmount] = useState('')
     const [desc, setDesc] = useState('')
     const [value, setValue] = React.useState(null);
     const [options, setOptions] = useState([])
     const [from, setFrom] = useState(0)
+
+    const [archive, setArchive] = useState(false)
+    const [archiveGroups, setArchiveGroups] = useState([])
+    const [archiveOptions, setArchiveOptions] = useState([])
 
     const [groupIndex1, setGroupIndex1] = useState("")
 
@@ -71,7 +75,14 @@ function Index(props) {
     function getGroups(search) {
         instance.get("/group", {params: {search}}).then(res => {
             setGroups(res.data)
+            let a = []
+            res.data?.map(item => a.push({value: item?.id, label: item?.name}))
+            setArchiveGroups(a)
         })
+    }
+
+    function archiveModal() {
+        setArchive(!archive)
     }
 
     useEffect(() => {
@@ -80,16 +91,13 @@ function Index(props) {
         let groupId = localStorage.getItem("groupId");
         setGroup(groupId)
 
+        getArchivedGroups()
+
         let groupIndex = localStorage.getItem("groupIndex");
         setGroupIndex1(groupIndex);
         let timeTableId = localStorage.getItem("timeTableId");
         let timeTableIndex = localStorage.getItem("timeTableIndex");
         let timeTableItem = JSON.parse(localStorage.getItem("timeTableItem"));
-        // setLessOrMore(JSON.parse(localStorage.getItem("less")).less)
-
-        // instance.patch(`/studyCenter/timeTable/${timeTableId}/${true}`).then(res => {
-        //     getTimeTab(timeTableId)
-        // })
 
         if (groupId != null) {
             getTimeTables(groupId)
@@ -101,6 +109,23 @@ function Index(props) {
 
         }
     }, [])
+
+
+    function getArchivedGroups() {
+        instance.get("/group/archive").then(res => {
+            let a = []
+            res.data?.map(item => a.push({value: item?.id, label: item?.name}))
+            setArchiveOptions(a)
+        })
+    }
+
+    function changeArchive(e) {
+        console.log(e)
+        instance.patch("/group/archive", e).then(res => {
+            getGroups(searchGroup)
+            getArchivedGroups()
+        })
+    }
 
 
     function rodalVisible() {
@@ -424,10 +449,10 @@ function Index(props) {
     }
 
     function makePayment() {
-        if ((newPayment && (!value || !amount))||(!newPayment && !amount)) toast.error("pay type and amount should be filled!")
+        if ((newPayment && (!value || !amount)) || (!newPayment && !amount)) toast.error("pay type and amount should be filled!")
         if (!newPayment && from?.balance < amount) toast.error("not enough money")
-        else instance.post("/payment/" + from.timeTableId, {payType: value, amount, desc,newPayment}).then(res => {
-           getTimeTab(from.timetable)
+        else instance.post("/payment/" + from.timeTableId, {payType: value, amount, desc, newPayment}).then(res => {
+            getTimeTab(from.timetable)
             rodalVisisble()
         })
     }
@@ -438,7 +463,7 @@ function Index(props) {
         instance.get("/user/getoneUser/" + item.userid).then(res => {
             rodalVisisble()
             console.log(item.id)
-            setFrom({...res?.data?.data, timeTableId: item.id,paid:item.paid,timetable:item.timeTableId})
+            setFrom({...res?.data?.data, timeTableId: item.id, paid: item.paid, timetable: item.timeTableId})
             reset(res.data.data)
         })
     }
@@ -487,6 +512,13 @@ function Index(props) {
         } else {
             toast.error("Group name must not be empty!")
         }
+    }
+
+    const styleSelect = {
+        multiValueLabel: (provided, state) => ({
+            ...provided,
+            width: '100px'
+        }),
     }
 
 
@@ -538,15 +570,18 @@ function Index(props) {
         }
     }
 
+
     return (
         <div className={`studyCenter  ${pathname === "/Mentor" ? "mw-100" : ""}`}>
-            <div className={"archiveGroup"}>
-                <i
-                    className="fa-solid fa-inbox text-danger archiveGroup"
-                    title={"Archive group"}
-                />
-            </div>
-            <p className={"archiveGroup1"}>Archived&nbsp;groups</p>
+
+
+            <Button
+                onClick={archiveModal}
+                style={{margin: "20px", marginRight: "auto"}}
+                variant={"contained"} color={"primary"}>
+                Archive groups
+            </Button>
+
             <div className={"all-time"}>
                 <input
                     type="search"
@@ -791,13 +826,14 @@ function Index(props) {
                                                               className={"spanDeleteUser text-white"}>X</span>
 
                                                     }
-                                                    {console.log(item.price )}
-                                                    {console.log(item.paid )}
 
                                                     <p
-                                                        style={{color: parseInt(item.price)>item.paid ? "red" : "green"}}
+                                                        style={{color: parseInt(item.price) > item.paid ? "red" : "green"}}
                                                         onClick={() => seeUser(item)}>
                                                         {item.firstname + " " + item.lastname}
+                                                        <br/>
+                                                        {item?.parentsData?.length === 0 &&
+                                                            <i className="fa-solid fa-robot text-danger"/>}
                                                         {
                                                             showPri ?
                                                                 <div>
@@ -805,6 +841,7 @@ function Index(props) {
                                                                     {item.phone}
                                                                     <br/>
                                                                     {item.deletedate ? "Delete=" + item.deletedate : ""}
+
                                                                 </div>
                                                                 : ""
                                                         }
@@ -1025,6 +1062,7 @@ function Index(props) {
                     <button form={"my-form-started"} className={"btn btn-outline-dark"}>Start</button>
                 </Modal.Footer>
             </Rodal>
+
             <Rodal visible={rodal3} height={550} onClose={deleteuserRodal}>
                 <h1>Delete student</h1>
                 <div className={"card-body my-2"}>
@@ -1050,194 +1088,206 @@ function Index(props) {
 
             {/*user rodal*/}
 
-            <Rodal height={530} width={700} visible={rodalCreateUser} onClose={rodalVisisble}>
+            <Dialog height={530} width={700} open={rodalCreateUser} onClose={rodalVisisble}>
                 <div className="card register-card">
-                    <div className="card-header bgCollor"><img width={150} src={logo} alt="logo"/></div>
+                    <div style={{background: primaryColor}} className="card-header bgCollor"><img width={150} src={logo}
+                                                                                                  alt="logo"/></div>
                     <div className="card-body card_body">
-                        <ButtonGroup variant="contained" sx={{width: '100%', mb: 3}}
-                                     aria-label="outlined primary button group">
+
+                        {isSuper && (<ButtonGroup variant="contained" sx={{width: '100%', mb: 3}}
+                                                  aria-label="outlined primary button group">
                             <Button variant={payment ? "text" : "contained"} sx={{width: '50%'}}
                                     onClick={() => isPayment(true)}>Payment</Button>
                             <Button variant={payment ? "contained" : "text"} sx={{width: '50%'}}
                                     onClick={() => isPayment(false)}>User Data</Button>
-                        </ButtonGroup>
-                        {payment ? <div style={{display: "flex", flexDirection: "column", gap: 5}}>
+                        </ButtonGroup>)}
 
-                            <div style={{display: "flex", width: "95%"}}>
-                                <Grid sx={{width: "50%"}}>
-                                    <FormControl sx={{m: 1, mb: 5, height: 30, width: "95%"}}>
-                                        <TextField style={{height: 30}}
-                                                   id="outlined-basic"
-                                                   fullWidth
-                                                   label="Amount"
-                                                   value={amount}
-                                            // error={errorText.amount}
-                                                   onChange={(e) => setAmount(e.target.value)}
-                                                   variant="outlined" type={'number'}/>
-                                    </FormControl>
-                                </Grid>
 
-                                {newPayment && <Grid sx={{width: "50%"}}>
-                                    <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
-                                        <InputLabel id="-label" sx={{backgroundColor: "white"}}> Pay Type</InputLabel>
-                                        <Select
-                                            labelId="demo-simple-select-helper-label"
-                                            id="demo-simple-select-helper"
-                                            value={value}
-                                            label="pay_type"
-                                            onChange={(e) => setValue(e.target.value)}
-                                        >
-                                            {options.map((item, index) => <MenuItem
-                                                value={item.value}>{item?.label}</MenuItem>)}
+                        {payment && isSuper ? <div style={{display: "flex", flexDirection: "column", gap: 5}}>
 
-                                        </Select>
-                                    </FormControl>
+                                <div style={{display: "flex", width: "400px"}}>
+                                    <Grid sx={{width: "100%"}}>
+                                        <FormControl sx={{m: 1, mb: 5, height: 30, width: "95%"}}>
+                                            <TextField style={{height: 30}}
+                                                       id="outlined-basic"
+                                                       fullWidth
+                                                       label="Amount"
+                                                       value={amount}
+                                                // error={errorText.amount}
+                                                       onChange={(e) => setAmount(e.target.value)}
+                                                       variant="outlined" type={'number'}/>
+                                        </FormControl>
+                                    </Grid>
 
-                                </Grid>
-                                }
-                            </div>
-                            {newPayment && <div>
-                                <TextField
-                                    multiline
-                                    rows={4}
-                                    sx={{m: 1, width: "95%"}}
-                                    id="outlined-multiline-static"
-                                    label="Description"
-                                    variant="outlined"
-                                    value={desc}
-                                    onChange={(e) => setDesc(e.target.value)}
-                                />
-                            </div>}
-                            <div>
-                                New Payment: <Switch onClick={() => {
-                                setNewPayment(!newPayment)
-                            }} checked={newPayment}/>
-                            </div>
-                            <div style={{display: "flex", justifyContent: "space-between", width: "95%"}}>
+                                    {newPayment && <Grid sx={{width: "50%"}}>
+                                        <FormControl sx={{m: 1, minWidth: 200, width: "95%"}}>
+                                            <InputLabel id="-label" sx={{backgroundColor: "white"}}> Pay Type</InputLabel>
+                                            <SelectMui
+                                                labelId="demo-simple-select-helper-label"
+                                                id="demo-simple-select-helper"
+                                                value={value}
+                                                label="pay_type"
+                                                onChange={(e) => setValue(e.target.value)}
+                                            >
+                                                {options.map((item, index) => <MenuItem
+                                                    key={item.value}
+                                                    value={item.value}>{item?.label}</MenuItem>)}
+
+                                            </SelectMui>
+                                        </FormControl>
+
+                                    </Grid>
+                                    }
+                                </div>
+                                {newPayment && <div>
+                                    <TextField
+                                        multiline
+                                        rows={3}
+                                        sx={{m: 1, width: "100%"}}
+                                        id="outlined-multiline-static"
+                                        label="Description"
+                                        variant="outlined"
+                                        value={desc}
+                                        onChange={(e) => setDesc(e.target.value)}
+                                    />
+                                </div>}
                                 <div>
-                                    <p>Balance: {from?.balance} so'm</p>
-                                    <p>Paid: {from?.paid} so'm</p>
+                                    New Payment: <Switch onClick={() => {
+                                    setNewPayment(!newPayment)
+                                }} checked={newPayment}/>
                                 </div>
-                                <Button onClick={makePayment} variant={"contained"}>Add</Button>
+                                <div style={{display: "flex", justifyContent: "space-between", width: "95%"}}>
+                                    <div>
+                                        <p>Balance: {from?.balance} so'm</p>
+                                        <p>Paid: {from?.paid} so'm</p>
+                                    </div>
+                                    <Button sx={{height: "30px"}} onClick={makePayment} variant={"contained"}>Add</Button>
 
-                            </div>
-                        </div> : <form id={"my_form"} onSubmit={handleSubmit(mySubmit)}>
-
-                            <div className="d-flex gap-3">
-                                <div className={"w-50"}>
-                                    <input className={"form-control my-1"} type="text"
-                                           placeholder={"FirstName..."} {...register("firstName", {required: true})}/>
-                                    {errors.firstName ? <p className={"text-danger"}>Ismni kiritish majburiy</p> : ""}
-                                </div>
-
-                                <div className={"w-50"}>
-                                    <input className={"form-control my-1"} type="text"
-                                           placeholder={"LastName..."} {...register("lastName", {required: true})}/>
-                                    {errors.lastName ?
-                                        <p className={"text-danger"}>Familyani kiritish majburiy</p> : ""}
                                 </div>
                             </div>
 
 
-                            <div className="d-flex gap-3">
-                                <div className={"w-50"}>
-                                    <label htmlFor="phoneNumber">Phone Number</label>
-                                    <Controller
-                                        name="phoneNumber"
-                                        control={control}
-                                        render={({field: {onChange, value}}) => (
-                                            <PhoneInput
-                                                country={"uz"}
-                                                containerClass={"phone_input"}
-                                                value={value}
-                                                placeholder={"+998 99 123 45 67"}
-                                                onChange={onChange}
-                                                prefix={"+"}
-                                            />
+                            : <form id={"my_form"} onSubmit={handleSubmit(mySubmit)}>
+
+                                <div className="d-flex gap-3">
+                                    <div className={"w-50"}>
+                                        <input className={"form-control my-1"} type="text"
+                                               placeholder={"FirstName..."} {...register("firstName", {required: true})}/>
+                                        {errors.firstName ?
+                                            <p className={"text-danger"}>Ismni kiritish majburiy</p> : ""}
+                                    </div>
+
+                                    <div className={"w-50"}>
+                                        <input className={"form-control my-1"} type="text"
+                                               placeholder={"LastName..."} {...register("lastName", {required: true})}/>
+                                        {errors.lastName ?
+                                            <p className={"text-danger"}>Familyani kiritish majburiy</p> : ""}
+                                    </div>
+                                </div>
+
+
+                                <div className="d-flex gap-3">
+                                    <div className={"w-50"}>
+                                        <label htmlFor="phoneNumber">Phone Number</label>
+                                        <Controller
+                                            name="phoneNumber"
+                                            control={control}
+                                            render={({field: {onChange, value}}) => (
+                                                <PhoneInput
+                                                    country={"uz"}
+                                                    containerClass={"phone_input"}
+                                                    value={value}
+                                                    placeholder={"+998 99 123 45 67"}
+                                                    onChange={onChange}
+                                                    prefix={"+"}
+                                                />
+                                            )}
+                                        />
+                                        {errors["phoneNumber"] && (
+                                            <p className="error-message text-danger">Invalid Phone</p>
                                         )}
-                                    />
-                                    {errors["phoneNumber"] && (
-                                        <p className="error-message text-danger">Invalid Phone</p>
-                                    )}
-                                </div>
+                                    </div>
 
-                                <div className={"w-50"}>
-                                    Masul shaxs
-                                    <Controller
-                                        name="fatherPhoneNumber"
-                                        control={control}
-                                        render={({field: {onChange, value}}) => (
-                                            <PhoneInput
-                                                country={"uz"}
-                                                containerClass={"phone_input"}
-                                                value={value}
-                                                placeholder={"+998 99 123 45 67"}
-                                                onChange={onChange}
-                                                prefix={"+"}
-                                            />
+                                    <div className={"w-50"}>
+                                        Masul shaxs
+                                        <Controller
+                                            name="fatherPhoneNumber"
+                                            control={control}
+                                            render={({field: {onChange, value}}) => (
+                                                <PhoneInput
+                                                    country={"uz"}
+                                                    containerClass={"phone_input"}
+                                                    value={value}
+                                                    placeholder={"+998 99 123 45 67"}
+                                                    onChange={onChange}
+                                                    prefix={"+"}
+                                                />
+                                            )}
+                                        />
+
+
+                                        {errors["phoneNumber"] && (
+                                            <p className="error-message text-danger">Invalid Phone</p>
                                         )}
-                                    />
-
-
-                                    {errors["phoneNumber"] && (
-                                        <p className="error-message text-danger">Invalid Phone</p>
-                                    )}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className={"d-flex align-items-center"}>
+                                <div className={"d-flex align-items-center"}>
 
-                                <input style={{width: "100px"}} min={6} max={100} className={"form-control my-1"}
-                                       type="number"
-                                       placeholder={"Age"} {...register("age", {required: true, min: 7, max: 70})}/>
+                                    <input style={{width: "100px"}} min={6} max={100} className={"form-control my-1"}
+                                           type="number"
+                                           placeholder={"Age"} {...register("age", {required: true, min: 7, max: 70})}/>
 
-                                <label className={"d-flex align-items-start"}>
-                                    <p className={"mx-2"}>
-                                        isActive
-                                    </p>
-                                    <input className={"form-check-input my-1"} type="checkbox"
-                                           id="flexSwitchCheckChecked" placeholder={"Age"} {...register("activ")}/>
-                                </label>
-                            </div>
-
-
-                            <div className="d-flex gap-3">
-                                <div className="w-50">
-                                    <input className={"form-control my-1"} type="text" minLength={6}
-                                           placeholder={"Login"} {...register("username", {
-                                        minLength: 5
-                                    })}/>
-                                    {errors.username ?
-                                        <p className={"text-danger"}>Username 6 ta harfdan kam bo'lmasligi
-                                            kerak</p> : ""}
-                                    <input className={"form-control my-1"} type="password" minLength={6}
-                                           placeholder={"Password"} {...register("password")}/>
-                                    <input className={"form-control my-1"} type="password" minLength={6}
-                                           placeholder={"Password Repid"} {...register("password_repid")}/>
+                                    <label className={"d-flex align-items-start"}>
+                                        <p className={"mx-2"}>
+                                            isActive
+                                        </p>
+                                        <input className={"form-check-input my-1"} type="checkbox"
+                                               id="flexSwitchCheckChecked" placeholder={"Age"} {...register("activ")}/>
+                                    </label>
                                 </div>
-                                <div className={"w-50"}>
+
+
+                                <div className="d-flex gap-3">
+                                    <div className="w-50">
+                                        <input className={"form-control my-1"} type="text" minLength={6}
+                                               placeholder={"Login"} {...register("username", {
+                                            minLength: 5
+                                        })}/>
+                                        {errors.username ?
+                                            <p className={"text-danger"}>Username 6 ta harfdan kam bo'lmasligi
+                                                kerak</p> : ""}
+                                        <input className={"form-control my-1"} type="password" minLength={6}
+                                               placeholder={"Password"} {...register("password")}/>
+                                        <input className={"form-control my-1"} type="password" minLength={6}
+                                               placeholder={"Password Repid"} {...register("password_repid")}/>
+                                    </div>
+                                    <div className={"w-50"}>
                             <textarea className={"form-control my-1"} cols="30" rows="2"
                                       placeholder={"Address"} {...register("address", {required: true})}/>
-                                    {errors.address ? <p className={"text-danger"}>Manzil kiritish majburiy</p> : ""}
+                                        {errors.address ?
+                                            <p className={"text-danger"}>Manzil kiritish majburiy</p> : ""}
+                                    </div>
                                 </div>
-                            </div>
 
 
-                        </form>
+                            </form>
                         }
                     </div>
-                    <div className="card-footer  text-end bgCollor">
-                        <button onClick={rodalVisisble} className={"btn btn-danger"}>cancel</button>
+                    <div className="card-footer  text-end bgCollor"
+                         style={{display: "flex", gap: "1rem", justifyContent: "flex-end"}}>
+                        <Button onClick={rodalVisisble} variant={"contained"} sx={{marginLeft: "-20px"}}
+                                color={"error"}>cancel</Button>
                         {!payment &&
-                            <button form={"my_form"} className={"btn btn-dark"}>{currentNew ? "save" : "edit"}</button>}
+                            <Button type={"submit"} form={"my_form"} variant={"contained"}>{currentNew ? "save" : "edit"}</Button>}
                     </div>
                 </div>
-            </Rodal>
+            </Dialog>
 
             {/*user rodal*/}
 
             {/*close lesson */}
-            <Rodal visible={rodalCloseLesson} height={300} onClose={closeLesson}>
+            <Dialog open={rodalCloseLesson} height={300} onClose={closeLesson}>
                 <div className={"card-body my-2"}>
                     <div className="card-body">
                         <form id={"my-form-lesson"} onSubmit={handleSubmitCloseLesson(submit)}>
@@ -1259,10 +1309,34 @@ function Index(props) {
                         <button type={'submit'} form={"my-form-lesson"} className={"btn btn-outline-dark"}>Save</button>
                     </div>
                 </div>
-            </Rodal>
+            </Dialog>
             <Rodal visible={con} height={300} onClose={rodalVisibleCon}>
                 <h1>Hello</h1>
             </Rodal>
+
+            <Dialog open={archive} onClose={archiveModal}>
+                <div style={{minWidth: "500px", minHeight: "400px", padding: "1rem"}}>
+                    <h1>Archived groups</h1>
+                    <Select
+                        styles={styleSelect}
+                        isMulti
+                        name="colors"
+                        onChange={(e) => changeArchive(e)}
+                        options={archiveGroups}
+                        value={archiveOptions}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        placeholder={"Archive groups"}
+                    />
+                </div>
+
+                <div className="card-footer" style={{display: "flex", justifyContent: "flex-end"}}>
+                    <Button sx={{width: "10%"}} onClick={archiveModal} variant={"outlined"}
+                            color={"error"}>Close</Button>
+                </div>
+
+            </Dialog>
+
         </div>
     );
 }

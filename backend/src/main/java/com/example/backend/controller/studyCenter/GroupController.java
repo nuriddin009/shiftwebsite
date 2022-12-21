@@ -1,5 +1,6 @@
 package com.example.backend.controller.studyCenter;
 
+import com.example.backend.dto.ArchiveGroupDto;
 import com.example.backend.entity.studyCenter.Group;
 import com.example.backend.projection.GroupUserData;
 import com.example.backend.service.GroupService;
@@ -23,6 +24,19 @@ public class GroupController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MENTOR','ROLE_SUPERADMIN')")
     public List<Group> getGroup(@RequestParam(defaultValue = "") String search) {
         return groupService.getGroup(search);
+    }
+
+    @PatchMapping("/archive")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN','ROLE_MENTOR')")
+    public List<Group> archiveGroup(@RequestBody List<ArchiveGroupDto> archiveData) {
+        return groupService.archiveGroup(archiveData);
+    }
+
+
+    @GetMapping("/archive")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MENTOR','ROLE_SUPERADMIN')")
+    public List<Group> getArchivedGroups() {
+        return groupService.getArchived();
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MENTOR','ROLE_SUPERADMIN')")

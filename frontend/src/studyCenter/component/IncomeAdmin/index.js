@@ -48,7 +48,6 @@ function Index(props) {
                 <Grid item xs={12}>
                     <IncomeTable/>
                 </Grid>
-
             </Grid>
         </Card>
         </div>
