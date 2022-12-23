@@ -34,11 +34,15 @@ import Autocomplete, {createFilterOptions} from "@mui/material/Autocomplete";
 import Stack from "@mui/material/Stack";
 import instance from "../../../../shift/utils/instance";
 import InboxIcon from "@mui/icons-material/Inbox";
-
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import {toast} from "react-toastify";
+import NumberFormat, {NumberFormatBase, NumericFormat} from 'react-number-format';
 
 function Row(props) {
-    const {row, index} = props;
+    const {deleteRow ,row, index} = props;
     const [open, setOpen] = React.useState(false);
+    const [sure, isSure] = React.useState(false);
+
 
     return (
         <React.Fragment>
@@ -75,6 +79,7 @@ function Row(props) {
                                         <TableCell sx={{color: "white"}}>Qiymati</TableCell>
                                         <TableCell sx={{color: "white"}}>To'lov turi</TableCell>
                                         <TableCell sx={{color: "white"}}>Kim qo'shdi?</TableCell>
+                                        <TableCell sx={{color: "white"}}></TableCell>
                                     </TableRow>
                                 </TableHead>
                                 {
@@ -88,6 +93,10 @@ function Row(props) {
                                                     <TableCell>{historyRow.amount}</TableCell>
                                                     <TableCell>{historyRow?.payType}</TableCell>
                                                     <TableCell>{historyRow?.madeBy}</TableCell>
+                                                    <TableCell><Button onClick={() => isSure(historyRow?.id)}>
+                                                        <DeleteOutlinedIcon
+                                                            sx={{color: "red"}}/></Button></TableCell>
+
                                                 </TableRow>
                                             ))}
                                         </TableBody>
@@ -124,6 +133,16 @@ function Row(props) {
                     </Collapse>
                 </TableCell>
             </TableRow>
+            <Dialog open={sure}>
+                <div className={"p-3"} style={{width: 500}}>
+                    <h5 className={"text-center"}>Ishonchingiz komilmi?</h5>
+                    <div className={"d-flex justify-content-center gap-4"}>
+                        <Button variant={"contained"} onClick={()=>deleteRow(sure,isSure)}>Ha</Button> <Button variant={"contained"}
+                                                                                           onClick={() => isSure(false)}>Yo'q</Button>
+                    </div>
+                </div>
+
+            </Dialog>
         </React.Fragment>
     );
 }
@@ -147,7 +166,7 @@ Row.propTypes = {
 const filter = createFilterOptions();
 
 
-function ExpenseTable() {
+function ExpenseTable({getBalance}) {
     const [open, setOpen] = useState(false)
     const [value, setValue] = React.useState("");
     const [options, setOptions] = useState([])
@@ -165,6 +184,23 @@ function ExpenseTable() {
         value: false,
     })
 
+    const NumberFormatCustom = React.forwardRef(function NumberFormatCustom(props, ref) {
+        const { onChange, ...other } = props;
+
+        console.log(onChange)
+        console.log(other)
+        return (
+            <NumericFormat
+                {...other}
+                getInputRef={ref}
+                onValueChange={(values) => {
+                    onChange(values.value);
+                }}
+                thousandSeparator
+                isNumericString
+            />
+        );
+    });
 
     useEffect(() => {
         getPayTypes();
@@ -218,6 +254,14 @@ function ExpenseTable() {
         })
     }
 
+    function deleteRow(id, modal) {
+        instance.delete(`/expense/${id}`).then(res => {
+            getExpenses(currentPage, timeFilter)
+            getBalance();
+            modal(false)
+        })
+    }
+
 
     function addNewExpense() {
         if (title && amount && value) {
@@ -228,7 +272,9 @@ function ExpenseTable() {
                 description
             }
             toggleModal()
-            instance.post("/expense", data).then(res => {
+            instance.post("/expense", data).then(({data}) => {
+                if(data?.success===false) return toast.error(data?.message)
+                console.log("salom")
                 setAmount("")
                 setValue("")
                 setTitle("")
@@ -240,6 +286,8 @@ function ExpenseTable() {
                     amount: false
                 })
                 getExpenses(currentPage, timeFilter)
+            }).catch((e)=>{
+                toast.error(e?.message)
             })
         } else {
             setErrorText({
@@ -311,7 +359,7 @@ function ExpenseTable() {
                         {
                             expenses.length >= 1 ? <TableBody>
                                 {expenses?.map((row, index) => (
-                                    <Row key={row.id} row={row} index={index}/>
+                                    <Row deleteRow={deleteRow} key={row.id} row={row} index={index}/>
                                 ))}
                             </TableBody> : <TableBody>
                                 <StyledTableCell></StyledTableCell>
@@ -387,6 +435,20 @@ function ExpenseTable() {
                                            value={amount}
                                            onChange={(e) => setAmount(e.target.value)}
                                            variant="outlined" type={'number'}/>
+                                {/*<TextField style={{height: 30}}*/}
+                                {/*    sx={{m: 1, height: 30, marginTop: "16.5px", width: "95%"}}*/}
+                                {/*    label="Miqdor"*/}
+                                {/*    value={amount}*/}
+                                {/*    helperText={errorText.amount ? "Miqdor majburiy" : ""}*/}
+                                {/*    error={errorText.amount}*/}
+                                {/*    onChange={(e) => setAmount(e.target.value)}*/}
+                                {/*    name="numberformat"*/}
+                                {/*    id="formatted-numberformat-input"*/}
+                                {/*    InputProps={{*/}
+                                {/*        inputComponent: NumberFormatCustom,*/}
+                                {/*    }}*/}
+                                {/*    variant="outlined" type={'number'}*/}
+                                {/*/>*/}
                             </Grid>
 
                         </div>
@@ -457,7 +519,7 @@ function ExpenseTable() {
                             <TextField
                                 multiline
                                 rows={3}
-                                sx={{height: 40,  width: "100%"}}
+                                sx={{height: 40, width: "100%"}}
                                 id="outlined-multiline-static"
                                 label="Qayd"
                                 variant="outlined"

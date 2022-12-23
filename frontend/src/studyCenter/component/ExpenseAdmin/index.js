@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Grid, styled, Typography} from "@mui/material";
+import {Button, Card, Dialog, Divider, Grid, styled, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import ExpenseTable from "./components/ExpenseTable";
 import instance from "../../../shift/utils/instance";
@@ -39,6 +39,7 @@ const StyledButton = (props) => {
 function Index(props) {
     // const {tab}= useParams()
     const [balance,setBalance]=useState(null)
+    const [open,isOpen]=useState(false)
     const navigate = useNavigate()
 
 
@@ -54,19 +55,50 @@ function Index(props) {
         })
     }
 
+
+        function getStatistics() {
+            instance.get(`/income/statistics`).then(({data}) => {
+                isOpen(data.data)
+                console.log(data.data)
+            })
+        }
+
+
     return (
         <div style={{width: "100%", padding: "60px 5px 0px 5px"}}>
             <Card sx elevation={0}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <Typography sx={{textAlign:"center", fontSize:30}}>Expense</Typography>
-                        <Typography sx={{ fontSize:20}}>Balance: {balance?.income-balance?.expense}</Typography>
-                        <Typography sx={{ fontSize:20}}>Expence: {balance?.expense}</Typography>
+                        <div className={"d-flex justify-content-between pr-4 align-items-lg-start"}>
+                            <div>
+                                <Typography sx={{ fontSize:20}}>Balance: {balance?.income-balance?.expense}</Typography>
+                                <Typography sx={{ fontSize:20}}>Expense: {balance?.expense}</Typography>
+                            </div>
+                            <Button onClick={getStatistics} variant={"contained"} sx={{marginRight:5}}>Bugungi statistika</Button>
+                        </div>
 
-                        <ExpenseTable/>
+                        <ExpenseTable getBalance={getBalance}/>
                     </Grid>
                 </Grid>
             </Card>
+            <Dialog open={!!open}>
+                <div  style={{width:"500px"}} className={"bg-white m-3"}>
+                    <Typography>Balance: {open?.currentBalance?.reduce((a, b) => a + ((b.income||0)-(b.expense||0)), 0)}</Typography>
+                    {open?.currentBalance?.map(item=>
+                        <Typography key={item.id}>{item?.type}: {(item.income||0)-(item.expense||0)}</Typography>)}
+                    <Divider/>
+                    <Typography className={"my-3"}>Kirim: {open.todayIncome}</Typography>
+                    <Divider/>
+                    <Typography>Chiqim: {open?.todayExpense?.reduce((a, b) => a + b.amount, 0)}</Typography>
+                    {open?.todayExpense?.map(item=>
+                        <Typography key={item.id}>{item?.title}: {item.amount} {item.payType}</Typography>)}
+                    <Divider/>
+                    <div className={"text-end"}>
+                        <Button variant={"contained"} className={"mt-2"} onClick={()=>isOpen(false)}>Ok</Button>
+                    </div>
+                </div>
+            </Dialog>
         </div>
     );
 }

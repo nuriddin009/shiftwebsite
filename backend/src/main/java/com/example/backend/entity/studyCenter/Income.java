@@ -49,6 +49,7 @@ public class Income {
     @UpdateTimestamp
     private LocalDateTime updated;
 
+    private Boolean deleted;
     public Income(int amount, String description, PayType payType, IncomeType incomeType, User user) {
         this.amount = amount;
         this.description = description;

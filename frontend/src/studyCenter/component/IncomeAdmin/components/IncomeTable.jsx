@@ -32,7 +32,9 @@ import Stack from "@mui/material/Stack";
 import InboxIcon from '@mui/icons-material/Inbox';
 import Pagination from "@mui/material/Pagination";
 import {FormHelperText} from "@mui/material";
-
+import {red} from "@mui/material/colors";
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import {NumericFormat} from "react-number-format";
 const filter = createFilterOptions();
 
 
@@ -62,6 +64,7 @@ function IncomeTable() {
     const [currentPage, setCurrentPage] = React.useState(1);
 
     const [timeFilter, setTimeFilter] = React.useState(null);
+    const [sure, isSure] = React.useState(false);
 
     const [errorText, setErrorText] = useState({
         currentUser: false,
@@ -88,6 +91,20 @@ function IncomeTable() {
         getAll()
     }, [])
 
+    const NumberFormatCustom = React.forwardRef(function NumberFormatCustom(props, ref) {
+        const {onChange, ...other} = props;
+        return (
+            <NumericFormat
+                {...other}
+                getInputRef={ref}
+                onValueChange={(values) => {
+                    onChange(values.value);
+                }}
+                thousandSeparator
+                isNumericString
+            />
+        );
+    });
     function getAll() {
         setIsAll(true)
         setIncomeType("")
@@ -174,6 +191,10 @@ function IncomeTable() {
             id: 'income_type',
             label: "Kirim turi",
         },
+        {
+            id: 'action',
+            label: "",
+        },
     ]
 
 
@@ -224,6 +245,13 @@ function IncomeTable() {
         getIncomes(payType, incomeType, today, page, timeFilter)
     }
 
+
+    function deleteRow() {
+        instance.delete(`/income/${sure}`).then(res => {
+            getIncomes(payType, incomeType, today, currentPage, timeFilter);
+            isSure(false)
+        })
+    }
 
     return (
         <div style={{marginTop: '30px'}}>
@@ -350,6 +378,7 @@ function IncomeTable() {
                                             <StyledTableCell>{income?.payType?.type}</StyledTableCell>
                                             <StyledTableCell>{income?.amount}</StyledTableCell>
                                             <StyledTableCell>{income?.incomeType?.type}</StyledTableCell>
+                                            <StyledTableCell><Button onClick={()=>isSure(income.id)} ><DeleteOutlinedIcon sx={{color:"red"}}/></Button></StyledTableCell>
                                         </StyledTableRow>)
                                     }
 
@@ -499,6 +528,20 @@ function IncomeTable() {
                                                error={errorText.amount}
                                                onChange={(e) => setAmount(e.target.value)}
                                                variant="outlined" type={'number'}/>
+
+                                    {/*<TextField style={{height: 30}}*/}
+                                    {/*           id="outlined-basic"*/}
+                                    {/*           fullWidth*/}
+                                    {/*           label="Miqdor"*/}
+                                    {/*           value={amount}*/}
+                                    {/*           error={errorText.amount}*/}
+                                    {/*           onChange={(e) => setAmount(e?.target?.value)}*/}
+                                    {/*           name="numberformat"*/}
+                                    {/*           InputProps={{*/}
+                                    {/*               inputComponent: NumberFormatCustom,*/}
+                                    {/*           }}*/}
+                                    {/*           variant="outlined"*/}
+                                    {/*/>*/}
                                 </FormControl>
 
                                 <FormHelperText sx={{marginTop: "20px", marginLeft: "10px"}} error id="my-helper-text">
@@ -662,6 +705,15 @@ function IncomeTable() {
                         color={"error"}
                     >bekor qilish</Button>
                 </Stack>
+            </Dialog>
+            <Dialog open={sure} >
+                <div className={"p-3"} style={{width:500}}>
+                    <h5 className={"text-center"}>Ishonchingiz komilmi?</h5>
+                    <div className={"d-flex justify-content-center gap-4"}>
+                        <Button variant={"contained"} onClick={deleteRow}>Ha</Button> <Button variant={"contained"} onClick={()=>isSure(false)}>Yo'q</Button>
+                    </div>
+                </div>
+
             </Dialog>
         </div>
     )

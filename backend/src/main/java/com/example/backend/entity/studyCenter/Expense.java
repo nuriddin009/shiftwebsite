@@ -19,7 +19,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 @Table(name = "expense")
-@EntityListeners(AuditingEntityListener.class)
 public class Expense {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -47,7 +46,7 @@ public class Expense {
     @CreatedBy
     private User user;
 
-
+    private Boolean deleted;
 
 
     @CreationTimestamp
@@ -55,7 +54,6 @@ public class Expense {
 
     @UpdateTimestamp
     private LocalDateTime updated;
-
 
 
     public Expense(int amount, String description, String title, PayType payType) {

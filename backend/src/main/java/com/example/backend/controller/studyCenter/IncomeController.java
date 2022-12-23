@@ -52,4 +52,11 @@ public class IncomeController {
     }
 
 
+    @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN')")
+    @GetMapping("/statistics")
+    public ResponseEntity<ApiResponse> getStatistics() {
+        return ResponseEntity.ok(incomeService.getStatistics());
+    }
+
+
 }
