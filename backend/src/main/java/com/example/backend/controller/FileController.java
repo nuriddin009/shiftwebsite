@@ -86,7 +86,7 @@ public class FileController {
         );
 
         User user = userRepository.findById(userId).get();
-        user.setFilePath("/backend/images/users/" + userId);
+        user.setFilePath("/images/users/" + userId);
         userRepository.save(user);
     }
 

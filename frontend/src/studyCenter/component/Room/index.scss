@@ -8,17 +8,21 @@
   margin-top: -100px;
   padding-right: 5rem;
 
-
   table {
-    position: absolute;
     top: 100px;
     transform: scale(0.6);
-    left: -15%;
     margin-right: 200px;
+    position: sticky;
+    left: 0;
 
     @media (max-width: 1200px) {
-      left: -30%;
+      left: -10%;
     }
+  }
+
+
+  .editTable {
+      margin-top: -3%;
   }
 
 

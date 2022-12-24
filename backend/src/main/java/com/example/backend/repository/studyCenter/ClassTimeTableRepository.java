@@ -17,4 +17,7 @@ public interface ClassTimeTableRepository extends JpaRepository<ClassTimeTable, 
             "order by r.created, ctt.created", nativeQuery = true)
     List<ClassTimeTableProjection> getClassTimeTableBy();
 
+
+    List<ClassTimeTable> findByRoomIdOrderByCreated(UUID id);
+
 }

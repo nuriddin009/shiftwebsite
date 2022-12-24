@@ -50,6 +50,13 @@ public class TimeTableData {
     private LocalDateTime updated;
 
 
+    @ManyToOne
+    private Mentor table_mentor;
+
+    @ManyToOne
+    private Group group;
+
+
     public TimeTableData(String mentor, String groupName, ClassTimeTable classTimeTable, WeekEnum weekday, Integer weekOrder) {
         this.mentor = mentor;
         this.groupName = groupName;
