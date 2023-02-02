@@ -1,6 +1,6 @@
 const env = {
     development: 'http://localhost:81/api',
-    production: 'http://localhost:81/api',
+    production: '/api',
     test: 'http://localhost:81/api',
 }
 

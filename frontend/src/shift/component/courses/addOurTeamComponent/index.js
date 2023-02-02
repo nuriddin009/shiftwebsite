@@ -70,7 +70,7 @@ function Index(props) {
                     <div className="card-body   text-center">
                         <label className={"my-label"}>
                             <img className={"imgIcon"} style={{width: "80px", height: "80px"}}
-                                 src={"http://localhost:81/api/img/" + fileId} alt={"rasmni tanlang"}/>
+                                 src={"/api/img/" + fileId} alt={"rasmni tanlang"}/>
                             <input accept={"image/*"} style={{display: "none"}}
                                    onChange={e => handleFile(e)}
                                    type="file"/>

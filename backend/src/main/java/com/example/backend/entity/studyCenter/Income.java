@@ -50,6 +50,8 @@ public class Income {
     private LocalDateTime updated;
 
     private Boolean deleted;
+
+    private Boolean usd=false;
     public Income(int amount, String description, PayType payType, IncomeType incomeType, User user) {
         this.amount = amount;
         this.description = description;

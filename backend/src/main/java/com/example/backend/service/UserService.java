@@ -171,7 +171,7 @@ public class UserService {
 
         user.setFilePath("/users/" + userId);
         userRepository.save(user);
-        String fileName = "backend/images/users/" + userId + ".png";
+        String fileName = "images/users/" + userId + ".png";
         FileCopyUtils.copy(
                 file.getInputStream(),
                 new FileOutputStream(fileName)
@@ -288,7 +288,7 @@ public class UserService {
     @SneakyThrows
     public void getAvatar(UUID userId, HttpServletResponse response) {
         FileCopyUtils.copy(
-                new FileInputStream("backend/images/users/" + userId + ".png"),
+                new FileInputStream("images/users/" + userId + ".png"),
                 response.getOutputStream()
         );
     }

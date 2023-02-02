@@ -72,8 +72,8 @@ function Index(props) {
                         <Typography sx={{textAlign:"center", fontSize:30}}>Expense</Typography>
                         <div className={"d-flex justify-content-between pr-4 align-items-lg-start"}>
                             <div>
-                                <Typography sx={{ fontSize:20}}>Balance: {balance?.income-balance?.expense}</Typography>
-                                <Typography sx={{ fontSize:20}}>Expense: {balance?.expense}</Typography>
+                                <Typography sx={{ fontSize:20}}>Balance: {(balance?.income-balance?.expense).toLocaleString()} (${balance?.incomeUsd})</Typography>
+                                <Typography sx={{ fontSize:20}}>Expense: {balance?.expense.toLocaleString()}  (${balance?.expenseUsd})</Typography>
                             </div>
                             <Button onClick={getStatistics} variant={"contained"} sx={{marginRight:5}}>Bugungi statistika</Button>
                         </div>
@@ -84,15 +84,15 @@ function Index(props) {
             </Card>
             <Dialog open={!!open}>
                 <div  style={{width:"500px"}} className={"bg-white m-3"}>
-                    <Typography>Balance: {open?.currentBalance?.reduce((a, b) => a + ((b.income||0)-(b.expense||0)), 0)}</Typography>
+                    <Typography>Balance: {open?.currentBalance?.reduce((a, b) => a + ((b.income||0)-(b.expense||0)), 0)?.toLocaleString()}</Typography>
                     {open?.currentBalance?.map(item=>
-                        <Typography key={item.id}>{item?.type}: {(item.income||0)-(item.expense||0)}</Typography>)}
+                        <Typography key={item.id}>{item?.type}: {((item.income||0)-(item.expense||0))?.toLocaleString()} (${((item.incomeUsd||0)-(item.expenseUsd||0))?.toLocaleString()})</Typography>)}
                     <Divider/>
-                    <Typography className={"my-3"}>Kirim: {open.todayIncome}</Typography>
+                    <Typography className={"my-3"}>Kirim: {open.todayIncome?.toLocaleString()} {open.todayIncomeUsd?`$${open.todayIncomeUsd?.toLocaleString()}`:""}</Typography>
                     <Divider/>
-                    <Typography>Chiqim: {open?.todayExpense?.reduce((a, b) => a + b.amount, 0)}</Typography>
+                    <Typography>Chiqim: {open?.todayExpense?.filter(i=>!i.usd).reduce((a, b) => a + b.amount, 0)?.toLocaleString()} so'm (${open?.todayExpense?.filter(i=>i.usd).reduce((a, b) => a + b.amount, 0)?.toLocaleString()})</Typography>
                     {open?.todayExpense?.map(item=>
-                        <Typography key={item.id}>{item?.title}: {item.amount} {item.payType}</Typography>)}
+                        <Typography key={item.id}>{item?.title}: {item.usd?"$":""}{item.amount?.toLocaleString()} {item.payType}</Typography>)}
                     <Divider/>
                     <div className={"text-end"}>
                         <Button variant={"contained"} className={"mt-2"} onClick={()=>isOpen(false)}>Ok</Button>

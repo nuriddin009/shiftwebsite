@@ -66,7 +66,7 @@ function Index(props) {
                                     <div key={item.id}>
                                         <a target="_blank" href={item.url}>
                                             <img className={"logoIcon"}
-                                                 src={"http://localhost:81/api/img/" + item.attachment?.id}
+                                                 src={"/api/img/" + item.attachment?.id}
                                                  alt={item.id}/>
                                         </a>
                                     </div>

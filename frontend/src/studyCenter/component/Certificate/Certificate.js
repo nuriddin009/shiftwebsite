@@ -348,7 +348,7 @@ function Certificate(props) {
                                                 attachmentId ? <img
                                                         style={{border: "3px solid blue", borderRadius: "50%"}}
                                                         width={100} height={100}
-                                                        src={"http://localhost:81/api/img/" + attachmentId} alt="upload"
+                                                        src={"/api/img/" + attachmentId} alt="upload"
                                                     />
                                                     : <img
                                                         width={100} height={100}
@@ -493,7 +493,7 @@ function Certificate(props) {
                                         <td>
                                             <img
                                                 width={100} height={100}
-                                                src={"http://localhost:81/api/certificate/qrCode/" + item.certificateId}
+                                                src={"/api/certificate/qrCode/" + item.certificateId}
                                                 alt={item.firstName + " " + item.lastName}
                                             />
                                         </td>
@@ -501,7 +501,7 @@ function Certificate(props) {
                                         <td>
                                             <img
                                                 width={100} height={100}
-                                                src={"http://localhost:81/api/certificate/image/" + item.certificateId}
+                                                src={"/api/certificate/image/" + item.certificateId}
                                                 alt={item.firstName + " " + item.lastName}
                                             />
                                         </td>

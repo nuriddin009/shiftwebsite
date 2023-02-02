@@ -144,12 +144,12 @@ function Index({getShift, whyUses}) {
                                     {
                                         locationStateLocation.pathname === "/" ?
                                             <img
-                                                src={"http://localhost:81/api/img/" + item.attachment}
+                                                src={"/api/img/" + item.attachment}
                                                 alt="ua"
                                             />
                                             :
                                             <label className={"my-label"}>
-                                                <img src={"http://localhost:81/api/img/" + item.attachment} alt="ua"/>
+                                                <img src={"/api/img/" + item.attachment} alt="ua"/>
                                                 <input accept={"image/*"} style={{display: "none"}}
                                                        onChange={e => handleFile(e, item, index)}
                                                        type="file"/>

@@ -54,7 +54,7 @@ public class CertificateService {
         certificate.setDescription(certificateDto.getDescription());
         Certificate save = certificateRepository.save(certificate);
 
-        InputStream fileInputStream = new FileInputStream("backend/images/users/" + userId + ".png");
+        InputStream fileInputStream = new FileInputStream("images/users/" + userId + ".png");
         byte[] bytes1 = ByteStreams.toByteArray(fileInputStream);
 
         byte[] bytes = generateCertificate.generateStudentCertificate(
@@ -67,7 +67,7 @@ public class CertificateService {
         );
 
         FileCopyUtils.copy(
-                bytes, new FileOutputStream("backend/images/certificate/image/" + userId + ".png")
+                bytes, new FileOutputStream("images/certificate/image/" + userId + ".png")
         );
 
         certificate.setCertificatePhoto(bytes);

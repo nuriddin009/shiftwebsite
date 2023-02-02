@@ -10,5 +10,6 @@ import java.util.List;
 public class StatisticsRes {
     private List<ExpenseProjection> todayExpense;
     private Integer todayIncome;
+    private Integer todayIncomeUsd;
     private  List<BalanceProjection> currentBalance;
 }

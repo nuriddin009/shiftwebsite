@@ -9,7 +9,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import DataTablePagination from "./DataTablePagination";
-import {FormHelperText} from "@mui/material";
+import {FormHelperText, Switch} from "@mui/material";
 import {
 
     Box,
@@ -42,6 +42,7 @@ function Row(props) {
     const {deleteRow ,row, index} = props;
     const [open, setOpen] = React.useState(false);
     const [sure, isSure] = React.useState(false);
+    const [isUsd, setIsUsd] = React.useState(false);
 
 
     return (
@@ -52,7 +53,7 @@ function Row(props) {
                     {index + 1}
                 </TableCell>
                 <TableCell>{new Date(row?.month).toLocaleString('en-us', {month: 'long', year: 'numeric'})}</TableCell>
-                <TableCell>{row.amount + " so'm"}</TableCell>
+                <TableCell>{row.amount.toLocaleString() + " so'm"},  ${row.amountUsd.toLocaleString()}</TableCell>
 
                 <TableCell align={'right'}>
                     <IconButton
@@ -86,11 +87,12 @@ function Row(props) {
                                     row?.expenses?.length >= 1 ? <TableBody>
                                             {row?.expenses?.map((historyRow) => (
                                                 <TableRow key={historyRow?.created}>
+                                                    {console.log(historyRow)}
                                                     <TableCell>{historyRow?.title}</TableCell>
                                                     <TableCell component="th" scope="row">
                                                         {new Date(historyRow?.created).toLocaleString()}
                                                     </TableCell>
-                                                    <TableCell>{historyRow.amount}</TableCell>
+                                                    <TableCell>{historyRow.usd?"$":""}{historyRow.amount.toLocaleString()}</TableCell>
                                                     <TableCell>{historyRow?.payType}</TableCell>
                                                     <TableCell>{historyRow?.madeBy}</TableCell>
                                                     <TableCell><Button onClick={() => isSure(historyRow?.id)}>
@@ -178,6 +180,8 @@ function ExpenseTable({getBalance}) {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [timeFilter, setTimeFilter] = React.useState(null);
     const [isAll, setIsAll] = React.useState(false);
+    const [isUsd, setIsUsd] = React.useState(false);
+
     const [errorText, setErrorText] = useState({
         title: false,
         amount: false,
@@ -267,9 +271,10 @@ function ExpenseTable({getBalance}) {
         if (title && amount && value) {
             let data = {
                 title,
-                amount,
+                amount:parseInt(amount),
                 payTypeId: value.value,
-                description
+                description,
+                isUsd
             }
             toggleModal()
             instance.post("/expense", data).then(({data}) => {
@@ -413,7 +418,7 @@ function ExpenseTable({getBalance}) {
                                     <Box sx={{minWidth: 220}}>
                                         <TextField sx={{m: 1, width: "95%"}}
                                                    id="outlined-basic"
-                                                   label="Kirim sarlavhasi"
+                                                   label="Chiqim sarlavhasi"
                                                    error={errorText.title}
                                                    helperText={errorText.title ? "Sarlavha majburiy" : ""}
                                                    value={title}
@@ -426,29 +431,32 @@ function ExpenseTable({getBalance}) {
 
                             </Grid>
                             <Grid xs={6} sx={{width: "40%"}}>
-                                <TextField style={{height: 30}}
-                                           sx={{m: 1, height: 30, marginTop: "16.5px", width: "95%"}}
-                                           id="outlined-basic"
-                                           label="Miqdor"
-                                           error={errorText.amount}
-                                           helperText={errorText.amount ? "Miqdor majburiy" : ""}
-                                           value={amount}
-                                           onChange={(e) => setAmount(e.target.value)}
-                                           variant="outlined" type={'number'}/>
-                                {/*<TextField style={{height: 30}}*/}
-                                {/*    sx={{m: 1, height: 30, marginTop: "16.5px", width: "95%"}}*/}
-                                {/*    label="Miqdor"*/}
-                                {/*    value={amount}*/}
-                                {/*    helperText={errorText.amount ? "Miqdor majburiy" : ""}*/}
-                                {/*    error={errorText.amount}*/}
-                                {/*    onChange={(e) => setAmount(e.target.value)}*/}
-                                {/*    name="numberformat"*/}
-                                {/*    id="formatted-numberformat-input"*/}
-                                {/*    InputProps={{*/}
-                                {/*        inputComponent: NumberFormatCustom,*/}
-                                {/*    }}*/}
-                                {/*    variant="outlined" type={'number'}*/}
-                                {/*/>*/}
+                                <div className={"d-flex justify-content-between align-items-end"}>
+                                    <Grid xs={8} sx={{m: 1, minWidth: 200, marginLeft: "-1px", width: "100%"}}>
+                                        <FormControl sx={{m: 1, height: 30, width: "95%"}}>
+                                            <NumericFormat
+                                                type="text"
+                                                value={amount}
+                                                prefix={isUsd?'$':""}
+                                                onChange={(e) => setAmount(e.target.value.replaceAll("$", "").replaceAll(" ", ""))}
+                                                error={errorText.amount}
+                                                valueIsNumericString={true}
+                                                thousandSeparator=" "
+                                                displayType="input"
+                                                label="Miqdor"
+                                                thousandsGroupStyle="thousand"
+                                                customInput={TextField}/>
+                                        </FormControl>
+                                        <FormHelperText sx={{marginTop: "20px", marginLeft: "10px"}} error
+                                                        id="my-helper-text">
+                                            {errorText.amount ? "Miqdor talab qilinadi" : ""}
+                                        </FormHelperText>
+                                    </Grid>
+                                    <Grid xs={3} sx={{width: "40%"}}>
+                                        <Switch value={isUsd} onChange={(e)=>setIsUsd(e.target.checked)} />
+
+                                    </Grid>
+                                </div>
                             </Grid>
 
                         </div>

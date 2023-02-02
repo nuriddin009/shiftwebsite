@@ -47,6 +47,7 @@ public class Expense {
     private User user;
 
     private Boolean deleted;
+    private Boolean usd=false;
 
 
     @CreationTimestamp

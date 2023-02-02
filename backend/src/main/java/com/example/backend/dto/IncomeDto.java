@@ -24,4 +24,7 @@ public class IncomeDto {
     @NotNull
     private UUID userId;
 
+    @NotNull
+    private Boolean isUsd;
+
 }

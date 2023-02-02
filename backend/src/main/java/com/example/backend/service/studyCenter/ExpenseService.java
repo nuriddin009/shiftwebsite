@@ -47,8 +47,8 @@ public class ExpenseService {
     public ApiResponse postExpense(@Valid ExpenseDto expenseDto) {
 
         PayType payType = payTypeRepository.findById(expenseDto.getPayTypeId()).orElseThrow(() -> new ServiceException("pay type not found"));
-        Long income = incomeRepository.getIncome(expenseDto.getPayTypeId());
-        Long exp = expenseRepository.getExpense(expenseDto.getPayTypeId());
+        Long income = !expenseDto.getIsUsd()?incomeRepository.getIncome(expenseDto.getPayTypeId()):incomeRepository.getIncomeUsd(expenseDto.getPayTypeId());
+        Long exp = !expenseDto.getIsUsd()?expenseRepository.getExpense(expenseDto.getPayTypeId()):expenseRepository.getExpenseUsd(expenseDto.getPayTypeId());
         if(income==null) income=0L;
         if(exp==null) exp=0L;
         if(income - exp < expenseDto.getAmount()) return new ApiResponse(false,String.format("not enough money in %s",payType.getType()));
@@ -58,6 +58,7 @@ public class ExpenseService {
                 expenseDto.getTitle(),
                 payType
         );
+        expense.setUsd(expenseDto.getIsUsd());
         expense.setUser(userSession.getUser());
 
         expenseRepository.save(expense);

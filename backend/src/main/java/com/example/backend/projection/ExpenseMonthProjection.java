@@ -11,6 +11,7 @@ import java.util.List;
 public interface ExpenseMonthProjection {
 
     BigDecimal getAmount();
+    BigDecimal getAmountUsd();
 
     LocalDateTime getMonth();
 

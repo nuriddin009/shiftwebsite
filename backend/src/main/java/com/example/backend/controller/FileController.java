@@ -65,7 +65,7 @@ public class FileController {
     @GetMapping("/users/{id}")
     public void getUsersImage(@PathVariable UUID id, HttpServletResponse response) {
         FileCopyUtils.copy(
-                new FileInputStream("backend/images/users/" + id + ".png"),
+                new FileInputStream("images/users/" + id + ".png"),
                 response.getOutputStream()
         );
     }
@@ -79,14 +79,14 @@ public class FileController {
     @SneakyThrows
     @PostMapping("/createProfile")
     public void createFile(@RequestParam MultipartFile file, @RequestParam UUID userId) {
-        String fileName = "backend/images/users/" + userId + ".png";
+        String fileName = "images/users/" + userId + ".png";
         FileCopyUtils.copy(
                 file.getInputStream(),
                 new FileOutputStream(fileName)
         );
 
         User user = userRepository.findById(userId).get();
-        user.setFilePath("/backend/images/users/" + userId);
+        user.setFilePath("/images/users/" + userId);
         userRepository.save(user);
     }
 

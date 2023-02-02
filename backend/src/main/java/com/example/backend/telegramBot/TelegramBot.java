@@ -144,7 +144,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "1329449681:AAHVkLvh3VwcHXdpfnyE9XDsieWoy0h952o";
+        return "5438088057:AAEtekplo9_9sR7AhG_0OfzvpHCjHchkr1U";
     }
 
 
@@ -154,7 +154,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "Kanal_admin_robot";
+        return "uzshiftacademy_bot";
     }
 
 

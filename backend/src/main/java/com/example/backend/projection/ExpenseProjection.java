@@ -14,4 +14,5 @@ public interface ExpenseProjection {
     String getPayType();
 
     String getMadeBy();
+    Boolean getUsd();
 }

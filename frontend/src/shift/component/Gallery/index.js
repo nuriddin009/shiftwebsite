@@ -138,7 +138,7 @@ function Index(props) {
             >
                 <Modal.Body>
                     <div className={"rodaldiv text-center"}>
-                        <img className={"imgrodal"} src={"http://localhost:81/api/img/" + url}
+                        <img className={"imgrodal"} src={"/api/img/" + url}
                              width={(size[0] < 650 ? 300 : 450)} alt="asd"/>
                     </div>
 
@@ -177,7 +177,7 @@ function Index(props) {
                         <label style={{height: "100%"}} className={"my-label"}>
                             {
                                 fileId ? <img style={{height: "100%", width: "100%"}}
-                                              src={"http://localhost:81/api/img/" + fileId} alt={"rasmni tanlang"}/>
+                                              src={"/api/img/" + fileId} alt={"rasmni tanlang"}/>
                                     : <img width={100} height={100} src={upload} alt="upload"/>
                             }
 
@@ -224,7 +224,7 @@ function Index(props) {
                                          cursor: pathname.startsWith("/admin") ? "grab" : "",
                                          opacity: drag === index ? "0" : ""
                                      }}
-                                     src={"http://localhost:81/api/img/" + item.attachment?.id} alt="gallery"/>
+                                     src={"/api/img/" + item.attachment?.id} alt="gallery"/>
                             </div>
                         )
                     }

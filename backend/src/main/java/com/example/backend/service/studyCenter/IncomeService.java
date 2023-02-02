@@ -56,6 +56,7 @@ public class IncomeService {
                 incomeTypeRepository.findById(incomeDto.getIncomeTypeId()).orElseThrow(() -> new ServiceException("income type not found")),
                 user
         );
+        income.setUsd(incomeDto.getIsUsd());
         incomeRepository.save(income);
         userRepository.save(user);
         return new ApiResponse(true, "Income is added");
@@ -85,10 +86,12 @@ public class IncomeService {
     public ApiResponse getStatistics() {
         List<ExpenseProjection> todayExpense = expenseRepository.findTodayExpense(LocalDate.now());
         Integer todayIncome = incomeRepository.findTodayIncome(LocalDate.now());
+        Integer todayIncomeUsd = incomeRepository.findTodayIncomeUsd(LocalDate.now());
         List<BalanceProjection> currentBalance = incomeRepository.getCurrentBalance();
         StatisticsRes statisticsRes= new StatisticsRes();
         statisticsRes.setTodayExpense(todayExpense);
         statisticsRes.setTodayIncome(todayIncome==null?0:todayIncome);
+        statisticsRes.setTodayIncomeUsd(todayIncomeUsd==null?0:todayIncomeUsd);
         statisticsRes.setCurrentBalance(currentBalance);
         return new ApiResponse(true,statisticsRes);
     }

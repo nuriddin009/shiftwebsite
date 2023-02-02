@@ -57,9 +57,11 @@ public class PaymentService {
     }
 
     public ApiResponse getBalance() {
-        Long incomeSum = incomeRepository.getIncomeSum();
-        Long expenseSum = expenseRepository.getExpenseSum();
-        BalanceRes balanceRes = new BalanceRes(incomeSum, expenseSum);
+        Long incomeSum = incomeRepository.getIncomeSum(false);
+        Long incomeUsdSum = incomeRepository.getIncomeSum(true);
+        Long expenseSum = expenseRepository.getExpenseSum(false);
+        Long expenseSumUsd = expenseRepository.getExpenseSum(true);
+        BalanceRes balanceRes = new BalanceRes(incomeSum, expenseSum,incomeUsdSum,expenseSumUsd);
         return new ApiResponse(true,balanceRes);
     }
 }
@@ -69,5 +71,6 @@ public class PaymentService {
 class BalanceRes{
     private Long income;
     private Long expense;
-
+    private Long incomeUsd;
+    private Long expenseUsd;
 }

@@ -159,7 +159,7 @@ function Index(props) {
                                         pathname !== "/" ?
                                             <label className={"my-label"}>
                                                 <img
-                                                    src={"http://localhost:81/api/img/" + item.attachment}
+                                                    src={"/api/img/" + item.attachment}
                                                     width={100}
                                                     alt="ua"
                                                 />
@@ -173,7 +173,7 @@ function Index(props) {
                                                     <LazyLoadImage
                                                         alt={"section-1"}
                                                         effect="blur"
-                                                        src={"http://localhost:81/api/img/" + item.attachment}
+                                                        src={"/api/img/" + item.attachment}
                                                         placeholderSrc={load}
                                                         width={window.innerWidth > 900 ? "70px"
                                                             : "51.09px"}

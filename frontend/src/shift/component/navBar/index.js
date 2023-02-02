@@ -155,7 +155,7 @@ function Index(props) {
                                             <label className={"my-label mx-3"} style={{cursor: "pointer"}}>
                                                 <div onClick={clickBtn} className={"userImageNavbar"}>
                                                     <img className={"userimage rounded-circle"}
-                                                         src={"http://localhost:81/api/img/" + user?.attachmentid}
+                                                         src={"/api/img/" + user?.attachmentid}
                                                          alt="kelmadi"/>
                                                 </div>
                                             </label>

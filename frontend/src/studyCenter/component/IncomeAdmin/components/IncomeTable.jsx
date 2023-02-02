@@ -8,33 +8,30 @@ import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
-import DataTablePagination from "./DataTablePagination";
 import {
     Box,
-    Button,
-    Card,
+    Button, Checkbox,
     Dialog,
-    FormControl,
-    Grid,
+    FormControl, FormControlLabel,
+    FormHelperText,
+    Grid, InputAdornment,
     InputLabel,
     MenuItem,
-    Select,
-    TextField,
-    Typography
+    Select, Slider, Switch,
+    TextField
 } from "@mui/material";
 import myStyles from "./index.module.css"
 import dayjs from "dayjs";
 import {DatePicker} from "@mui/x-date-pickers";
-import FormAsyncSelectInput from "./FormAsyncSelectInput";
 import Autocomplete, {createFilterOptions} from "@mui/material/Autocomplete";
 import instance from "../../../../shift/utils/instance";
 import Stack from "@mui/material/Stack";
 import InboxIcon from '@mui/icons-material/Inbox';
 import Pagination from "@mui/material/Pagination";
-import {FormHelperText} from "@mui/material";
-import {red} from "@mui/material/colors";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {NumericFormat} from "react-number-format";
+import {AccountCircle} from "@mui/icons-material";
+
 const filter = createFilterOptions();
 
 
@@ -52,12 +49,13 @@ function IncomeTable() {
     const [incomeType, setIncomeType] = useState("")
 
     const [description, setDescription] = React.useState("");
-    const [amount, setAmount] = React.useState("");
+    let [amount, setAmount] = React.useState("");
 
     const [inputValue, setInputValue] = React.useState('');
     const [incomeOptions, setIncomeOptions] = React.useState([]);
     const [incomeValue, setIncomeValue] = React.useState("");
     const [isAll, setIsAll] = React.useState(false);
+    const [isUsd, setIsUsd] = React.useState(false);
     const [today, setToday] = React.useState(true);
     const [totalPages, setTotalPages] = React.useState(0);
 
@@ -105,6 +103,7 @@ function IncomeTable() {
             />
         );
     });
+
     function getAll() {
         setIsAll(true)
         setIncomeType("")
@@ -206,7 +205,8 @@ function IncomeTable() {
     function addNewIncome() {
         if (currentUser && amount && incomeValue && value) {
             let data = {
-                amount,
+                amount: parseInt(amount),
+                isUsd,
                 payTypeId: value.value,
                 incomeTypeId: incomeValue.value,
                 userId: currentUser.value,
@@ -304,7 +304,8 @@ function IncomeTable() {
                     {/*// payType filer*/}
                     <FormControl sx={{m: 1, minWidth: 250}}>
                         <Box sx={{minWidth: 250}}>
-                            <InputLabel style={{background: "white"}} id="demo-simple-select-label">To'lov turi</InputLabel>
+                            <InputLabel style={{background: "white"}} id="demo-simple-select-label">To'lov
+                                turi</InputLabel>
                             <Select
                                 sx={{minWidth: 200, height: 45}}
                                 labelId="demo-simple-select-label"
@@ -376,9 +377,10 @@ function IncomeTable() {
                                             <StyledTableCell>{income?.user?.phoneNumber}</StyledTableCell>
                                             <StyledTableCell>{new Date(income?.created).toLocaleString()}</StyledTableCell>
                                             <StyledTableCell>{income?.payType?.type}</StyledTableCell>
-                                            <StyledTableCell>{income?.amount}</StyledTableCell>
+                                            <StyledTableCell>{(income?.usd?"$":"")+income?.amount.toLocaleString()}</StyledTableCell>
                                             <StyledTableCell>{income?.incomeType?.type}</StyledTableCell>
-                                            <StyledTableCell><Button onClick={()=>isSure(income.id)} ><DeleteOutlinedIcon sx={{color:"red"}}/></Button></StyledTableCell>
+                                            <StyledTableCell><Button onClick={() => isSure(income.id)}><DeleteOutlinedIcon
+                                                sx={{color: "red"}}/></Button></StyledTableCell>
                                         </StyledTableRow>)
                                     }
 
@@ -519,34 +521,35 @@ function IncomeTable() {
 
                             </Grid>
                             <Grid xs={6} sx={{width: "40%"}}>
-                                <FormControl sx={{m: 1, height: 30, width: "95%"}}>
-                                    <TextField style={{height: 30}}
-                                               id="outlined-basic"
-                                               fullWidth
-                                               label="Miqdor"
-                                               value={amount}
-                                               error={errorText.amount}
-                                               onChange={(e) => setAmount(e.target.value)}
-                                               variant="outlined" type={'number'}/>
+                                <div className={"d-flex justify-content-between align-items-end"}>
 
-                                    {/*<TextField style={{height: 30}}*/}
-                                    {/*           id="outlined-basic"*/}
-                                    {/*           fullWidth*/}
-                                    {/*           label="Miqdor"*/}
-                                    {/*           value={amount}*/}
-                                    {/*           error={errorText.amount}*/}
-                                    {/*           onChange={(e) => setAmount(e?.target?.value)}*/}
-                                    {/*           name="numberformat"*/}
-                                    {/*           InputProps={{*/}
-                                    {/*               inputComponent: NumberFormatCustom,*/}
-                                    {/*           }}*/}
-                                    {/*           variant="outlined"*/}
-                                    {/*/>*/}
-                                </FormControl>
+                                    <Grid xs={8} sx={{width: "40%"}}>
+                                        <FormControl sx={{m: 1, height: 30, width: "95%"}}>
+                                            <NumericFormat
+                                                type="text"
+                                                value={amount}
+                                                prefix={isUsd?'$':""}
+                                                onChange={(e) => setAmount(e.target.value.replaceAll("$", "").replaceAll(" ", ""))}
+                                                error={errorText.amount}
+                                                valueIsNumericString={true}
+                                                thousandSeparator=" "
+                                                displayType="input"
+                                                label="Miqdor"
+                                                thousandsGroupStyle="thousand"
+                                                customInput={TextField}/>
+                                        </FormControl>
+                                        <FormHelperText sx={{marginTop: "20px", marginLeft: "10px"}} error
+                                                        id="my-helper-text">
+                                            {errorText.amount ? "Miqdor talab qilinadi" : ""}
+                                        </FormHelperText>
+                                    </Grid>
+                                    <Grid xs={3} sx={{width: "40%"}}>
+                                         <Switch value={isUsd} onChange={(e)=>setIsUsd(e.target.checked)} />
 
-                                <FormHelperText sx={{marginTop: "20px", marginLeft: "10px"}} error id="my-helper-text">
-                                    {errorText.amount ? "Miqdor talab qilinadi" : ""}
-                                </FormHelperText>
+                                    </Grid>
+                                </div>
+
+
                             </Grid>
 
                         </div>
@@ -706,11 +709,12 @@ function IncomeTable() {
                     >bekor qilish</Button>
                 </Stack>
             </Dialog>
-            <Dialog open={sure} >
-                <div className={"p-3"} style={{width:500}}>
+            <Dialog open={sure}>
+                <div className={"p-3"} style={{width: 500}}>
                     <h5 className={"text-center"}>Ishonchingiz komilmi?</h5>
                     <div className={"d-flex justify-content-center gap-4"}>
-                        <Button variant={"contained"} onClick={deleteRow}>Ha</Button> <Button variant={"contained"} onClick={()=>isSure(false)}>Yo'q</Button>
+                        <Button variant={"contained"} onClick={deleteRow}>Ha</Button> <Button variant={"contained"}
+                                                                                              onClick={() => isSure(false)}>Yo'q</Button>
                     </div>
                 </div>
 
