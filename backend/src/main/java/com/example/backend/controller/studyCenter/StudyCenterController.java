@@ -124,7 +124,7 @@ public class StudyCenterController {
         return studyCenterService.exam(exam, lessnId, timetableId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')")
     @DeleteMapping("/delete/{id}")
     public void deleteTTUD(@PathVariable Integer id) {
         studyCenterService.deleteTTUD(id);

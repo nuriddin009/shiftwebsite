@@ -115,8 +115,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                             (timeTableDatum.getLessonMark() == 0 ? "" : timeTableDatum.getLessonMark() == 1 ? "\n Darga qatnashmadi ‼️" : "\n \uD83D\uDCD4 Darsga qatnashgan bahosi= " + timeTableDatum.getLessonMark()) + "\n" +
                             (timeTableDatum.getHomeworkMark() == 0 ? "" : timeTableDatum.getHomeworkMark() == 1 ? "\uD83D\uDCD3 Uyga vazifa qilinmagan. Iltimos nazoratni qattiq oling ‼️" : "\uD83D\uDCD3 Uyga vazifadagi bahosi= " + timeTableDatum.getHomeworkMark())
                     ;
-                    SendMessage sendMessage1 = botUtils.sendMessageToStudents(timeTableDatum);
-                    execute(sendMessage1);
 
                 }
                 text = fullName + " \n " + todayInfo;

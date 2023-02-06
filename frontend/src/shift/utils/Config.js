@@ -1,7 +1,7 @@
 const env = {
-    development: 'http://localhost:81/api',
+    development: '/api',
     production: '/api',
-    test: 'http://localhost:81/api',
+    test: '/api',
 }
 
 const getEnv = () => env[process.env.NODE_ENV]

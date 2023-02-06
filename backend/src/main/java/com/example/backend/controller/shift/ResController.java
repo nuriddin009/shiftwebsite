@@ -49,23 +49,6 @@ public class ResController {
                                                     HttpServletResponse response
     ) throws Exception {
 
-
-//
-//        Authentication authenticate = securityConfig.authenticationManagerBean().authenticate(
-//                new UsernamePasswordAuthenticationToken(reqLogin.getUsername(), reqLogin.getPassword())
-//        );
-//        SecurityContextHolder.getContext().setAuthentication(authenticate);
-//        User user = (User) authenticate.getPrincipal();
-//        StringBuilder rolesStr = new StringBuilder();
-//        for (Role role : user.getRoles()) {
-//            rolesStr.append(role.getRoleName()).append(",");
-//        }
-//        String token = Jwts.builder()
-//                .setSubject(user.getUsername())
-//                .claim("roles", rolesStr)
-//                .signWith(SignatureAlgorithm.HS256,secretKey)
-//                .compact();
-//        return new TokenUser(token,user.getRoles());
         return ResponseEntity.ok(shiftService.signIn(reqLogin, request));
     }
 

@@ -78,6 +78,14 @@ public class StudyCenterService {
         if (!timeTableUsersByTimeTableId.isEmpty()) {
             for (TimeTableUserDemoProjection timeTableUserProjection : timeTableUsersByTimeTableId) {
                 if (timeTableUserProjection.getUserid().equals(data.getUserid())) {
+                    if (timeTableUserProjection.getGotogroup() > 0) {
+                        TimeTableUser referenceById = timeTableUsersRepository.getReferenceById(timeTableUserProjection.getId());
+                        referenceById.setGotogroup(0);
+                        referenceById.setWhytogroup(null);
+                        referenceById.setDeletedate(null);
+                        timeTableUsersRepository.save(referenceById);
+                        return new ApiResponse(true,"Student guruhga qayta qo'shildi");
+                    }
                     return new ApiResponse("Bu student guruhda bor", false);
                 }
             }
@@ -214,8 +222,7 @@ public class StudyCenterService {
                 return new ApiResponse(true, timeTableUserData.getIsvideoallowed() ? "Video activated" : "Video deactivated");
             }
 
-        }
-        else {
+        } else {
             for (Lesson_url lesson_url : ListLesson) {
                 HashModel hashModel = boomStreamService.addUserEmail(lesson_url.getUrl_video(), user.getPhoneNumber());
                 if (hashModel.getSuccess()) {

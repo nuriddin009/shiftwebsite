@@ -23,7 +23,7 @@ function Index(props) {
     return (
         found ? <div className={"certificate-page"}>
                 <img src={"/api/certificate/get/one/" + id} alt=""/>
-                {/*<img src={"http://localhost:81/api/certificate/test"} alt=""/>*/}
+                {/*<img src={"/api/certificate/test"} alt=""/>*/}
                 <a target={'_blank'} href={"/api/certificate/download/" + id}>
                     <button className={"btn btn-success"}>Download <i
                         style={{fontSize: "24px"}}

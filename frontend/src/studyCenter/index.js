@@ -197,6 +197,7 @@ function Index(props) {
 
     function clickTimeTable(item, index) {
         setTimeTableIndex(index)
+        console.log(item?.id)
         localStorage.setItem("timeTableIndex", index);
         localStorage.setItem("timeTableItem", JSON.stringify(item))
         setTimeTab(item)
@@ -375,6 +376,8 @@ function Index(props) {
         data = {
             ...data,
             activ: true,
+            phoneNumber: "+" + data.phoneNumber,
+            fatherPhoneNumber: "+" + data.fatherPhoneNumber,
             username: data.firstName.toLocaleLowerCase() + data.lastName.toLocaleLowerCase() + phone,
             password: data.firstName.toLocaleLowerCase() + data.lastName.toLocaleLowerCase() + phone,
             password_repid: data.firstName.toLocaleLowerCase() + data.lastName.toLocaleLowerCase() + phone
@@ -568,6 +571,13 @@ function Index(props) {
         } else {
             toast.error("Please fill in the time table name")
         }
+    }
+
+    function deleteErrorTt(id) {
+        instance.delete("/studyCenter/delete/" + id).then(res => {
+            localStorage.getItem("timeTableId")
+            getTimeTab(localStorage.getItem("timeTableId"))
+        })
     }
 
 
@@ -860,7 +870,7 @@ function Index(props) {
                                                 <div>
                                                     <p>
                                                         {/*<span*/}
-                                                        {/*    onClick={() => alert(item1.id)}*/}
+                                                        {/*    onClick={() => deleteErrorTt(item1.id)}*/}
                                                         {/*    className={"text-danger"}*/}
                                                         {/*>*/}
                                                         {/*        <i*/}
@@ -1279,7 +1289,8 @@ function Index(props) {
                         <Button onClick={rodalVisisble} variant={"contained"} sx={{marginLeft: "-20px"}}
                                 color={"error"}>cancel</Button>
                         {!payment &&
-                            <Button type={"submit"} form={"my_form"} variant={"contained"}>{currentNew ? "save" : "edit"}</Button>}
+                            <Button type={"submit"} form={"my_form"}
+                                    variant={"contained"}>{currentNew ? "save" : "edit"}</Button>}
                     </div>
                 </div>
             </Dialog>

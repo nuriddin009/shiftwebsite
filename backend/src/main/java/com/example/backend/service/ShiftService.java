@@ -13,6 +13,7 @@ import com.example.backend.repository.IpAdressUserRepository;
 import com.example.backend.repository.RoleRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.repository.shiftRepo.*;
+import com.example.backend.repository.studyCenter.CertificateRepository;
 import com.example.backend.repository.studyCenter.LessonHashRepository;
 import com.example.backend.repository.studyCenter.TimeTableUsersDataRepository;
 import com.example.backend.repository.studyCenter.TimeTableUsersRepository;
@@ -316,6 +317,7 @@ public class ShiftService {
     private final SecurityConfig securityConfig;
     private final JwtTokenProvider jwtTokenProvider;
     private final IpAdressUserRepository ipAdressUserRepository;
+    private final CertificateRepository certificateRepository;
 
     public JwtAuthResponse signIn(ReqLogin reqLogin, HttpServletRequest request) throws Exception {
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
@@ -376,6 +378,7 @@ public class ShiftService {
         timeTableUsersRepository.deleteByUserId(userId);
         parentRepo.deleteUserParent(userId);
         roleRepository.deleteUserRoles(userId);
+        certificateRepository.deleteAllByUserId(userId);
         userRepository.deleteById(userId);
     }
 

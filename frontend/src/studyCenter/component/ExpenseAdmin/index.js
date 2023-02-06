@@ -73,7 +73,7 @@ function Index(props) {
                         <div className={"d-flex justify-content-between pr-4 align-items-lg-start"}>
                             <div>
                                 <Typography sx={{ fontSize:20}}>Balance: {(balance?.income-balance?.expense).toLocaleString()} (${balance?.incomeUsd})</Typography>
-                                <Typography sx={{ fontSize:20}}>Expense: {balance?.expense.toLocaleString()}  (${balance?.expenseUsd})</Typography>
+                                <Typography sx={{ fontSize:20}}>Expense: {balance?.expense?.toLocaleString()}  (${balance?.expenseUsd})</Typography>
                             </div>
                             <Button onClick={getStatistics} variant={"contained"} sx={{marginRight:5}}>Bugungi statistika</Button>
                         </div>

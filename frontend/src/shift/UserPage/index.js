@@ -26,6 +26,11 @@ import Avatar from '@mui/material/Avatar';
 import userImg from "../file/image/imageShift/user.png";
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Button from '@mui/material/Button';
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 
 const drawerWidth = window.innerWidth > 660 ? 300 : 200;
@@ -219,6 +224,7 @@ function Index(props) {
                         </ListItemButton>
                     </ListItem>
                 </Link>
+
                 {
                     lessons.length !== 0 ? <Link style={{textDecoration: "none"}} to={`/userPage/lessons`}>
                             <ListItem
@@ -252,6 +258,10 @@ function Index(props) {
                         </Link>
                         : ""
                 }
+                {window.innerWidth <= 660 && <Button onClick={() => {
+                    localStorage.clear()
+                    navigate("/")
+                }} variant={"contained"} sx={{mx: 2, my: 1}} color={"error"}>Logout</Button>}
             </List>
         </Box>
     );
@@ -259,6 +269,15 @@ function Index(props) {
 
     //  Mobile v
 
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open1 = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     function logOut() {
         navigate("/")
@@ -300,12 +319,50 @@ function Index(props) {
                                 >
                                     <MenuIcon/>
                                 </IconButton>
+
+
                                 <Avatar
                                     alt="Trevor Henderson"
                                     src={userImg}
                                     sx={{position: "fixed", right: "20px"}}
+                                    onClick={handleClick}
                                 />
+
+                                <Menu
+                                    id="fade-menu"
+                                    sx={{marginTop: "10px"}}
+                                    MenuListProps={{
+                                        'aria-labelledby': 'fade-button',
+                                    }}
+                                    anchorEl={anchorEl}
+                                    open={open1}
+                                    onClose={handleClose}
+                                    // TransitionComponent={Fade}
+                                >
+                                    {/*<MenuItem onClick={handleClose}>*/}
+                                    {/*    <Link style={{textDecoration: "none", display: "flex", alignItems: "center", color: "blue"}}*/}
+                                    {/*          to={`/userPage/user`}>*/}
+                                    {/*        <AccountCircleOutlinedIcon/>&nbsp;<h6 className={"mt-2"}>Profile</h6>*/}
+                                    {/*    </Link>*/}
+                                    {/*</MenuItem>*/}
+                                    <MenuItem onClick={handleClose}>
+                                        <Link style={{
+                                            textDecoration: "none",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            color: "blue"
+                                        }}
+                                              to={"/"}><HomeOutlinedIcon/>&nbsp;<h6 className={"mt-2"}>Home</h6></Link>
+                                    </MenuItem>
+                                    <MenuItem sx={{display: "flex", alignItems: "center", color: "red"}}
+                                              onClick={() => {
+                                                  localStorage.clear()
+                                                  navigate("/")
+                                              }}><LogoutIcon/>&nbsp;<h6 className={"mt-2"}>Logout</h6></MenuItem>
+                                </Menu>
+
                             </Toolbar>
+
                         </AppBar>
                         <Drawer variant="permanent" open={open}>
                             <DrawerHeader sx={{padding: "1rem", boxSizing: "border-box"}}>
