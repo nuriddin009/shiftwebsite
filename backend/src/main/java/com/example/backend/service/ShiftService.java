@@ -8,15 +8,9 @@ import com.example.backend.entity.User;
 import com.example.backend.entity.UserIpAdress;
 import com.example.backend.entity.shift.*;
 import com.example.backend.entity.studyCenter.TimeTableUser;
-import com.example.backend.repository.AttachmentRepository;
-import com.example.backend.repository.IpAdressUserRepository;
-import com.example.backend.repository.RoleRepository;
-import com.example.backend.repository.UserRepository;
+import com.example.backend.repository.*;
 import com.example.backend.repository.shiftRepo.*;
-import com.example.backend.repository.studyCenter.CertificateRepository;
-import com.example.backend.repository.studyCenter.LessonHashRepository;
-import com.example.backend.repository.studyCenter.TimeTableUsersDataRepository;
-import com.example.backend.repository.studyCenter.TimeTableUsersRepository;
+import com.example.backend.repository.studyCenter.*;
 import com.example.backend.repository.telegramBot.ParentRepo;
 import com.example.backend.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -318,6 +312,8 @@ public class ShiftService {
     private final JwtTokenProvider jwtTokenProvider;
     private final IpAdressUserRepository ipAdressUserRepository;
     private final CertificateRepository certificateRepository;
+    private final ExpenseRepository expenseRepository;
+    private final IncomeRepository incomeRepository;
 
     public JwtAuthResponse signIn(ReqLogin reqLogin, HttpServletRequest request) throws Exception {
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
@@ -375,10 +371,13 @@ public class ShiftService {
                 timeTableUsersDataRepository.deleteTTUDBYUser(time_tableUser.getId());
             }
         }
+        ipAdressUserRepository.deleteAll();
         timeTableUsersRepository.deleteByUserId(userId);
         parentRepo.deleteUserParent(userId);
         roleRepository.deleteUserRoles(userId);
-        certificateRepository.deleteAllByUserId(userId);
+        certificateRepository.deleteUserCertificate(userId);
+        expenseRepository.deleteExpenseBy(userId);
+        incomeRepository.deleteIncomeBy(userId);
         userRepository.deleteById(userId);
     }
 

@@ -61,14 +61,15 @@ public class PaymentService {
         Long incomeUsdSum = incomeRepository.getIncomeSum(true);
         Long expenseSum = expenseRepository.getExpenseSum(false);
         Long expenseSumUsd = expenseRepository.getExpenseSum(true);
-        BalanceRes balanceRes = new BalanceRes(incomeSum, expenseSum,incomeUsdSum,expenseSumUsd);
-        return new ApiResponse(true,balanceRes);
+        BalanceRes balanceRes = new BalanceRes(incomeSum, expenseSum, incomeUsdSum, expenseSumUsd);
+        return new ApiResponse(true, balanceRes);
     }
 }
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-class BalanceRes{
+class BalanceRes {
     private Long income;
     private Long expense;
     private Long incomeUsd;

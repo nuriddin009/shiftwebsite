@@ -6,9 +6,11 @@ import com.example.backend.projection.ExpenseProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,4 +56,9 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
             " select sum(t.amount) from Expense t where t.payType.id=:payTypeId and (t.deleted is null or t.deleted is false) and t.usd is true"
     )
     Long getExpenseUsd(UUID payTypeId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from Expense e where e.user.id=:userId")
+    void deleteExpenseBy(UUID userId);
 }
