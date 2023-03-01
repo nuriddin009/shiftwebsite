@@ -376,8 +376,8 @@ function Index(props) {
         data = {
             ...data,
             activ: true,
-            phoneNumber: "+" + data.phoneNumber,
-            fatherPhoneNumber: "+" + data.fatherPhoneNumber,
+            phoneNumber: data.phoneNumber.startsWith("+") ? data.phoneNumber : "+" + data.phoneNumber,
+            fatherPhoneNumber: data.fatherPhoneNumber.startsWith("+") ? data.fatherPhoneNumber : "+" + data.fatherPhoneNumber,
             username: data.firstName.toLocaleLowerCase() + data.lastName.toLocaleLowerCase() + phone,
             password: data.firstName.toLocaleLowerCase() + data.lastName.toLocaleLowerCase() + phone,
             password_repid: data.firstName.toLocaleLowerCase() + data.lastName.toLocaleLowerCase() + phone
@@ -573,12 +573,6 @@ function Index(props) {
         }
     }
 
-    function deleteErrorTt(id) {
-        instance.delete("/studyCenter/delete/" + id).then(res => {
-            localStorage.getItem("timeTableId")
-            getTimeTab(localStorage.getItem("timeTableId"))
-        })
-    }
 
 
     return (
@@ -869,14 +863,6 @@ function Index(props) {
 
                                                 <div>
                                                     <p>
-                                                        {/*<span*/}
-                                                        {/*    onClick={() => deleteErrorTt(item1.id)}*/}
-                                                        {/*    className={"text-danger"}*/}
-                                                        {/*>*/}
-                                                        {/*        <i*/}
-                                                        {/*            className="fa-solid fa-xmark"*/}
-                                                        {/*        /> Tegma*/}
-                                                        {/*</span>*/}
                                                         {
                                                             item1.done && item1.exam && !lessOrMore ?
                                                                 <div className={"mt-4"}>

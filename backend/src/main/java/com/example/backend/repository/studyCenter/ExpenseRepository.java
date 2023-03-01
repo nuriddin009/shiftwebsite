@@ -61,4 +61,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
     @Transactional
     @Query(value = "delete from Expense e where e.user.id=:userId")
     void deleteExpenseBy(UUID userId);
+
+//    @Query(value = "update Expense e set e.user=null where e.user.id=:userId")
+//    void updateExpense(UUID userId);
 }

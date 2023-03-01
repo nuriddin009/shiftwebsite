@@ -32,12 +32,15 @@ public interface CertificateRepository extends JpaRepository<Certificate, UUID> 
                     "where concat(u.first_name || ' '|| u.last_name) ilike '%' || :search || '%'", nativeQuery = true)
     Page<UserCertificateProjection> getAllUsersCertificate(Pageable pageable, String search);
 
-    void deleteAllByUserId(UUID userId);
+
 
     @Modifying
     @Transactional
     @Query(value = "delete from Certificate c where c.user.id=:userId")
     void deleteUserCertificate(UUID userId);
+
+
+
 
 
 }

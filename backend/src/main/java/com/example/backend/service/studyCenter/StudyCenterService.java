@@ -111,19 +111,25 @@ public class StudyCenterService {
         }
         List<Lesson> all = lessonRepository.findAll();
         if (all.size() != 0) {
-            if (timeTableUsersByTimeTableId.isEmpty()) {
-                for (Lesson lesson : all) {
-                    TimeTableUserData timeTableUserData = new TimeTableUserData(save,
-                            lesson.getLesson_order(), false, 0, 0,
-                            false, false, false);
-                    timeTableUsersDataRepository.save(timeTableUserData);
-                }
-            } else {
-                for (int i = 0; i < all.size(); i++) {
-                    TimeTableUserData timeTableUserData = new TimeTableUserData(save, i + 1, false, 0, 0, timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getDone(), timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getExam(), false);
-                    timeTableUsersDataRepository.save(timeTableUserData);
-                }
-
+//            if (timeTableUsersByTimeTableId.isEmpty()) {
+//                for (Lesson lesson : all) {
+//                    TimeTableUserData timeTableUserData = new TimeTableUserData(save,
+//                            lesson.getLesson_order(), false, 0, 0,
+//                            false, false, false);
+//                    timeTableUsersDataRepository.save(timeTableUserData);
+//                }
+//            } else {
+//                for (int i = 0; i < all.size(); i++) {
+//                    TimeTableUserData timeTableUserData = new TimeTableUserData(save, i + 1, false, 0, 0, timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getDone(), timeTableUsersByTimeTableId.get(0).getLessonData().get(i).getExam(), false);
+//                    timeTableUsersDataRepository.save(timeTableUserData);
+//                }
+//
+//            }
+            for (Lesson lesson : all) {
+                TimeTableUserData timeTableUserData = new TimeTableUserData(save,
+                        lesson.getLesson_order(), false, 0, 0,
+                        false, false, false);
+                timeTableUsersDataRepository.save(timeTableUserData);
             }
             return new ApiResponse("The student joined free classes", true, null);
         }

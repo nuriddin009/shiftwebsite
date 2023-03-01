@@ -314,6 +314,7 @@ public class ShiftService {
     private final CertificateRepository certificateRepository;
     private final ExpenseRepository expenseRepository;
     private final IncomeRepository incomeRepository;
+    private final PaymentRepository paymentRepository;
 
     public JwtAuthResponse signIn(ReqLogin reqLogin, HttpServletRequest request) throws Exception {
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
@@ -339,7 +340,7 @@ public class ShiftService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
             user = (User) authentication.getPrincipal();
-            System.out.println(user);
+//            System.out.println(user);
             String accessToken = jwtTokenProvider.generateAccessToken(userPrincipal);
             String refreshToken = jwtTokenProvider.generateRefreshToken(userPrincipal.getUsername());
             if (byIpAdress.isPresent()) {
@@ -368,6 +369,7 @@ public class ShiftService {
         List<TimeTableUser> byUserId = timeTableUsersRepository.findByUserId(userId);
         if (byUserId.size() != 0) {
             for (TimeTableUser time_tableUser : byUserId) {
+                paymentRepository.deleteAllByTimeTableUserId(time_tableUser.getId());
                 timeTableUsersDataRepository.deleteTTUDBYUser(time_tableUser.getId());
             }
         }
@@ -376,8 +378,9 @@ public class ShiftService {
         parentRepo.deleteUserParent(userId);
         roleRepository.deleteUserRoles(userId);
         certificateRepository.deleteUserCertificate(userId);
-        expenseRepository.deleteExpenseBy(userId);
-        incomeRepository.deleteIncomeBy(userId);
+        incomeRepository.updateIncome(userId);
+//        expenseRepository.deleteExpenseBy(userId);
+//        incomeRepository.deleteIncomeBy(userId);
         userRepository.deleteById(userId);
     }
 

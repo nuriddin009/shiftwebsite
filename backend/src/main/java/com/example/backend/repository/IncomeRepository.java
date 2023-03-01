@@ -67,4 +67,9 @@ public interface IncomeRepository extends JpaRepository<Income, UUID> {
     @Modifying
     @Query(value = "delete from Income i where i.user.id=:userId")
     void deleteIncomeBy(UUID userId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update Income i set i.user=null where i.user.id=:userId")
+    void updateIncome(UUID userId);
 }
